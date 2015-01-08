@@ -1,0 +1,181 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.jme</groupId>
+    <artifactId>Mpjoe-Swing</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <dependencies>
+      <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-integration</artifactId>
+      </dependency>
+    </dependencies>
+    <dependencyManagement>
+      <dependencies>
+          <dependency>
+              <groupId>org.apache.logging.log4j</groupId>
+              <artifactId>log4j-core</artifactId>
+              <version>2.0-beta9</version>
+          </dependency>
+          <dependency>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+              <version>4.11</version>
+          </dependency>
+          <dependency>
+              <groupId>org.hamcrest</groupId>
+              <artifactId>hamcrest-integration</artifactId>
+              <version>1.3</version>
+          </dependency>
+      </dependencies>
+    </dependencyManagement>
+
+    <build>
+
+        <!-- Der Abschnitt pluginManagement ist lediglich zum Unterdrücken einer falschen Fehlermeldung des Eclipse m2e Plugins
+             (Hmm, offenbar etwas doof da unten beim  maven-antrun-plugin mit den Lifecycle-Phasen. Maven benötig die wohl als lower-case "generate-sources" aber Eclipse m2e möchte die gerne mit Grossbuchstaben "Generate-Sources" sehen.)
+             Siehe auch:
+                 http://maven.40175.n5.nabble.com/Having-trouble-with-maven-antrun-plugin-lifecycle-phase-tt5779709.html
+                 http://www.celinio.net/techblog/?p=1395
+                 http://wiki.eclipse.org/M2E_plugin_execution_not_covered
+                 http://javadeveloperslife.wordpress.com/2011/10/24/m2eclipse-plugin-execution-not-covered-by-lifecycle-configuration/
+                 http://stackoverflow.com/questions/19132555/plugin-maven-antrun-plugin-execution-not-covered-by-lifecycle-configuration-with
+                 http://stackoverflow.com/questions/6352208/how-to-solve-plugin-execution-not-covered-by-lifecycle-configuration-for-sprin
+                 https://docs.sonatype.org/display/M2ECLIPSE/Project+build+lifecycle+mapping#Projectbuildlifecyclemapping-Introducenotionsof%22interesting%22and%22notinteresting%22mojoexecutions -->
+        <pluginManagement>
+            <plugins>
+                <!--The configuration of this plugin is used to store the Eclipse M2E settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange> [1.7,)</versionRange>
+                                        <goals> <!-- plugin goals--> <goal>run</goal> </goals>
+                                    </pluginExecutionFilter>
+                                    <action> <!-- M2E should ignore the plugin --> <ignore/> </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- Java-Compiler auf 1.7 setzen, siehe http://maven.apache.org/general.html#Compiling-J2SE-5 -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <!-- Ant-Skript zum Generieren unseres eigenen Versionsstrings, siehe auch VersionInfo.java -->
+            <!-- Hmm, alternativ konnte man z.B. auch exec-maven-plugin oder bash-maven-plugin verwenden -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <target>
+                                <!-- Wir tun unser Properties-File nach target/classes, dann wird es automatisch mit in's jar getan -->
+                                <mkdir dir="${project.build.directory}/classes" />
+                                <exec executable="bash" dir="." outputproperty="myversion" failonerror="true"> <arg line="-C InvokeVersion.sh --make-version-string"/> </exec>
+                                <propertyfile file="${project.build.directory}/classes/jme.mpjoe.swing.MainWin.buildinfo.properties"> <entry key="build.version" value="${myversion}"/> </propertyfile>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Jar ausführbar machen, falls man das Jar ohne Dependencies verwendet, siehe http://maven.apache.org/shared/maven-archiver/examples/classpath.html -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>jme.mpjoe.swing.MainWin</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>.</Class-Path><!-- Classpath benötigt man leider, damit log4j2.xml ausserhalb des Jars gefunden wird -->
+                            <!-- <Implementation-Version>${myversion}</Implementation-Version> ... geht leider noch nicht, siehe VersionInfo.java -->
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Jar ausführbar machen und Libs mit einpacken, siehe http://stackoverflow.com/questions/17674784/maven-plugin-to-create-executable-jar-with-dependencies-not-unpacked-jar-with-j -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2-beta-5</version>
+                <executions><!-- Default assembly:single, damit das nicht jedesmal auf der Kommandozeile übergeben werden muss -->
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration><!-- Für jar-with-dependencies die Main-Klasse angeben, damit das Jar ausführbar wird -->
+                    <archive>
+                        <manifest>
+                          <addClasspath>true</addClasspath>
+                          <mainClass>jme.mpjoe.swing.MainWin</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>.</Class-Path><!-- Classpath benötigt man leider, damit log4j2.xml ausserhalb des Jars gefunden wird -->
+                            <!-- <Implementation-Version>${myversion}</Implementation-Version> ... geht leider noch nicht, siehe VersionInfo.java -->
+                        </manifestEntries>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>log4j2.xml</include><!-- Logger-Konfiguration in's Ausgabeverzeichnis kopieren -->
+                </includes>
+                <targetPath>..</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+            </resource>
+            <resource>
+                <directory>src/main/java/jme/mpjoe/swing/help</directory> <!-- Html-Hilfe soll in's Jar -->
+                <includes>
+                    <include>*.html</include>
+                </includes>
+                <targetPath>jme/mpjoe/swing/help</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+            </resource>
+        </resources>
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+</project>
