@@ -1,0 +1,28 @@
+Frage für Stackoverflow vorbereitet ...
+
+Whats seems to be the best Java audio library for a media player application?
+
+Some years ago, I'd developed a media player (similar to DJ Maze's [mp3tunes](http://www.in.com/downloads/softwares--mp3-tunes-46853.html)) using Borland Delphi 7 and 
+[FMOD](http://www.fmod.com) for audio mixing and output (after leaving [Xaudio](http://www.xaudio.com) because of license issues).
+
+Now I'm going to start a new project from the scratch which shoud support at least:
+
+* Ubuntu / Kubuntu (maybe some more linux platforms
+* Android
+* Maybe Windows
+* Maybe later Mac OSX and iOS
+* I think, I should use different audio libs for the different platforms (at least for Linux versus Android), isn't it?
+
+Features for audio playback:
+
+* Audio formats at least:
+  * mp3
+  * ogg vorbis
+  * flac
+  * Maybe wav
+  * Maybe later Midi playback
+* Multiple simultaneous players (for crossfading, jingles, et cetera)
+* Support of multiple outputs (e.g. for headphone pre-listening / pre-cuing while playlist goes to the master output)
+* Pitch control
+* Equalizer feature would be nice
+* Visualization interface (for implementing e.g. VU Meter / wave) would also be nice
