@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
 /**
- * UI-Komponente für die Statuszeile des Ews Client
+ * UI-Komponente für die Statuszeile des Mpjoe Java Swing Client
  * @author Joe Merten
  */
 public class Statusbar extends JPanel {

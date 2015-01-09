@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * UI-Komponente für den Ews Client bzg. der allgemeinen Funktionalitäten
+ * UI-Komponente für den Mpjoe Java Swing Client bzg. der allgemeinen Funktionalitäten
  * @author Joe Merten
  */
 public class GenPanel extends JPanel {
@@ -15,7 +15,7 @@ public class GenPanel extends JPanel {
     public GenPanel() {
         setLayout(new BorderLayout(0, 0));
         JLabel l = new JLabel();
-        l.setText("Ews General  … noch nichts implementiert …");
+        l.setText("Mpjoe General  … noch nichts implementiert …");
         add(l, BorderLayout.NORTH);
     }
 

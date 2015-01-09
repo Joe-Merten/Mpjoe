@@ -24,7 +24,7 @@ import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.VersionInfo;
 
 /**
- * Applikationsfenster des Ews Client
+ * Applikationsfenster des Mpjoe Java Swing Client
  * @author Joe Merten
  */
 public class MainWin {

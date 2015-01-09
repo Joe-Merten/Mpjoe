@@ -9,7 +9,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
 /**
- * UI-Komponente für die Toolbar des Ews Client
+ * UI-Komponente für die Toolbar des Mpjoe Java Swing Client
  * @author Joe Merten
  */
 public class Toolbar extends JToolBar {

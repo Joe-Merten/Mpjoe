@@ -101,7 +101,7 @@
                                 <!-- Wir tun unser Properties-File nach target/classes, dann wird es automatisch mit in's jar getan -->
                                 <mkdir dir="${project.build.directory}/classes" />
                                 <exec executable="bash" dir="." outputproperty="myversion" failonerror="true"> <arg line="-C InvokeVersion.sh --make-version-string"/> </exec>
-                                <propertyfile file="${project.build.directory}/classes/jme.mpjoe.swing.MainWin.buildinfo.properties"> <entry key="build.version" value="${myversion}"/> </propertyfile>
+                                <propertyfile file="${project.build.directory}/classes/de.jme.mpjoe.swing.MainWin.buildinfo.properties"> <entry key="build.version" value="${myversion}"/> </propertyfile>
                             </target>
                         </configuration>
                     </execution>
@@ -116,7 +116,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>jme.mpjoe.swing.MainWin</mainClass>
+                            <mainClass>de.jme.mpjoe.swing.MainWin</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>.</Class-Path><!-- Classpath benötigt man leider, damit log4j2.xml ausserhalb des Jars gefunden wird -->
@@ -143,7 +143,7 @@
                     <archive>
                         <manifest>
                           <addClasspath>true</addClasspath>
-                          <mainClass>jme.mpjoe.swing.MainWin</mainClass>
+                          <mainClass>de.jme.mpjoe.swing.MainWin</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>.</Class-Path><!-- Classpath benötigt man leider, damit log4j2.xml ausserhalb des Jars gefunden wird -->
@@ -166,11 +166,11 @@
                 <targetPath>..</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
             <resource>
-                <directory>src/main/java/jme/mpjoe/swing/help</directory> <!-- Html-Hilfe soll in's Jar -->
+                <directory>src/main/java/de/jme/mpjoe/swing/help</directory> <!-- Html-Hilfe soll in's Jar -->
                 <includes>
                     <include>*.html</include>
                 </includes>
-                <targetPath>jme/mpjoe/swing/help</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+                <targetPath>de/jme/mpjoe/swing/help</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
         </resources>
     </build>

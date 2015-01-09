@@ -26,7 +26,7 @@ public class DauWarning extends JDialog {
     public DauWarning() {
         setModal(true);
         setBounds(100, 100, 668, 386);
-        setTitle("Ews Client");
+        setTitle("Mpjoe Java Swing Client");
 
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

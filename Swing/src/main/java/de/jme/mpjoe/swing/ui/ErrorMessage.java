@@ -6,7 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
- * UI-Komponente zur Anzeige von Fehlermeldungen im Ews Client
+ * UI-Komponente zur Anzeige von Fehlermeldungen im Mpjoe Java Swing Client
  * @author Joe Merten
  */
 public class ErrorMessage extends JOptionPane {
