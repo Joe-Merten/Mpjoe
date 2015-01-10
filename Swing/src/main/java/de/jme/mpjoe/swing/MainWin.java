@@ -223,11 +223,11 @@ public class MainWin {
         if (returnVal == FileChooser.APPROVE_OPTION) {
             ret = true;
             File file = fc.getSelectedFile();
-            System.out.println("File = " + file.toString());
+            URI uri = file.toURI();
+            /*System.out.println("File = " + file.toString());
             System.out.println("  Name = " + file.getName());
             System.out.println("  Abs  = " + file.getAbsolutePath());
             try { System.out.println("  Cano = " + file.getCanonicalPath()); } catch (IOException e) { e.printStackTrace(); }
-            URI uri = file.toURI();
             System.out.println("Uri  = " + uri.toString());
             System.out.println("  Path = " + uri.getPath());
             try {
@@ -243,7 +243,7 @@ public class MainWin {
                 System.out.println("  Path = " + url.getPath());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             mpjPlayer.setTrack(new MpjTrack(uri));
         }
