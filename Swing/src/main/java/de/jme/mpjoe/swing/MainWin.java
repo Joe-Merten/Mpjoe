@@ -6,10 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -46,7 +43,7 @@ public class MainWin {
     private GenPanel    genPanel;
     private MpjPlayer   mpjPlayer;
 
-    private static CwdSaver cwd = new CwdSaver(new String[]{"/D/MP3/", "D:\\MP3"});  // TODO: Sinnvolle Defaultverzeichnisse
+    private static CwdSaver cwd = new CwdSaver(new String[]{"/bbb-d/MP3/OGG-WMA-RM-Test/Testfiles/", "/D/MP3/", "D:/MP3/OGG-WMA-RM-Test/Testfiles/", "D:/MP3/"});  // TODO: Sinnvolle Defaultverzeichnisse
 
     private class QuitAction extends AbstractAction {
         private static final long serialVersionUID = 4852834538692097749L;
@@ -216,8 +213,12 @@ public class MainWin {
         }/**/
 
         FileChooser fc = new FileChooser("Open MpjTrack for play", cwd);
-        javax.swing.filechooser.FileFilter filterAudio = new javax.swing.filechooser.FileNameExtensionFilter("Audio Files (mp3 ogg flac wav)", "mp3", "ogg", "flac", "wav");
+        javax.swing.filechooser.FileFilter filterAudio = new javax.swing.filechooser.FileNameExtensionFilter("Audio Files (mp3 ogg flac wav wma)", "mp3", "ogg", "flac", "wav", "wma");
+        javax.swing.filechooser.FileFilter filterVideo = new javax.swing.filechooser.FileNameExtensionFilter("Video Files (mpeg avi mov ogv wmv)", "mpeg", "mpg", "mpe", "mp4", "avi", "mov", "ogv", "wmv");
+        javax.swing.filechooser.FileFilter filterSupported = new javax.swing.filechooser.FileNameExtensionFilter("Supported Files", "mp3", "ogg", "flac", "wav");
+        fc.addChoosableFileFilter(filterSupported);
         fc.addChoosableFileFilter(filterAudio);
+        fc.addChoosableFileFilter(filterVideo);
         int returnVal = fc.showOpenDialog(frame);
         boolean ret = false;
         if (returnVal == FileChooser.APPROVE_OPTION) {

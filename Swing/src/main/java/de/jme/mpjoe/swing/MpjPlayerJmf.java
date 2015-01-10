@@ -18,10 +18,54 @@ import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjTrack;
 
 /**
- * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client.
+ * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client unter Verwendung des Java Media Framework
  *
  * @author Joe Merten
+                                                                   Linux  Video
+ * "Testfiles/100_1404 - Limbo.MOV"                                 ja    nein?
+ * "Testfiles/16 - Eric Clapton - Tears in Heaven.wma"             nein
+ * "Testfiles/3ddemo.mod"                                          nein
+ * "Testfiles/afile-547676518.flv"                                 nein
+ * "Testfiles/American Football - Voll Verarscht.wmv"              nein
+ * "Testfiles/America - The Last Unicorn.mp3"                       ja
+ * "Testfiles/audio.rm"                                            nein
+ * "Testfiles/bee gees - words video.mpeg"                          ja    nein?
+ * "Testfiles/Beethovens Für Elise.rmi"                            nein
+ * "Testfiles/Bill Clinton - Computergame - Wifehunter.mpe"         ja    nein?
+ * "Testfiles/Brandenburg_Concerto_no._1_in_F_major_64.rm"         nein
+ * "Testfiles/Brandenburg_Concerto_no._1_in_F_major_WMA_48.wma"    nein
+ * "Testfiles/canyon.mid"                                          nein
+ * "Testfiles/canyon.midi"                                         nein
+ * "Testfiles/car.fsb"
+ * "Testfiles/examples.fev"                                        nein
+ * "Testfiles/flashvideo.flv"                                      nein
+ * "Testfiles/Hello2.swf"                                          nein
+ * "Testfiles/invtro94.s3m"                                        nein
+ * "Testfiles/Karate Ulk - Cow Matrix.asf"                         nein
+ * "Testfiles/Laura Merten - 1998-11-12 Hallo 2 Jahre alt.Wav"      ja
+ * "Testfiles/Livin'_On_Borrowed_Time_zero.ogg"                    nein
+ * "Testfiles/Marc-Julian Zech - Strafraum.FLV"                    nein
+ * "Testfiles/Marc_Nelson_02_zero.ogg"
+ * "Testfiles/MOTOR.WAV"                                            ja
+ * "Testfiles/movie.swf"
+ * "Testfiles/nibbles.swf"
+ * "Testfiles/other.fsb"
+ * "Testfiles/Safri Dou - Played-A-Live.avi"                        ja    nein?
+ * "Testfiles/sample.asf"
+ * "Testfiles/seal.ogg"
+ * "Testfiles/shakira.mov"                                         nein
+ * "Testfiles/Tricks Tutorials - Aerial Tutorial (short).mpg"
+ * "Testfiles/Tricks Tutorials - Backflip Tutorial (short).mpg"
+ * "Testfiles/Tricks Tutorials - Doubleleg Tutorial (early).mpg"
+ * "Testfiles/Tricks Tutorials - Doubleleg Tutorial (short).mpg"
+ * "Testfiles/Tricks Tutorials - Finally Backwards.mpg"             ja    nein?
+ * "Testfiles/videotest.rm"
+ * "Testfiles/wi64.mid"
+ * "Testfiles/zel3.xm"
  */
+
+
+
 public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
 
     static boolean mp3PluginInitialized = false;
