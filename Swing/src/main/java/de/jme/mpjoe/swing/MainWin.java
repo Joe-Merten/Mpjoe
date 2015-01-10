@@ -5,6 +5,11 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -15,9 +20,15 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
+import de.jme.mpj.MpjPlayer;
+import de.jme.mpj.MpjPlayer.PlayerEvent;
+import de.jme.mpj.MpjPlayer.PlayerState;
+import de.jme.mpj.MpjTrack;
 import de.jme.mpjoe.swing.gen.GenPanel;
 import de.jme.mpjoe.swing.help.Help;
+import de.jme.mpjoe.swing.ui.CwdSaver;
 import de.jme.mpjoe.swing.ui.DauWarning;
+import de.jme.mpjoe.swing.ui.FileChooser;
 import de.jme.mpjoe.swing.ui.Statusbar;
 import de.jme.mpjoe.swing.ui.Toolbar;
 import de.jme.toolbox.SystemInfo;
@@ -33,6 +44,9 @@ public class MainWin {
     private Statusbar   statusbar;
     private JTabbedPane tabbedPane;
     private GenPanel    genPanel;
+    private MpjPlayer   mpjPlayer;
+
+    private static CwdSaver cwd = new CwdSaver(new String[]{"/D/MP3/", "D:\\MP3"});  // TODO: Sinnvolle Defaultverzeichnisse
 
     private class QuitAction extends AbstractAction {
         private static final long serialVersionUID = 4852834538692097749L;
@@ -49,6 +63,19 @@ public class MainWin {
         }
     }
     private QuitAction quitAction;
+
+    private class ChooseFileAndPlayAction extends AbstractAction {
+        private static final long serialVersionUID = 4852834538692097750L;
+        public ChooseFileAndPlayAction() {
+            super("Play...", null);
+            putValue(SHORT_DESCRIPTION, "Choose file and play");
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+        }
+        public void actionPerformed(ActionEvent ae) {
+            chooseFileAndPlay();
+        }
+    }
+    private ChooseFileAndPlayAction chooseFileAndPlayAction;
 
 
     /**
@@ -109,6 +136,7 @@ public class MainWin {
         //--------------------
         // Actions
         quitAction = new QuitAction();
+        chooseFileAndPlayAction = new ChooseFileAndPlayAction();
 
 
         //--------------------
@@ -136,6 +164,7 @@ public class MainWin {
         Toolbar toolbar = new Toolbar();
         frame.getContentPane().add(toolbar, BorderLayout.NORTH);
         toolbar.add(quitAction);
+        toolbar.add(chooseFileAndPlayAction);
 
         //--------------------
         // Statusbar
@@ -158,11 +187,66 @@ public class MainWin {
         genPanel = new GenPanel(); tabbedPane.addTab("General", genPanel);
 
         //--------------------
-        // Den jewels letzten State des AudioPlayer auch in der Statusbar anzeigen
-        //TtsAudioPlayer.instance.addListener(new PlayerEventListner() {
-        //    @Override public void playerEvent(TtsAudioPlayer player, PlayerEvent evt) {
-        //        statusbar.setStatusTextC(player.getPlayerStateString());
-        //    }
-        //});
+        mpjPlayer = new MpjPlayerJmf("Player");
+
+        // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
+        mpjPlayer.addListener(new MpjPlayer.PlayerEventListner() {
+            @Override public void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
+                statusbar.setStatusTextC(player.getPlayerStateString());
+            }
+        });
+    }
+
+    public boolean chooseFileAndPlay() {
+
+        // Vielleicht doch mal javazoom angucken:
+        //   http://stackoverflow.com/a/22305518/2880699
+        //   http://introcs.cs.princeton.edu/java/faq/mp3/MP3.java.html
+        // http://www.onjava.com/pub/a/onjava/2004/08/11/javasound-mp3.html
+        // Hier noch Sourcen mit fade-in/out
+        // -> http://stackoverflow.com/questions/14959566/java-error-when-trying-to-use-mp3plugin-for-playing-an-mp3-file/14959818#14959818
+
+        /*{
+            String bip = "___/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
+            //String bip = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
+            //String bip = "file:///D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
+
+            File f = new File(bip);
+            mpjPlayer.setTrack(new MpjTrack(f.toURI()));
+        }/**/
+
+        FileChooser fc = new FileChooser("Open MpjTrack for play", cwd);
+        javax.swing.filechooser.FileFilter filterAudio = new javax.swing.filechooser.FileNameExtensionFilter("Audio Files (mp3 ogg flac wav)", "mp3", "ogg", "flac", "wav");
+        fc.addChoosableFileFilter(filterAudio);
+        int returnVal = fc.showOpenDialog(frame);
+        boolean ret = false;
+        if (returnVal == FileChooser.APPROVE_OPTION) {
+            ret = true;
+            File file = fc.getSelectedFile();
+            System.out.println("File = " + file.toString());
+            System.out.println("  Name = " + file.getName());
+            System.out.println("  Abs  = " + file.getAbsolutePath());
+            try { System.out.println("  Cano = " + file.getCanonicalPath()); } catch (IOException e) { e.printStackTrace(); }
+            URI uri = file.toURI();
+            System.out.println("Uri  = " + uri.toString());
+            System.out.println("  Path = " + uri.getPath());
+            try {
+                URL furl = file.toURL();
+                System.out.println("File.Url  = " + furl.toString());
+                System.out.println("  Path = " + furl.getPath());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                URL url = uri.toURL();
+                System.out.println("Uri.Url  = " + url.toString());
+                System.out.println("  Path = " + url.getPath());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            mpjPlayer.setTrack(new MpjTrack(uri));
+        }
+        return ret;
     }
 }
