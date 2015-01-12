@@ -3,6 +3,7 @@ package de.jme.toolbox;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 
 /**
  * Ermittlung diverser Systeminformationen
@@ -13,6 +14,8 @@ public class SystemInfo {
 
     static String userName;
     static String computerName;
+
+    // Hmm, ändern auf "System.getProperty("user.name")" und "InetAddress.getLocalHost().getHostName()"?
 
     static public String getUserName() {
         if (userName == null) {
@@ -28,6 +31,11 @@ public class SystemInfo {
 
     static public String getComputerName() {
         if (computerName == null) {
+            /*try {
+                System.out.println("InetAddress.getLocalHost().getHostName() = " + java.net.InetAddress.getLocalHost().getHostName());
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }/**/
             // Unter Windows steht das in der Environmentvariablen "COMPUTERNAME" (evtl. auch in "USERDOMAIN" und "LOGONSERVER" (dort mit vorangestelltem \\)).
             // -> Vorerst nur für Windows XP geprüft
             String s = System.getenv("COMPUTERNAME");
@@ -48,6 +56,13 @@ public class SystemInfo {
                 }
             }
             if (s == null) s = "";  // Leerstring, falls nichts zu finden ist
+            try {
+                if (getMachineType() == MachineType.PcOsx) {
+                    // ggf. das ".fritz.box" am Ende von "N4s-MacBook-Pro.fritz.box" entfernen
+                    int dot = s.indexOf('.', 1);
+                    if (dot > 0) s = s.substring(0, dot);
+                }
+            } catch (IOException e) { }
             computerName = s;
             //System.out.println("Computername = " + computerName);
         }
