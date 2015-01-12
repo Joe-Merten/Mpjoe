@@ -56,4 +56,7 @@ Todo
   - http://stackoverflow.com/a/22305518/2880699
   - Kleines Beispiel mit Sourcen: http://introcs.cs.princeton.edu/java/faq/mp3/MP3.java.html
   - Hier noch Sourcen mit fade-in/out -> http://stackoverflow.com/questions/14959566/java-error-when-trying-to-use-mp3plugin-for-playing-an-mp3-file/14959818#14959818
+  - und noch eins: http://www.javazoom.net/jlgui/addons/PlayIT.java
 - Tritonus → http://www.tritonus.org
+- Jaco Mp3 Player → http://jacomp3player.sourceforge.net/index.html
+  - offenbar sehr leichtgewichtig, kann vermutlich nur mp3, hat wohl keine Lautstärkenregelung, ...
