@@ -71,8 +71,9 @@ public class DauWarning extends JDialog {
         String username = SystemInfo.getUserName().toLowerCase();
         //String cpuname = SystemInfo.getComputerName().toLowerCase();
 
-        if (username.equals("joe"   )) ret = false;
-        if (username.equals("britta")) ret = false;
+        if (username.equals("joe"       )) ret = false;
+        if (username.equals("joe.merten")) ret = false;
+        if (username.equals("britta"    )) ret = false;
 
         return ret;
     }
