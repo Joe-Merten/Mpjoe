@@ -70,9 +70,11 @@ public class MpjPlayerSound extends MpjPlayer implements AutoCloseable {
                         }
                         // close() rufen wir später, damit uns das hier keine Latenz zwischen den Tracks bringt.
                         setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_END);
+                        ejectTrack(); // TODO: Hack erst mal
                         //currentTrack = null;
                         //toClose.add(pe);
                     } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+                        ejectTrack(); // TODO: Hack erst mal
                         setError(e);
                     }
                 } else {

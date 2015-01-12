@@ -16,6 +16,8 @@ import javax.media.Player;
 
 import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjTrack;
+import de.jme.toolbox.SystemInfo;
+import de.jme.toolbox.SystemInfo.MachineType;
 
 /**
  * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client unter Verwendung des Java Media Framework
@@ -112,7 +114,9 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
                         }
                         // close() rufen wir später, damit uns das hier keine Latenz zwischen den Tracks bringt.
                         setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_END);
+                        ejectTrack(); // TODO: Hack erst mal
                     } catch (NoPlayerException | CannotRealizeException | IOException e) {
+                        ejectTrack(); // TODO: Hack erst mal
                         setError(e);
                     }
                 } else {
@@ -147,8 +151,14 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
                 URL url = getClass().getResource("/de/jme/mpjoe/swing/mp3plugin.jar");
 
                 { // Direkt aus dem jar heraus geht offenbar nicht, also kopieren wir das Teil in eine temporäre Datei
-                    File tempFile = File.createTempFile("mp3plugin", ".jar");
-                    tempFile.deleteOnExit();
+                    File tempFile = null;
+                    /*if (SystemInfo.getMachineType() == MachineType.PcWindows)
+                        // Hmm, unter Windows XP ergibt url.toString() -> "file:/C:/DOKUME~1/Britta/LOKALE~1/Temp/mp3plugin1419834848127383131.jar"
+                        // Aber mit mp3plugin.jar im aktuellen Verzeichnis funktioniert es unter Windows auch nicht
+                        tempFile = new File("mp3plugin.jar");
+                    else*/
+                        tempFile = File.createTempFile("mp3plugin", ".jar");
+                    tempFile.deleteOnExit(); // Scheint zumindest unter Windows XP nicht zu funktionieren
                     //System.out.println("TMP=" + tempFile.toString());
                     InputStream is = getClass().getResourceAsStream("/de/jme/mpjoe/swing/mp3plugin.jar");
                     Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
