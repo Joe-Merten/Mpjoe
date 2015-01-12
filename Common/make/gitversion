@@ -1,0 +1,139 @@
+#!/bin/bash -e
+########################################################################################################################
+# Generierung eines Git Revisionstrings, in etwa analnog zu svnversion
+#-----------------------------------------------------------------------------------------------------------------------
+# \project    Multithreaded C++ Framework
+# \file       gitversion
+# \creation   2013-07-02, Joe Merten
+#-----------------------------------------------------------------------------------------------------------------------
+# Erzeugung der Versionsinformationen, die in das Binary einkompiliert werden
+# Einschränkungen:
+# - Bzgl. der Git Revisionskennzeichnung bin ich mir bzgl. der richtigen Strategie noch unsicher (sowas wie svnversion gibt's hier nicht)
+# - Bei fetch ohne merge wird auch "p" (also dirty) angezeigt, weil ich momentan nur auf "Your branch is up-to-date with 'origin/master'" prüfe
+# - Bei "git checkout <alterev>" wird aus gleichem Grund ebenfalls "p" angezeigt
+# - Verhalten im Branch ist noch zu testen, vermutlich bekommen wir da auch eine "p" Markierung
+########################################################################################################################
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Bzgl. Git Revision
+#
+# "git describe" hat bei mir leider nicht funktioniert.
+#
+# Mittels
+#    $ git show-ref refs/heads/master | cut -d " " -f 1
+# erhalte ich den vollständigen Hash der Revision, z.B. "a4b17fc67f64cceb40bfb4cc556faee9503d3791"
+# Hmm, offenbar ist das dasselbe wie (TODO: könnte bei Branches abweichend sein)
+#    $ git rev-list HEAD -n 1
+# ob hier --all und --full-history eine Rolle spielen weiss ich nicht (vermutlich aber nicht)
+#
+# Eine Art "Commit Count" bekomme ich mittels (siehe auch http://stackoverflow.com/questions/677436/how-to-get-the-git-commit-count)
+#    $ git rev-list HEAD --full-history --all --count
+#
+# Bzgl. uncommitted Changes und unpushed Commits.
+#----------
+# Ein sauberer Stand sieht in etwa so aus:
+#     $ LANG= git status
+#     On branch master
+#     Your branch is up-to-date with 'origin/master'.
+#
+#     nothing to commit, working directory clean
+#----------
+# Mit uncommited Changes aber ohne unpushed Commits:
+#     $ LANG= git status
+#     On branch master
+#     Your branch is up-to-date with 'origin/master'.
+#
+#     Changes not staged for commit:
+#       (use "git add <file>..." to update what will be committed)
+#       (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#             modified:   ../Src/Main.cxx
+#             modified:   Makefile
+#
+#     Untracked files:
+#       (use "git add <file>..." to include in what will be committed)
+#
+#             ../../../../Common/Make/Version.mk
+#
+#     no changes added to commit (use "git add" and/or "git commit -a")
+#----------
+# Ohne uncommited Changes aber mit unpushed Commits:
+#     $ LANG= git status
+#     On branch master
+#     Your branch is ahead of 'origin/master' by 1 commit.
+#       (use "git push" to publish your local commits)
+#
+#     nothing to commit, working directory clean
+#----------
+# Mit uncommited Changes sowie mit unpushed Commits:
+#     $ LANG= git status
+#     On branch master
+#     Your branch is ahead of 'origin/master' by 1 commit.
+#       (use "git push" to publish your local commits)
+#
+#     Changes not staged for commit:
+#       (use "git add <file>..." to update what will be committed)
+#       (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#             modified:   README.md
+#
+#     no changes added to commit (use "git add" and/or "git commit -a")
+#----------
+# Outstanding Pull:
+#     $ LANG= git status
+#     On branch master
+#     Your branch is behind 'origin/master' by 1 commit, and can be fast-forwarded.
+#       (use "git pull" to update your local branch)
+#
+#     Changes not staged for commit:
+#       (use "git add <file>..." to update what will be committed)
+#       (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#             modified:   ../Src/N4SensorDevboard.h
+#
+#     no changes added to commit (use "git add" and/or "git commit -a")
+#----------
+# Outstanding Push & Pull
+#     $ LANG= git status
+#     On branch master
+#     Your branch and 'origin/master' have diverged,
+#     and have 1 and 1 different commit each, respectively.
+#       (use "git pull" to merge the remote branch into yours)
+#
+#     Changes not staged for commit:
+#       (use "git add <file>..." to update what will be committed)
+#       (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#             modified:   ../Src/N4SensorDevboard.h
+#
+#     no changes added to commit (use "git add" and/or "git commit -a")
+#----------
+# So sieht es aus wenn ich eine ältere Version ausgecheckt habe
+#     $ LANG= git status
+#     HEAD detached at 2e9be75
+#     nothing to commit, working directory clean
+#----------
+# Folglich werde ich vorerst folgendes auswerten:
+# - Zum Test auf uncommited Changes: "nothing to commit, working directory clean"
+# - Zum Test auf unpushed Commits:   "Your branch is up-to-date with 'origin/master'"
+#----------
+# Sonstiges:
+#    git status --porcelain  → Gibt leider nur Auskunft über uncommited Changes, sagt aber nichts über unpushed Commits
+#-----------------------------------------------------------------------------------------------------------------------
+
+function MakeGitRevString {
+    local gitRevHash="$(LANG= git rev-list HEAD -n 1)"
+    local gitRevCount="$(LANG= git rev-list HEAD --full-history --all --count)"
+
+    local gitStatus="$(LANG= git status)"
+    local gitUncommited=""
+    local gitUnpushed=""
+    # Statt "grep -q" mache ich hier lieber ">/dev/null", da ich bei "grep -q" Fehler "broken pipe" bekomme
+    echo "$gitStatus" | grep "nothing to commit, working directory clean" >/dev/null || gitUncommited="c"
+    echo "$gitStatus" | grep "Your branch is up-to-date with 'origin/master'" >/dev/null  || gitUnpushed="p"
+
+    echo "${gitRevCount}${gitUncommited}${gitUnpushed}:${gitRevHash}"
+}
+
+MakeGitRevString
