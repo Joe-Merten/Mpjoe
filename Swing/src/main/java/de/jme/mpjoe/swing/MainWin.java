@@ -42,6 +42,14 @@ import de.jme.toolbox.VersionInfo;
  */
 public class MainWin {
 
+    private enum PlayerType {
+        AUTO,
+        SOUND,
+        JMF,
+        VLC
+    };
+    private PlayerType playerType = PlayerType.AUTO;
+
     private JFrame      frame;
     private Statusbar   statusbar;
     private JTabbedPane tabbedPane;
@@ -86,11 +94,17 @@ public class MainWin {
      */
     public static void main(final String[] args) {
         boolean justPrintVersion = false;
+        String uriString = null;
+        PlayerType playerType = PlayerType.AUTO;
         for (String arg : args) {
-            if (arg.equals("--version")) justPrintVersion = true;
+            if      (arg.equals("--version")) justPrintVersion = true;
+            else if (arg.equals("--sound")) playerType = PlayerType.SOUND;
+            else if (arg.equals("--jfm"  )) playerType = PlayerType.JMF;
+            else if (arg.equals("--vlc"  )) playerType = PlayerType.VLC;
+            else if (uriString == null) uriString = arg;
             else {
-                //System.err.println("Unreconized parameter: \"" + arg + "\"");
-                //System.exit(1);
+                System.err.println("Unreconized parameter: \"" + arg + "\"");
+                System.exit(1);
             }
         }
         String version = VersionInfo.getVersionInfo();
@@ -100,6 +114,8 @@ public class MainWin {
             System.exit(0);
         }
 
+        final PlayerType playerTypeFinal = playerType;
+        final String uriStringFinal = uriString;
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 if (DauWarning.isWarningNeeded()) {
@@ -107,7 +123,7 @@ public class MainWin {
                     warn.setVisible(true);
                 }
                 try {
-                    MainWin window = new MainWin(args);
+                    MainWin window = new MainWin(playerTypeFinal, uriStringFinal);
                     window.frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -120,15 +136,16 @@ public class MainWin {
      * Konstruktur
      * @throws IOException
      */
-    public MainWin(String[] args) throws IOException {
-        initialize(args);
+    public MainWin(PlayerType playerType, String uriString) throws IOException {
+        this.playerType = playerType;
+        initialize(uriString);
     }
 
     /**
      * Initialisierung des Fensters und der Fensterkomponenten
      * @throws IOException
      */
-    private void initialize(String[] args) throws IOException {
+    private void initialize(String uriString) throws IOException {
         if (SystemInfo.getMachineType() == MachineType.PcOsx) {
             // Unter Osx bekomme ich folgenden Fehler:
             //   JavaVM WARNING: JAWT_GetAWT must be called after loading a JVM
@@ -206,28 +223,25 @@ public class MainWin {
         playerPanel.setBackground(Color.CYAN);
         playerPanel.setVisible(true);
 
-        //mpjPlayer = new MpjPlayerSound("Player");
-        //mpjPlayer = new MpjPlayerJmf("Player");
-        //mpjPlayer = new MpjPlayerVlc("Player");
-
-        if (mpjPlayer == null) {
+        if (playerType == null || playerType == PlayerType.AUTO) {
             if (SystemInfo.getMachineType() == MachineType.PcWindows) {
                 // Unter Windows funktioniert Jmf noch nicht mit MP3, deshalb hier erst mal Vlc verwenden
-                mpjPlayer = new MpjPlayerVlc("Player");
+                playerType = PlayerType.VLC;
             } else if (SystemInfo.getMachineType() == MachineType.PcOsx) {
                 // Auf Mac frunzt Vlcj noch nicht, deshalb vorerst Jmf verwenden
-                mpjPlayer = new MpjPlayerJmf("Player");
-                //mpjPlayer = new MpjPlayerVlc("Player");
+                playerType = PlayerType.JMF;
+            } else {
+                // Unter Linux verwende ich per default erst mal Vlc
+                playerType = PlayerType.VLC;
             }
         }
 
-        if (mpjPlayer == null) {
-            // Unter Linux defaulten wir erst mal auf Vlc
-            //mpjPlayer = new MpjPlayerSound("Player");
-            //mpjPlayer = new MpjPlayerJmf("Player");
-            mpjPlayer = new MpjPlayerVlc("Player");
+        switch (playerType) {
+            case SOUND: mpjPlayer = new MpjPlayerSound("Player"); break;
+            case JMF:   mpjPlayer = new MpjPlayerJmf("Player");   break;
+            case VLC:   mpjPlayer = new MpjPlayerVlc("Player");   break;
+            default: break;
         }
-
         mpjPlayer.setGuiParent(playerPanel);
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
@@ -239,9 +253,9 @@ public class MainWin {
         });
 
         {
-            String nam = "";
+            String nam = uriString;
             URI uri = null;
-            if (args.length == 0) {
+            if (nam == null || nam.isEmpty()) {
                 nam = "/D/MP3/OGG-WMA-RM-Test/Testfiles/America - The Last Unicorn.mp3";
                 //nam = "/D/MP3/OGG-WMA-RM-Test/Testfiles/Safri Dou - Played-A-Live.avi";
                 //nam = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
@@ -268,8 +282,6 @@ public class MainWin {
                     if (SystemInfo.getMachineType() == MachineType.PcWindows) nam = nam.replace("/D/", "D:/");
                     if (SystemInfo.getMachineType() == MachineType.PcOsx) nam = nam.replace("/D/MP3/", "/Users/joe.merten/Development/");
                 }
-            } else {
-                nam = args[0];
             }
 
             System.out.println("Nam   = " + nam);
