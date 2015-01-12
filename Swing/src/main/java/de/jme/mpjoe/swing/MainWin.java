@@ -207,7 +207,28 @@ public class MainWin {
         playerPanel.setBackground(Color.CYAN);
         playerPanel.setVisible(true);
 
-        mpjPlayer = new MpjPlayerVlc("Player");
+        //mpjPlayer = new MpjPlayerSound("Player");
+        //mpjPlayer = new MpjPlayerJmf("Player");
+        //mpjPlayer = new MpjPlayerVlc("Player");
+
+        if (mpjPlayer == null) {
+            if (SystemInfo.getMachineType() == MachineType.PcWindows) {
+                // Unter Windows funktioniert Jmf noch nicht mit MP3, deshalb hier erst mal Vlc verwenden
+                mpjPlayer = new MpjPlayerVlc("Player");
+            } else if (SystemInfo.getMachineType() == MachineType.PcOsx) {
+                // Auf Mac frunzt Vlcj noch nicht, deshalb Jmf verwenden
+                mpjPlayer = new MpjPlayerJmf("Player");
+                //mpjPlayer = new MpjPlayerVlc("Player");
+            }
+        }
+
+        if (mpjPlayer == null) {
+            // Unter Linux defaulten wir erst mal auf Vlc
+            //mpjPlayer = new MpjPlayerSound("Player");
+            //mpjPlayer = new MpjPlayerJmf("Player");
+            mpjPlayer = new MpjPlayerVlc("Player");
+        }
+
         mpjPlayer.setGuiParent(playerPanel);
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
@@ -222,28 +243,35 @@ public class MainWin {
             String nam = "";
             URI uri = null;
             if (args.length == 0) {
-                nam = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
-                nam = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
-                nam = "/D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
+                nam = "/D/MP3/OGG-WMA-RM-Test/Testfiles/America - The Last Unicorn.mp3";
+                //nam = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
+                //nam = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
+                //nam = "/D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
 
                 // Bei Youtube gibt's unter Linux leider noch Fehler:
                 //   [0x6884b248] gnutls tls client error: unsupported GnuTLS version
                 //   [0x6884b248] main tls client error: TLS client plugin not available
                 //   [0x68857830] main stream error: cannot pre fill buffer
                 // Mit dem richtigen Vlc Player geht es jedoch
-                nam = "https://www.youtube.com/watch?v=0w1mP3oFXRU";
-                nam = "http://www.youtube.com/watch?v=0w1mP3oFXRU";
-                nam = "http://youtu.be/0w1mP3oFXRU";
-                nam = "https://www.youtube.com/watch?v=5oGXmvy0--w";
-                nam = "https://www.youtube.com/watch?v=oJh-jusiDvU";
+                // nam = "https://www.youtube.com/watch?v=0w1mP3oFXRU";   // Furch Durango Bahn Gong
+                // nam = "http://www.youtube.com/watch?v=0w1mP3oFXRU";    // Furch Durango Bahn Gong
+                // nam = "http://youtu.be/0w1mP3oFXRU";                   // Furch Durango Bahn Gong
+                // nam = "https://www.youtube.com/watch?v=5oGXmvy0--w";
+                // nam = "https://www.youtube.com/watch?v=oJh-jusiDvU";
 
                 // Bei MyVideo gibt's unter Linux 'nen Crash (Segfault), Unter Windows XP hatte ich keine Wiedergabe
                 //nam = "http://www.myvideo.de/watch/7880291/Joe_AFF_Level_V_VII";
                 //nam = "http://prerelease.myvideo.de/watch/6322550/Lindsay_Lohan_zeigt_ihren_Haengebusen_smash247_com";
+
+                if (nam.startsWith("/D/")) { // TODO: Debug-Hack entfernen!
+                    if (SystemInfo.getMachineType() == MachineType.PcWindows) nam = nam.replace("/D/", "D:/");
+                    if (SystemInfo.getMachineType() == MachineType.PcOsx) nam = nam.replace("/D/MP3/", "/Users/joe.merten/Development/");
+                }
             } else {
                 nam = args[0];
             }
 
+            System.out.println("Nam   = " + nam);
             if (nam.startsWith("http://") || nam.startsWith("https://")) {
                 uri = URI.create(nam);
             } else {
