@@ -32,13 +32,22 @@ public class MpjPlayer extends Thread implements AutoCloseable {
         void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState);
     }
     private List<PlayerEventListner> listeners = new ArrayList<PlayerEventListner>();
-    private PlayerState   playerState;
+    private PlayerState      playerState;
     private MpjTrack         track;
     private MpjPlaylistEntry ple;
     private String           errorMessage;
+    private Object           guiParent;
 
     public MpjPlayer(String name) {
         setName(name);
+    }
+
+    public void setGuiParent(Object parent) {
+        guiParent = parent;
+    }
+
+    public Object getGuiParent() {
+        return guiParent;
     }
 
     public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) {

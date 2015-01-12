@@ -9,8 +9,6 @@ import java.util.TimeZone;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.jme.toolbox.SysInfo.MachineType;
-
 public class SysTime {
 
     static Logger logger = LogManager.getLogger(SysTime.class);
@@ -34,10 +32,10 @@ public class SysTime {
         int exitCode = p.exitValue();
 //        logger.trace(s + " returned " + exitCode);
         if (exitCode != 0) {
-            if (SysInfo.getMachineType() == MachineType.PC) {
+            /*if (SystemInfo.getMachineType() == MachineType.PC) {
                 logger.warn("Can not set date and time on PC, " + Arrays.asList(arguments) + " failed, ignoring");
                 return;
-            } else {
+            } else*/ {
                 throw new SecurityException("Setting date and time using " + Arrays.asList(arguments) + " failed");
             }
         }
@@ -46,10 +44,10 @@ public class SysTime {
         p.waitFor();
         exitCode = p.exitValue();
         if (exitCode != 0) {
-            if (SysInfo.getMachineType() == MachineType.PC) {
+            /*if (SystemInfo.getMachineType() == MachineType.PC) {
                 logger.warn("Can not set hwclock on PC, " + Arrays.asList(arguments2) + " failed, ignoring");
                 return;
-            } else {
+            } else*/ {
                 throw new SecurityException("Setting hwclock using " + Arrays.asList(arguments2) + " failed");
             }
         }

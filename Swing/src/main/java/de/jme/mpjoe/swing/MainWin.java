@@ -1,11 +1,13 @@
 package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.AbstractAction;
@@ -13,10 +15,12 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjPlayer.PlayerEvent;
 import de.jme.mpj.MpjPlayer.PlayerState;
@@ -29,6 +33,7 @@ import de.jme.mpjoe.swing.ui.FileChooser;
 import de.jme.mpjoe.swing.ui.Statusbar;
 import de.jme.mpjoe.swing.ui.Toolbar;
 import de.jme.toolbox.SystemInfo;
+import de.jme.toolbox.SystemInfo.MachineType;
 import de.jme.toolbox.VersionInfo;
 
 /**
@@ -42,6 +47,7 @@ public class MainWin {
     private JTabbedPane tabbedPane;
     private GenPanel    genPanel;
     private MpjPlayer   mpjPlayer;
+    private JPanel      playerPanel;
 
     private static CwdSaver cwd = new CwdSaver(new String[]{"/bbb-d/MP3/OGG-WMA-RM-Test/Testfiles/", "/D/MP3/", "D:/MP3/OGG-WMA-RM-Test/Testfiles/", "D:/MP3/"});  // TODO: Sinnvolle Defaultverzeichnisse
 
@@ -78,13 +84,13 @@ public class MainWin {
     /**
      * Start der Applikation
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         boolean justPrintVersion = false;
         for (String arg : args) {
             if (arg.equals("--version")) justPrintVersion = true;
             else {
-                System.err.println("Unreconized parameter: \"" + arg + "\"");
-                System.exit(1);
+                //System.err.println("Unreconized parameter: \"" + arg + "\"");
+                //System.exit(1);
             }
         }
         String version = VersionInfo.getVersionInfo();
@@ -101,7 +107,7 @@ public class MainWin {
                     warn.setVisible(true);
                 }
                 try {
-                    MainWin window = new MainWin();
+                    MainWin window = new MainWin(args);
                     window.frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -112,15 +118,25 @@ public class MainWin {
 
     /**
      * Konstruktur
+     * @throws IOException
      */
-    public MainWin() {
-        initialize();
+    public MainWin(String[] args) throws IOException {
+        initialize(args);
     }
 
     /**
      * Initialisierung des Fensters und der Fensterkomponenten
+     * @throws IOException
      */
-    private void initialize() {
+    private void initialize(String[] args) throws IOException {
+        if (SystemInfo.getMachineType() == MachineType.PcOsx) {
+            // Unter Osx bekomme ich folgenden Fehler:
+            //   JavaVM WARNING: JAWT_GetAWT must be called after loading a JVM
+            //   java.lang.UnsatisfiedLinkError: Can't load JAWT at com.sun.jna.Native.getWindowHandle0(Native Method) ...
+            // Manuelles laden der Lib hat aber auch nicht geholfen:
+            //   System.loadLibrary("jawt");
+        }
+
         frame = new JFrame();
         frame.setBounds(10, 10, 1400, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -134,7 +150,6 @@ public class MainWin {
         // Actions
         quitAction = new QuitAction();
         chooseFileAndPlayAction = new ChooseFileAndPlayAction();
-
 
         //--------------------
         // Hauptmenü
@@ -184,14 +199,73 @@ public class MainWin {
         genPanel = new GenPanel(); tabbedPane.addTab("General", genPanel);
 
         //--------------------
-        mpjPlayer = new MpjPlayerJmf("Player");
+        frame.setVisible(true);
+        //playerFrame = frame;
+        playerPanel = new JPanel();
+        splitPaneMain.setLeftComponent(playerPanel);
+        playerPanel.setBounds(0, 0, 200, 200);
+        playerPanel.setBackground(Color.CYAN);
+        playerPanel.setVisible(true);
+
+        mpjPlayer = new MpjPlayerVlc("Player");
+        mpjPlayer.setGuiParent(playerPanel);
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
         mpjPlayer.addListener(new MpjPlayer.PlayerEventListner() {
             @Override public void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
-                statusbar.setStatusTextC(player.getPlayerStateString());
+                //statusbar.setStatusTextC(player.getPlayerStateString());
+                System.out.println(player.getPlayerStateString());
             }
         });
+
+        {
+            String nam = "";
+            URI uri = null;
+            if (args.length == 0) {
+                nam = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
+                nam = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
+                nam = "/D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
+
+                // Bei Youtube gibt's unter Linux leider noch Fehler:
+                //   [0x6884b248] gnutls tls client error: unsupported GnuTLS version
+                //   [0x6884b248] main tls client error: TLS client plugin not available
+                //   [0x68857830] main stream error: cannot pre fill buffer
+                // Mit dem richtigen Vlc Player geht es jedoch
+                nam = "https://www.youtube.com/watch?v=0w1mP3oFXRU";
+                nam = "http://www.youtube.com/watch?v=0w1mP3oFXRU";
+                nam = "http://youtu.be/0w1mP3oFXRU";
+                nam = "https://www.youtube.com/watch?v=5oGXmvy0--w";
+                nam = "https://www.youtube.com/watch?v=oJh-jusiDvU";
+
+                // Bei MyVideo gibt's unter Linux 'nen Crash (Segfault), Unter Windows XP hatte ich keine Wiedergabe
+                //nam = "http://www.myvideo.de/watch/7880291/Joe_AFF_Level_V_VII";
+                //nam = "http://prerelease.myvideo.de/watch/6322550/Lindsay_Lohan_zeigt_ihren_Haengebusen_smash247_com";
+            } else {
+                nam = args[0];
+            }
+
+            if (nam.startsWith("http://") || nam.startsWith("https://")) {
+                uri = URI.create(nam);
+            } else {
+                // URI.create(nam) geht nicht, weil da sind dann keine Leerzeichen in Dateinamen erlaubt
+                File f = new File(nam);
+                System.out.println("File     = " + f.toString());
+                uri = f.toURI();
+            }
+            System.out.println("Uri      = " + uri.toString());
+            System.out.println("Uri.Url  = " + uri.toURL().toString());
+            System.out.println("Uri.Path = " + uri.getPath());
+
+            if (true) {
+                mpjPlayer.setTrack(new MpjTrack(uri));
+            } else {
+                // Hier Testcode zum 1:1 Durchreichen des Kommandozeilenparameter an Vlcj, um Verluste bei der URI Konvertierung zu vermeiden
+                EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+                playerPanel.add(mediaPlayerComponent);
+                //playerFrame.setContentPane(mediaPlayerComponent);
+                mediaPlayerComponent.getMediaPlayer().playMedia(nam);
+            }
+        }
     }
 
     public boolean chooseFileAndPlay() {
@@ -203,8 +277,14 @@ public class MainWin {
         // Hier noch Sourcen mit fade-in/out
         // -> http://stackoverflow.com/questions/14959566/java-error-when-trying-to-use-mp3plugin-for-playing-an-mp3-file/14959818#14959818
 
+        // Oder JavaFX Media
+        // -> http://docs.oracle.com/javafx/2/media/overview.htm
+
+        // Oder Tritonus
+        // -> http://www.tritonus.org/
+
         /*{
-            String bip = "___/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
+            String bip = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
             //String bip = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
             //String bip = "file:///D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
 

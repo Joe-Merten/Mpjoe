@@ -40,12 +40,11 @@ public class DauWarning extends JDialog {
         getContentPane().add(lblHeading, BorderLayout.NORTH);
 
         String msg = "\n";
-        msg += "Bei dieser Applikation handelt es sich um ein Entwicklertool.\n";
-        msg += "Sie ist somit:\n";
-        msg += "- nicht DAU - tauglich (also nicht narrensicher)\n";
-        msg += "- nicht ausgereift, da ständig in Entwicklung\n";
-        msg += "- nicht intensiv getestet\n";
-        msg += "Bei der Verwendung dieser Applikation sollte man also wissen was man tut.\n";
+        msg += "  Mpjoe ist noch in einem sehr frühen Entwicklungsstadium und somit:\n";
+        msg += "  - nicht DAU - tauglich (also nicht narrensicher)\n";
+        msg += "  - nicht ausgereift\n";
+        msg += "  - nicht intensiv getestet\n";
+        msg += "  Bei der Verwendung dieser Applikation sollte man also wissen was man tut.\n";
 
         JTextArea txtBody = new JTextArea(msg);
         txtBody.setFont(new Font("Dialog", Font.BOLD, 16));

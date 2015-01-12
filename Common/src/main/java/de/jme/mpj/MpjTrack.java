@@ -24,7 +24,14 @@ public class MpjTrack implements AutoCloseable {
     long    trackPos;        // Aktuelle Abspielposition in µs
 
     public MpjTrack(URI uri) {
-        this.name = new File(uri).getName(); // etwas umständlich um die %20 etc. wieder in Leerzeichen umzuwandeln (und hier auch gleich das Verzeichnis zu entfernen)
+        try {
+            // etwas umständlich um die %20 etc. wieder in Leerzeichen umzuwandeln (und hier auch gleich das Verzeichnis zu entfernen)
+            this.name = new File(uri).getName();
+        } catch (IllegalArgumentException e) {
+            // Ok, die Uri ist offenbar kein File, sondern vielleicht sowas wie "http://youtu.be/0w1mP3oFXRU"
+            this.name = uri.toString();
+        }
+
         this.uri  = uri;
         this.deleteOnClose = false;
     }
