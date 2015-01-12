@@ -35,6 +35,9 @@ import de.jme.mpjoe.swing.ui.Toolbar;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
 import de.jme.toolbox.VersionInfo;
+import de.jme.jsi.Jsi;
+import de.jme.jsi.MoniStd;
+import de.jme.jsi.Monitor;
 
 /**
  * Applikationsfenster des Mpjoe Java Swing Client
@@ -209,7 +212,7 @@ public class MainWin {
         frame.getContentPane().add(splitPaneMain, BorderLayout.CENTER);
 
         //--------------------
-        // Tts etc. Panels
+        // Panels
         tabbedPane = new JTabbedPane();
         splitPaneMain.setRightComponent(tabbedPane);
 
@@ -307,6 +310,17 @@ public class MainWin {
                 mediaPlayerComponent.getMediaPlayer().playMedia(nam);
             }
         }
+
+        // TODO: moniThread woanders einbauen?
+        Jsi jsi = Jsi.instance;
+        MoniStd.register(jsi);
+        //ShutdownAction.registerAction(jsi);
+//        ButtonHandler.registerJsiActions(jsi);
+        Thread moniThread = new Thread(new Monitor(), "Monitor");
+        moniThread.setDaemon(true);     // Der Monitor-Thread soll das Programm nicht am Beenden hindern, deshalb "Daemon"
+        moniThread.start();
+        if (!moniThread.isAlive())
+            throw new IllegalStateException("just started thread is not alive");
     }
 
     public boolean chooseFileAndPlay() {
