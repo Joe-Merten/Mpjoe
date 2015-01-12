@@ -16,7 +16,8 @@ import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjTrack;
 
 /**
- * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client.
+ * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client mittels javax.sound
+ * Funktioniert wohl nur mit Wav Dateien.
  *
  * @author Joe Merten
  */

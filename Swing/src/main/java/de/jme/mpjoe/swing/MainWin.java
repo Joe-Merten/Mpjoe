@@ -246,7 +246,8 @@ public class MainWin {
                 //nam = "/D/MP3/OGG-WMA-RM-Test/Testfiles/Safri Dou - Played-A-Live.avi";
                 //nam = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
                 //nam = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
-                //nam = "/D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
+                //nam = "/D/MP3/Nora de Mar - For your Beauty and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
+                //nam = "/D/MP3/Nora de Mar - For your Beauty and Soul/Flac/02 - Island of Hope.flac";
 
                 // Bei Youtube gibt's unter Linux leider noch Fehler:
                 //   [0x6884b248] gnutls tls client error: unsupported GnuTLS version
@@ -297,29 +298,6 @@ public class MainWin {
     }
 
     public boolean chooseFileAndPlay() {
-
-        // Vielleicht doch mal javazoom angucken:
-        //   http://stackoverflow.com/a/22305518/2880699
-        //   http://introcs.cs.princeton.edu/java/faq/mp3/MP3.java.html
-        // http://www.onjava.com/pub/a/onjava/2004/08/11/javasound-mp3.html
-        // Hier noch Sourcen mit fade-in/out
-        // -> http://stackoverflow.com/questions/14959566/java-error-when-trying-to-use-mp3plugin-for-playing-an-mp3-file/14959818#14959818
-
-        // Oder JavaFX Media
-        // -> http://docs.oracle.com/javafx/2/media/overview.htm
-
-        // Oder Tritonus
-        // -> http://www.tritonus.org/
-
-        /*{
-            String bip = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
-            //String bip = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
-            //String bip = "file:///D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";
-
-            File f = new File(bip);
-            mpjPlayer.setTrack(new MpjTrack(f.toURI()));
-        }/**/
-
         FileChooser fc = new FileChooser("Open MpjTrack for play", cwd);
         javax.swing.filechooser.FileFilter filterAudio = new javax.swing.filechooser.FileNameExtensionFilter("Audio Files (mp3 ogg flac wav wma)", "mp3", "ogg", "flac", "wav", "wma");
         javax.swing.filechooser.FileFilter filterVideo = new javax.swing.filechooser.FileNameExtensionFilter("Video Files (mpeg avi mov ogv wmv)", "mpeg", "mpg", "mpe", "mp4", "avi", "mov", "ogv", "wmv");
