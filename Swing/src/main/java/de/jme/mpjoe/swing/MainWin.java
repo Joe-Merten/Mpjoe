@@ -200,7 +200,6 @@ public class MainWin {
 
         //--------------------
         frame.setVisible(true);
-        //playerFrame = frame;
         playerPanel = new JPanel();
         splitPaneMain.setLeftComponent(playerPanel);
         playerPanel.setBounds(0, 0, 200, 200);
@@ -216,7 +215,7 @@ public class MainWin {
                 // Unter Windows funktioniert Jmf noch nicht mit MP3, deshalb hier erst mal Vlc verwenden
                 mpjPlayer = new MpjPlayerVlc("Player");
             } else if (SystemInfo.getMachineType() == MachineType.PcOsx) {
-                // Auf Mac frunzt Vlcj noch nicht, deshalb Jmf verwenden
+                // Auf Mac frunzt Vlcj noch nicht, deshalb vorerst Jmf verwenden
                 mpjPlayer = new MpjPlayerJmf("Player");
                 //mpjPlayer = new MpjPlayerVlc("Player");
             }
@@ -244,6 +243,7 @@ public class MainWin {
             URI uri = null;
             if (args.length == 0) {
                 nam = "/D/MP3/OGG-WMA-RM-Test/Testfiles/America - The Last Unicorn.mp3";
+                //nam = "/D/MP3/OGG-WMA-RM-Test/Testfiles/Safri Dou - Played-A-Live.avi";
                 //nam = "/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3";
                 //nam = "/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav";
                 //nam = "/D/MP3/Nora de Mar - For our Beaut and Soul/Ogg Vorbis/02 - Island of Hope.ogg";

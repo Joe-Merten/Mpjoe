@@ -1,5 +1,7 @@
 package de.jme.mpjoe.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,11 +15,10 @@ import javax.media.CannotRealizeException;
 import javax.media.Manager;
 import javax.media.NoPlayerException;
 import javax.media.Player;
+import javax.swing.JPanel;
 
 import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjTrack;
-import de.jme.toolbox.SystemInfo;
-import de.jme.toolbox.SystemInfo.MachineType;
 
 /**
  * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client unter Verwendung des Java Media Framework
@@ -92,7 +93,18 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
                 if (track != null) {
                     Player mediaPlayer = null;
                     try {
+                        JPanel parentPanel = (JPanel)getGuiParent();
+                        parentPanel.setLayout(new BorderLayout());
+                        parentPanel.setVisible(true);
+
+                        // Siehe auch: http://www.deitel.com/articles/java_tutorials/20060422/PlayingVideowithJMF
+                        // ... hat bei mir aber noch nie irgendein Video abgespielt ...
                         mediaPlayer = Manager.createRealizedPlayer(track.getUri().toURL());
+                        Component video = mediaPlayer.getVisualComponent();
+                        Component controls = mediaPlayer.getControlPanelComponent();
+                        if (video != null) parentPanel.add(video, BorderLayout.CENTER);
+                        if (controls != null) parentPanel.add(controls, BorderLayout.SOUTH);
+
                         mediaPlayer.start();
                         setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
 
