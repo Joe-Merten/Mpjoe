@@ -60,3 +60,4 @@ Todo
 - Tritonus → http://www.tritonus.org
 - Jaco Mp3 Player → http://jacomp3player.sourceforge.net/index.html
   - offenbar sehr leichtgewichtig, kann vermutlich nur mp3, hat wohl keine Lautstärkenregelung, ...
+- SampleDsp → http://www.tagtraum.com/sampledsp.html
