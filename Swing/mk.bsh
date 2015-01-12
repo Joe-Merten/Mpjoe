@@ -1,0 +1,86 @@
+#!/bin/bash
+########################################################################################################################
+# Kleines Skript für automatischen Build bei Änderung der Sourcen.
+#-----------------------------------------------------------------------------------------------------------------------
+# \project    Mpjoe
+# \file       mk.bsh
+# \creation   2015-01-12, Joe Merten
+#-----------------------------------------------------------------------------------------------------------------------
+# Auzfrufe unter Linux z.B.
+# Build: mvn -quiet clean install
+# Run:   java -Djna.nosys=true -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar /D/MP3/OGG-WMA-RM-Test/Testfiles/100_1404\ -\ Limbo.MOV
+# Das "-Djna.nosys=true" ist auf meinem Linux wg. vlcj erforderlich
+########################################################################################################################
+
+declare TARGET_FILE="target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+declare SRC_PATTERN=".*\.(java|xml)"
+
+function CopyToBBB {
+    cp "$TARGET_FILE" /bbb-d/Mpj2/.
+}
+
+#function RunRemote {
+#    # TODO
+#}
+
+function RunLocal {
+    java -Djna.nosys=true -jar "$TARGET_FILE" "${argv[@]}"
+}
+
+function CompileAndRun {
+    if mvn -q clean install; then
+        CopyToBBB
+        RunLocal
+        #RunRemote
+        return 0
+    else
+        return 1
+    fi
+}
+
+argv=("${@}")
+
+MSG_FLAG="TRUE"
+while true; do
+    if [ "$MSG_FLAG" == "TRUE" ]; then
+        MSG_FLAG="FALSE"
+        echo "Checking for file changes ..."
+    fi
+
+    if [ -f "$TARGET_FILE" ]; then
+        CHANGED_FILES=`find . -type f -newer "$TARGET_FILE" -regextype posix-extended -regex "$SRC_PATTERN"`
+
+        if [ "$CHANGED_FILES" != "" ]; then
+            # Weitere Dateien geaendert?
+            while true; do
+                echo ""
+                echo "Changed files detected..."
+                sleep 1
+                CHANGED_FILES2=`find . -type f -newer "$TARGET_FILE" -regextype posix-extended -regex "$SRC_PATTERN"`
+                if [ "$CHANGED_FILES2" == "$CHANGED_FILES" ]; then
+                    # Keine weiteren Aenderungen, also auf zum Kompilieren
+                    break
+                else
+                    echo "Waiting for additional changed files..."
+                    CHANGED_FILES="$CHANGED_FILES2"
+                fi
+            done
+        fi
+    else
+        # Target nicht existent
+        CHANGED_FILES="Target '$TARGET_FILE' don't exist"
+    fi
+
+
+    if [ "$CHANGED_FILES" != "" ]; then
+        echo "Changed files:"
+        echo "$CHANGED_FILES"
+        if ! CompileAndRun; then
+            # Touch notwendig, weil bei Kompilierfehlern das Out-File nicht existiert und das Kompilieren dann immer wieder erneut angeworfen wird.
+            # Ist erst mal ein etwas hässlicher Workaround. Ich sollte hier lieber ein Temp-File als Zeitreferenz anlegen.
+            touch "$TARGET_FILE"
+        fi
+        MSG_FLAG="TRUE"
+    fi
+    sleep 2
+done
