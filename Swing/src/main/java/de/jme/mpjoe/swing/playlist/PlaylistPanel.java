@@ -94,7 +94,6 @@ public class PlaylistPanel extends JPanel {
             TableColumn column = table.getColumnModel().getColumn(i);
             if (columnSpecs[i].initWidth >= 0)
                 column.setPreferredWidth(columnSpecs[i].initWidth);
-            System.out.println(column.getMinWidth());
             column.setMinWidth(0); // Damit erlaube ich, dass Spalten z.B. per Maus auf Breite 0 reduziert (also "ausgeblendet") werden können. Per Default steht die Breite offenbar auf 15.
             column.setCellRenderer(tr);
         }
