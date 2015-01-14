@@ -32,7 +32,7 @@ if [ "$1" == "--make-version-string" ]; then
     # Sowas wie VER_DEVELOPER ist (noch) nicht implementiert
 
     # SoftwareVersionString zusammensetzen
-    VER_STRING="$VER_TITLE V$VER_NUMBER $VER_DATETIME $VER_SOURCE$VER_DEVELOPER"
+    VER_STRING="$VER_TITLE V$VER_NUMBER $VER_DATETIME$VER_SOURCE$VER_DEVELOPER"
 fi
 
 if [ "$VER_STRING" != "" ]; then
