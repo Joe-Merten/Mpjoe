@@ -2,7 +2,7 @@
 target/
 
 # Symlinks aus Mpjoe Common
-src/main/java/de/jme/toolbox/
-src/main/java/de/jme/jsi/
-src/main/java/de/jme/thrift/
-src/main/java/de/jme/mpj/
+src/main/java/de/jme/toolbox
+src/main/java/de/jme/jsi
+src/main/java/de/jme/thrift
+src/main/java/de/jme/mpj
