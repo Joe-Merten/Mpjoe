@@ -27,11 +27,11 @@ public class MpjPlayer extends Thread implements AutoCloseable {
     }
 
     // Klassen, die über Änderungen des MpjPlayer-Zustands informiert werden wollen, müssen dieses Interface implementieren
-    public interface PlayerEventListner {
+    public interface EventListner {
         // Nachricht: Der MpjPlayer-Zustand hat sich geändert (kommt ggf. öfter als unbedingt nötig)
         void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState);
     }
-    private List<PlayerEventListner> listeners = new ArrayList<PlayerEventListner>();
+    private List<EventListner> listeners = new ArrayList<EventListner>();
     private PlayerState      playerState;
     private MpjTrack         track;
     private MpjPlaylistEntry ple;
@@ -143,11 +143,11 @@ public class MpjPlayer extends Thread implements AutoCloseable {
         return getPlayerStateString();
     }
 
-    public void addListener(PlayerEventListner listener) {
+    public void addListener(EventListner listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(PlayerEventListner listener) {
+    public void removeListener(EventListner listener) {
         listeners.remove(listener);
     }
 
@@ -170,7 +170,7 @@ public class MpjPlayer extends Thread implements AutoCloseable {
     //}
 
     private void sendPlayerEvent(PlayerEvent evt, PlayerState newState, PlayerState oldState) {
-        for (PlayerEventListner l : listeners) {
+        for (EventListner l : listeners) {
             try {
                 l.playerEvent(this, evt, newState, oldState);
             } catch (Exception e) {
