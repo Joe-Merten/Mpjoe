@@ -48,7 +48,7 @@ while true; do
     fi
 
     if [ -f "$TARGET_FILE" ]; then
-        CHANGED_FILES=`find . -type f -newer "$TARGET_FILE" -regextype posix-extended -regex "$SRC_PATTERN"`
+        CHANGED_FILES=$(find -L . -type f -newer "$TARGET_FILE" -regextype posix-extended -regex "$SRC_PATTERN")
 
         if [ "$CHANGED_FILES" != "" ]; then
             # Weitere Dateien geaendert?
@@ -56,7 +56,7 @@ while true; do
                 echo ""
                 echo "Changed files detected..."
                 sleep 1
-                CHANGED_FILES2=`find . -type f -newer "$TARGET_FILE" -regextype posix-extended -regex "$SRC_PATTERN"`
+                CHANGED_FILES2=$(find -L . -type f -newer "$TARGET_FILE" -regextype posix-extended -regex "$SRC_PATTERN")
                 if [ "$CHANGED_FILES2" == "$CHANGED_FILES" ]; then
                     # Keine weiteren Aenderungen, also auf zum Kompilieren
                     break
