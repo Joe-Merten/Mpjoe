@@ -8,6 +8,7 @@ package de.jme.mpj;
  */
 public class MpjPlaylistEntry implements AutoCloseable {
 
+    // TODO: Den State evtl. zum Track oder zum Player verschieben?
     public enum State {
         NONE,
         PLAY,
