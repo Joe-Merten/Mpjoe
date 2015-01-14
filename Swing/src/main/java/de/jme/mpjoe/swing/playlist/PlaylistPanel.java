@@ -28,9 +28,9 @@ import javax.swing.table.TableColumn;
 import de.jme.mpj.MpjPlaylist;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
-import de.jme.toolbox.JTableColumnFitAdapter;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
+import de.jme.toolbox.swing.JTableColumnFitAdapter;
 
 public class PlaylistPanel extends JPanel {
     private static final long serialVersionUID = 1L;
