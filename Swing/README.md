@@ -6,6 +6,7 @@ Swing application
 Build & run
 ===========
 
+    ./Update-Symlinks.sh
     mvn -q clean install
     java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 
