@@ -1,7 +1,7 @@
 package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -17,16 +17,20 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import de.jme.jsi.Jsi;
+import de.jme.jsi.MoniStd;
+import de.jme.jsi.Monitor;
 import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjPlayer.PlayerEvent;
 import de.jme.mpj.MpjPlayer.PlayerState;
 import de.jme.mpj.MpjTrack;
-import de.jme.mpjoe.swing.gen.GenPanel;
+import de.jme.mpjoe.swing.fsysview.FilesystemPanel;
 import de.jme.mpjoe.swing.help.Help;
+import de.jme.mpjoe.swing.playlist.PlaylistPanel;
 import de.jme.mpjoe.swing.ui.CwdSaver;
 import de.jme.mpjoe.swing.ui.DauWarning;
 import de.jme.mpjoe.swing.ui.FileChooser;
@@ -35,9 +39,6 @@ import de.jme.mpjoe.swing.ui.Toolbar;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
 import de.jme.toolbox.VersionInfo;
-import de.jme.jsi.Jsi;
-import de.jme.jsi.MoniStd;
-import de.jme.jsi.Monitor;
 
 /**
  * Applikationsfenster des Mpjoe Java Swing Client
@@ -49,16 +50,29 @@ public class MainWin {
         AUTO,
         SOUND,
         JMF,
-        VLC
+        VLC;
+        @Override public String toString() {
+            switch(this) {
+                case AUTO  : return "auto";
+                case SOUND : return "java.sound";
+                case JMF   : return "jmf";
+                case VLC   : return "vlcj";
+                default: throw new IllegalArgumentException();
+            }
+        }
+
     };
     private PlayerType playerType = PlayerType.AUTO;
 
     private JFrame      frame;
     private Statusbar   statusbar;
-    private JTabbedPane tabbedPane;
-    private GenPanel    genPanel;
+    private JPanel      leftPanel;
+    private JPanel      middlePanel;
+    private JPanel      rightPanel;
     private MpjPlayer   mpjPlayer;
     private JPanel      playerPanel;
+    PlaylistPanel       playlistPanel;
+    FilesystemPanel     filesystemPanel;
 
     private static CwdSaver cwd = new CwdSaver(new String[]{"/bbb-d/MP3/OGG-WMA-RM-Test/Testfiles/", "/D/MP3/", "D:/MP3/OGG-WMA-RM-Test/Testfiles/", "D:/MP3/"});  // TODO: Sinnvolle Defaultverzeichnisse
 
@@ -157,8 +171,14 @@ public class MainWin {
             //   System.loadLibrary("jawt");
         }
 
+        try {
+            // Significantly improves the look of the output in
+            // terms of the file names returned by FileSystemView!
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception weTried) {}
+
         frame = new JFrame();
-        frame.setBounds(10, 10, 1400, 800);
+        frame.setBounds(10, 10, 1260, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         String version = VersionInfo.getVersionInfo();
@@ -208,23 +228,53 @@ public class MainWin {
         // Restlicher Fensterbereich
         JSplitPane splitPaneMain = new JSplitPane();
         splitPaneMain.setContinuousLayout(true);
-        splitPaneMain.setDividerLocation(192);
+        //splitPaneMain.setDividerLocation(192); nicht setzen, weil ergibt sich durch die PreferredSize des leftPanel
         frame.getContentPane().add(splitPaneMain, BorderLayout.CENTER);
+        JSplitPane splitPaneRight = new JSplitPane();
+        splitPaneRight.setContinuousLayout(true);
+        splitPaneMain.setRightComponent(splitPaneRight);
 
         //--------------------
         // Panels
-        tabbedPane = new JTabbedPane();
-        splitPaneMain.setRightComponent(tabbedPane);
+        leftPanel = new JPanel();
+        leftPanel.setLayout(new BorderLayout());
+        middlePanel = new JPanel();
+        middlePanel.setLayout(new BorderLayout());
+        rightPanel = new JPanel();
+        rightPanel.setLayout(new BorderLayout());
+        splitPaneMain.setLeftComponent(leftPanel);
+        splitPaneRight.setLeftComponent(middlePanel);
+        splitPaneRight.setRightComponent(rightPanel);
 
-        genPanel = new GenPanel(); tabbedPane.addTab("General", genPanel);
+        playlistPanel = new PlaylistPanel();
+        middlePanel.add(playlistPanel, BorderLayout.CENTER);
+        playlistPanel.addAcceptEventListner(new PlaylistPanel.AcceptEventListner() {
+            @Override public void selectionAccepted(PlaylistPanel playlistPanel) {
+                mpjPlayer.setTrack(playlistPanel.getSelectedEntries()[0]);
+            }
+        });
+
+        filesystemPanel = new FilesystemPanel();
+        if      (new File("/D/MP3").isDirectory()) filesystemPanel.setRootDirectory("/D/MP3");  // TODO: Testcode entfernen
+        else if (new File("D:\\MP3").isDirectory()) filesystemPanel.setRootDirectory("D:\\MP3");
+        rightPanel.add(filesystemPanel, BorderLayout.CENTER);
+        filesystemPanel.addAcceptEventListner(new FilesystemPanel.AcceptEventListner() {
+            @Override public void selectionAccepted(FilesystemPanel filesystemPanel) {
+                final File[] files = filesystemPanel.getSelectedFiles();
+                for (File f : files)
+                    playlistPanel.addTrack(new MpjTrack(f.toURI()));
+            }
+        });
+
 
         //--------------------
         frame.setVisible(true);
-        playerPanel = new JPanel();
+        playerPanel = leftPanel;
         splitPaneMain.setLeftComponent(playerPanel);
-        playerPanel.setBounds(0, 0, 200, 200);
-        playerPanel.setBackground(Color.CYAN);
-        playerPanel.setVisible(true);
+        playerPanel.setPreferredSize(new Dimension(200, 200));
+        playerPanel.setMinimumSize(new Dimension(0, 0));
+        //playerPanel.setBackground(Color.CYAN);
+        //playerPanel.setVisible(true);
 
         if (playerType == null || playerType == PlayerType.AUTO) {
             if (SystemInfo.getMachineType() == MachineType.PcWindows) {
@@ -239,6 +289,8 @@ public class MainWin {
             }
         }
 
+        version += " (" + playerType + ")"; // TODO, HACK: Playertyp mit im der Fenstertitel anzeigen
+        frame.setTitle(version);
         switch (playerType) {
             case SOUND: mpjPlayer = new MpjPlayerSound("Player"); break;
             case JMF:   mpjPlayer = new MpjPlayerJmf("Player");   break;

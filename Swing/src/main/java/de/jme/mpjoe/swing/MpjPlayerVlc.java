@@ -6,6 +6,7 @@ package de.jme.mpjoe.swing;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -94,8 +95,7 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
                     try {
                         JPanel parentPanel = (JPanel)getGuiParent();
                         Canvas canvas = new Canvas();
-                        canvas.setBackground(Color.BLUE);
-                        canvas.setBounds(0, 0, 200, 200);
+                        //canvas.setBackground(Color.BLUE);
                         canvas.setVisible(true);
                         parentPanel.setLayout(new BorderLayout());
                         parentPanel.add(canvas, BorderLayout.CENTER);
@@ -114,7 +114,7 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
                         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         //frame.setVisible(true);
 
-                        mediaPlayer.setMarqueeText("Tralala");
+                        //mediaPlayer.setMarqueeText("Tralala");
                         System.out.println("Start Playback");
                         String nam = track.getUri().toString();
                         if (nam.startsWith("file:")) {
@@ -129,13 +129,16 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
                             }
                         }
 
-                        //mediaPlayer.prepareMedia(nam);
-                        mediaPlayer.startMedia(nam);
+                        System.out.println("Preparing (" + nam + ")");
+                        mediaPlayer.prepareMedia(nam);
+                        //if (!mediaPlayer.isPlayable()) {
+                        //    throw new Exception("Could not play this");
+                        //}
+                        System.out.println("Starting (" + nam + ")");
+                        mediaPlayer.play();
                         System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
                         setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
                         System.out.println("Playback started event sent");
-
-                        //mediaPlayer.start();
 
                         long t0 = System.nanoTime();
                         int i = 0;
@@ -145,8 +148,7 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
                             if (t1 - t0 >= 1000 * 1000000) { // Jede Sekunde ein Progress-Event
                                 t0 = t1;
                                 setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_PROGRESS);
-                                i++;
-                                if (i >= 10) { // TODO: Hack erst mal
+                                if (!mediaPlayer.isPlaying()) { // TODO: Hack erst mal
                                     ejectTrack();
                                     mediaPlayer.stop();
                                     mediaPlayer.release();
@@ -192,6 +194,14 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
         //   java -Djna.nosys=true -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
         // Nicht funktioniert hat hingegen:
         //   java -Djna.boot.library.path=/usr/lib/jni -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+
+        // Auf Osx läuft Vlcj bei mir noch nicht. Vielleicht mal versuchen:
+        //     final String jnaLibraryPath = System.getProperty("jna.library.path");
+        //     final StringBuilder newJnaLibraryPath = new StringBuilder(jnaLibraryPath != null ? (jnaLibraryPath + ":") : "");
+        //     newJnaLibraryPath.append("/Applications/VLC.app/Contents/MacOS/lib");
+        //     System.setProperty("jna.library.path", newJnaLibraryPath.toString());
+        // Siehe hier: http://stackoverflow.com/questions/11078586/vlcj-creating-multiple-video-panels
+
 
         System.out.println("Initializing VlcJ");
         MachineType machineType = SystemInfo.getMachineType();

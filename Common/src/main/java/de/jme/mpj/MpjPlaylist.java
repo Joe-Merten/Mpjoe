@@ -30,6 +30,18 @@ public class MpjPlaylist implements AutoCloseable {
         }
     }
 
+    public int size() {
+        synchronized (playlist) {
+            return playlist.size();
+        }
+    }
+
+    public MpjPlaylistEntry get(int index) {
+        synchronized (playlist) {
+            return playlist.get(index);
+        }
+    }
+
     @Override public void close() {
         clear();
     }
