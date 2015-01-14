@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -26,6 +27,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 import de.jme.mpj.MpjPlaylist;
+import de.jme.mpj.MpjPlaylist.PlaylistEvent;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
@@ -100,6 +102,7 @@ public class PlaylistPanel extends JPanel {
         JTableHeader header = table.getTableHeader();
         // header.setReorderingAllowed(false); ... falls ich das mal unterbinden möchte
         header.addMouseListener(new JTableColumnFitAdapter());
+        table.setAutoCreateRowSorter(true);
 
         scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // erforderlich, damit wir einen horizontalen Scrollbar bekommen
@@ -128,6 +131,15 @@ public class PlaylistPanel extends JPanel {
                     sendAcceptEvent();
                     evt.consume();
                 }
+            }
+        });
+        playlist.addListener(new MpjPlaylist.EventListner() {
+            @Override public void playerEvent(MpjPlaylist playlist, PlaylistEvent evt) {
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        model.fireTableDataChanged();
+                    }
+                });
             }
         });
     }
@@ -292,20 +304,20 @@ public class PlaylistPanel extends JPanel {
 
         @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            int columnIndex = table.convertColumnIndexToModel(column);  // Wandlung von column nach columnIndex erforderlich, falls die Spalten umsortiert wurden (z.B. interaktiv via header.setReorderingAllowed(true))
+            int rowIndex = table.convertRowIndexToModel(row);           // Notwendig, falls mit RowSorter umsortiert
             TableModel tm = (TableModel) table.getModel();
-            MpjPlaylistEntry ple = tm.playlist.get(row);
+            MpjPlaylistEntry ple = tm.playlist.get(rowIndex);
             MpjTrack track = ple.getTrack();
             URI uri = track.getUri();
             String scheme = uri.getScheme();
             if (!isSelected) {
                 if (scheme.equals("http") || scheme.equals("https")) {
-                    setForeground(Color.darkGray); // Nur Spielerei
+                    setForeground(Color.BLUE); // Nur Spielerei
                 } else {
-                    setForeground(Color.black);
+                    setForeground(Color.BLACK);
                 }
             }
-            // Wandlung von column nach columnIndex erforderlich, falls die Spalten umsortiert wurden (z.B. interaktiv via header.setReorderingAllowed(true))
-            int columnIndex = table.convertColumnIndexToModel(column);
             setHorizontalAlignment(columnSpecs[columnIndex].alignment);
             if (columnIndex == 0) {
                 if (ple.getState() == MpjPlaylistEntry.State.NONE) setText("");
@@ -318,9 +330,7 @@ public class PlaylistPanel extends JPanel {
     } // class TableRenderer
 
     public void addTrack(MpjTrack track) {
-        // TODO: Change-Listener an der Playlist?
         playlist.add(new MpjPlaylistEntry(track));
-        model.fireTableDataChanged();
     }
 
     public MpjPlaylistEntry[] getSelectedEntries() {
@@ -328,8 +338,10 @@ public class PlaylistPanel extends JPanel {
         int count = rows.length;
         MpjPlaylistEntry[] entries = new MpjPlaylistEntry[count];
         int num = 0;
-        for (int row : rows)
-            entries[num] = playlist.get(row);
+        for (int row : rows) {
+            int rowIndex = table.convertRowIndexToModel(row); // Notwendig, falls mit RowSorter umsortiert
+            entries[num] = playlist.get(rowIndex);
+        }
         return entries;
     }
 }

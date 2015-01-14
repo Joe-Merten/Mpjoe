@@ -10,6 +10,21 @@ import java.util.List;
  */
 public class MpjPlaylist implements AutoCloseable {
 
+    public enum PlaylistEvent {
+        CHANGED;
+        @Override public String toString() {
+            switch(this) {
+                case CHANGED: return "changed";
+                default: throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    public interface EventListner {
+        void playerEvent(MpjPlaylist playlist, PlaylistEvent evt);
+    }
+    private List<EventListner> listeners = new ArrayList<EventListner>();
+
     private List<MpjPlaylistEntry> playlist = new ArrayList<MpjPlaylistEntry>();
 
     public MpjPlaylist() {
@@ -27,6 +42,7 @@ public class MpjPlaylist implements AutoCloseable {
     public void add(MpjPlaylistEntry pe) {
         synchronized (playlist) {
             playlist.add(pe);
+            sendEvent(PlaylistEvent.CHANGED);
         }
     }
 
@@ -44,6 +60,28 @@ public class MpjPlaylist implements AutoCloseable {
 
     @Override public void close() {
         clear();
+    }
+
+    @Override public String toString() {
+        return "Playlist with " + size() + " tracks";
+    }
+
+    public void addListener(EventListner listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(EventListner listener) {
+        listeners.remove(listener);
+    }
+
+    private void sendEvent(PlaylistEvent evt) {
+        for (EventListner l : listeners) {
+            try {
+                l.playerEvent(this, evt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
