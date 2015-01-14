@@ -288,37 +288,37 @@ public class PlaylistPanel extends JPanel {
 
     // Debug-/Testfunktionen
     void addSampleTrack(String name) {
-        try {
-            if (name.startsWith("/D/")) {
-                if (SystemInfo.getMachineType() == MachineType.PcWindows) name = name.replace("/D/", "D:/");
-                if (SystemInfo.getMachineType() == MachineType.PcOsx) name = name.replace("/D/MP3/", "/Users/joe.merten/Development/");
-            }
-
-            URI uri;
-            if (name.startsWith("http://") || name.startsWith("https://")) {
-                uri = URI.create(name);
-            } else {
-                // URI.create(nam) geht nicht, weil da sind dann keine Leerzeichen in Dateinamen erlaubt
-                File f = new File(name);
-                uri = f.toURI();
-            }
-
-            playlist.add(new MpjPlaylistEntry(new MpjTrack(uri)));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (name.startsWith("/D/")) {
+            if (SystemInfo.isWindows()) name = name.replace("/D/", "D:/");
+            if (SystemInfo.isOsx()    ) name = name.replace("/D/MP3/", "/Users/joe.merten/Development/");
         }
+
+        URI uri;
+        if (name.startsWith("http://") || name.startsWith("https://")) {
+            uri = URI.create(name);
+        } else {
+            // URI.create(nam) geht nicht, weil da sind dann keine Leerzeichen in Dateinamen erlaubt
+            File f = new File(name);
+            uri = f.toURI();
+        }
+
+        playlist.add(new MpjPlaylistEntry(new MpjTrack(uri)));
     }
 
     void addSomeSampleTracks() {
-        addSampleTrack("/D/MP3/OGG-WMA-RM-Test/Testfiles/America - The Last Unicorn.mp3");
-        playlist.get(playlist.size()-1).setVotes(1);
-        addSampleTrack("/D/MP3/OGG-WMA-RM-Test/Testfiles/Safri Dou - Played-A-Live.avi");
-        playlist.get(playlist.size()-1).setVotes(2);
-        addSampleTrack("/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3");
-        playlist.get(playlist.size()-1).setVotes(3);
-        addSampleTrack("/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav");
-        addSampleTrack("/D/MP3/Nora de Mar - For your Beauty and Soul/Ogg Vorbis/02 - Island of Hope.ogg");
-        addSampleTrack("/D/MP3/Nora de Mar - For your Beauty and Soul/Flac/02 - Island of Hope.flac");
+        // TODO: Testcode entfernen
+        String username = SystemInfo.getUserName().toLowerCase();
+        if (username.equals("joe") || username.equals("joe.merten") /*|| username.equals("britta")*/) {
+            addSampleTrack("/D/MP3/OGG-WMA-RM-Test/Testfiles/America - The Last Unicorn.mp3");
+            playlist.get(playlist.size()-1).setVotes(1);
+            addSampleTrack("/D/MP3/OGG-WMA-RM-Test/Testfiles/Safri Dou - Played-A-Live.avi");
+            playlist.get(playlist.size()-1).setVotes(2);
+            addSampleTrack("/D/MP3/Carsten/The Boss Hoss/Stallion Battalion/12 High.mp3");
+            playlist.get(playlist.size()-1).setVotes(3);
+            addSampleTrack("/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav");
+            addSampleTrack("/D/MP3/Nora de Mar - For your Beauty and Soul/Ogg Vorbis/02 - Island of Hope.ogg");
+            addSampleTrack("/D/MP3/Nora de Mar - For your Beauty and Soul/Flac/02 - Island of Hope.flac");
+        }
 
         addSampleTrack("https://www.youtube.com/watch?v=0w1mP3oFXRU");
         addSampleTrack("http://www.youtube.com/watch?v=0w1mP3oFXRU");

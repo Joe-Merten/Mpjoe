@@ -56,13 +56,12 @@ public class SystemInfo {
                 }
             }
             if (s == null) s = "";  // Leerstring, falls nichts zu finden ist
-            try {
-                if (getMachineType() == MachineType.PcOsx) {
-                    // ggf. das ".fritz.box" am Ende von "N4s-MacBook-Pro.fritz.box" entfernen
-                    int dot = s.indexOf('.', 1);
-                    if (dot > 0) s = s.substring(0, dot);
-                }
-            } catch (IOException e) { }
+
+            if (getMachineType() == MachineType.PcOsx) {
+                // ggf. das ".fritz.box" am Ende von "N4s-MacBook-Pro.fritz.box" entfernen
+                int dot = s.indexOf('.', 1);
+                if (dot > 0) s = s.substring(0, dot);
+            }
             computerName = s;
             //System.out.println("Computername = " + computerName);
         }
@@ -84,34 +83,54 @@ public class SystemInfo {
         }
     };
 
-    public static MachineType getMachineType() throws IOException {
+    public static MachineType getMachineType() /*throws IOException*/ {
         if (machineType == null) {
-            // Linux + Osx:      Linux       Osx
-            //   uname -s  ->   "Linux"     "Darwin"
-            //   uname -m  ->  "i686" oder "x86_64"
+            try {
+                // Linux + Osx:      Linux       Osx
+                //   uname -s  ->   "Linux"     "Darwin"
+                //   uname -m  ->  "i686" oder "x86_64"
 
-            // Aber in Stackoverflow wird meistens System.getProperty("os.name") empfohlen:
-            //   http://stackoverflow.com/questions/228477/how-do-i-programmatically-determine-operating-system-in-java
-            //   http://stackoverflow.com/questions/14288185/detecting-windows-or-linux
-            //   https://java.net/projects/swingx/sources/svn/content/tags/swingx-project-1.6.4/swingx-common/src/main/java/org/jdesktop/swingx/util/OS.java?rev=4240
+                // Aber in Stackoverflow wird meistens System.getProperty("os.name") empfohlen:
+                //   http://stackoverflow.com/questions/228477/how-do-i-programmatically-determine-operating-system-in-java
+                //   http://stackoverflow.com/questions/14288185/detecting-windows-or-linux
+                //   https://java.net/projects/swingx/sources/svn/content/tags/swingx-project-1.6.4/swingx-common/src/main/java/org/jdesktop/swingx/util/OS.java?rev=4240
 
-            // Linux (Kubuntu 14.04) = "Linux"
-            // Windows (XP 32 Bit)   = "Windows XP"
-            // Macbook               = "Mac OS X"
+                // Linux (Kubuntu 14.04) = "Linux"
+                // Windows (XP 32 Bit)   = "Windows XP"
+                // Macbook               = "Mac OS X"
 
-            String osName = System.getProperty("os.name");
-            if (osName == null) throw new IOException("Can not determine Machine Type");
-            osName = osName.trim().toLowerCase();
+                String osName = System.getProperty("os.name");
+                if (osName == null) throw new IOException("Can not determine Machine Type");
+                osName = osName.trim().toLowerCase();
 
-            if      (osName.equals("mac os x")      ) machineType = MachineType.PcOsx;
-            else if (osName.indexOf("linux"  ) != -1) machineType = MachineType.PcLinux;
-            else if (osName.indexOf("windows") != -1) machineType = MachineType.PcWindows;
+                if      (osName.equals("mac os x")      ) machineType = MachineType.PcOsx;
+                else if (osName.indexOf("linux"  ) != -1) machineType = MachineType.PcLinux;
+                else if (osName.indexOf("windows") != -1) machineType = MachineType.PcWindows;
 
-            if (machineType == null)
-                throw new IOException("Can not determine Machine Type (os.name = " + osName + ")");
-            System.out.println("MachineType = " + machineType);
+                if (machineType == null)
+                    throw new IOException("Can not determine Machine Type (os.name = " + osName + ")");
+                System.out.println("MachineType = " + machineType);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return machineType;
+    }
+
+    public static boolean isLinux() {
+        return getMachineType() == MachineType.PcLinux;
+    }
+
+    public static boolean isWindows() {
+        return getMachineType() == MachineType.PcWindows;
+    }
+
+    public static boolean isOsx() {
+        return getMachineType() == MachineType.PcOsx;
+    }
+
+    public static boolean isAndroid() {
+        return getMachineType() == MachineType.Android;
     }
 
 }

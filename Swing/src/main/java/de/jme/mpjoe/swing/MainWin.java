@@ -37,7 +37,6 @@ import de.jme.mpjoe.swing.ui.FileChooser;
 import de.jme.mpjoe.swing.ui.Statusbar;
 import de.jme.mpjoe.swing.ui.Toolbar;
 import de.jme.toolbox.SystemInfo;
-import de.jme.toolbox.SystemInfo.MachineType;
 import de.jme.toolbox.VersionInfo;
 
 /**
@@ -177,7 +176,7 @@ public class MainWin {
      * @throws IOException
      */
     private void initialize(String uriString) throws IOException {
-        if (SystemInfo.getMachineType() == MachineType.PcOsx) {
+        if (SystemInfo.isOsx()) {
             // Unter Osx bekomme ich folgenden Fehler:
             //   JavaVM WARNING: JAWT_GetAWT must be called after loading a JVM
             //   java.lang.UnsatisfiedLinkError: Can't load JAWT at com.sun.jna.Native.getWindowHandle0(Native Method) ...
@@ -265,12 +264,21 @@ public class MainWin {
         playlistPanel.addAcceptEventListner(new PlaylistPanel.AcceptEventListner() {
             @Override public void selectionAccepted(PlaylistPanel playlistPanel) {
                 mpjPlayer.setTrack(playlistPanel.getSelectedEntries()[0]);
+                if (playerType == PlayerType.VLC) try { // TODO: Hack entfernen !!!
+                    ((MpjPlayerVlc)mpjPlayer).stop_Track();
+                    ((MpjPlayerVlc)mpjPlayer).start_Track();
+                } catch (InterruptedException e) {
+                    // TODO: Hmm, ist das so gut hier?
+                    e.printStackTrace();
+                }
             }
         });
 
         filesystemPanel = new FilesystemPanel();
         if      (new File("/D/MP3").isDirectory()) filesystemPanel.setRootDirectory("/D/MP3");  // TODO: Testcode entfernen
         else if (new File("D:\\MP3").isDirectory()) filesystemPanel.setRootDirectory("D:\\MP3");
+        else if (new File(System.getProperty("user.home")).isDirectory()) filesystemPanel.setRootDirectory(System.getProperty("user.home"));
+
         rightPanel.add(filesystemPanel, BorderLayout.CENTER);
         filesystemPanel.addAcceptEventListner(new FilesystemPanel.AcceptEventListner() {
             @Override public void selectionAccepted(FilesystemPanel filesystemPanel) {
@@ -291,10 +299,10 @@ public class MainWin {
         //playerPanel.setVisible(true);
 
         if (playerType == null || playerType == PlayerType.AUTO) {
-            if (SystemInfo.getMachineType() == MachineType.PcWindows) {
+            if (SystemInfo.isWindows()) {
                 // Unter Windows funktioniert Jmf noch nicht mit MP3, deshalb hier erst mal Vlc verwenden
                 playerType = PlayerType.VLC;
-            } else if (SystemInfo.getMachineType() == MachineType.PcOsx) {
+            } else if (SystemInfo.isOsx()) {
                 // Auf Mac frunzt Vlcj noch nicht, deshalb vorerst Jmf verwenden
                 playerType = PlayerType.JMF;
             } else {
@@ -308,16 +316,18 @@ public class MainWin {
         switch (playerType) {
             case SOUND: mpjPlayer = new MpjPlayerSound("Player"); break;
             case JMF:   mpjPlayer = new MpjPlayerJmf("Player");   break;
-            case VLC:   mpjPlayer = new MpjPlayerVlc("Player");   break;
+            case VLC:   mpjPlayer = new MpjPlayerVlc("Player", playerPanel);   break;
             default: break;
         }
         mpjPlayer.setGuiParent(playerPanel);
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
         mpjPlayer.addListener(new MpjPlayer.EventListner() {
-            @Override public void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
-                //statusbar.setStatusTextC(player.getPlayerStateString());
+            @Override public void playerEvent(final MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
                 System.out.println(player.getPlayerStateString());
+                EventQueue.invokeLater(new Runnable() { public void run() {
+                    statusbar.setStatusTextC(player.getPlayerStateString());
+                }});
             }
         });
 
@@ -348,8 +358,8 @@ public class MainWin {
                 //nam = "http://prerelease.myvideo.de/watch/6322550/Lindsay_Lohan_zeigt_ihren_Haengebusen_smash247_com";
 
                 if (nam.startsWith("/D/")) { // TODO: Debug-Hack entfernen!
-                    if (SystemInfo.getMachineType() == MachineType.PcWindows) nam = nam.replace("/D/", "D:/");
-                    if (SystemInfo.getMachineType() == MachineType.PcOsx) nam = nam.replace("/D/MP3/", "/Users/joe.merten/Development/");
+                    if (SystemInfo.isWindows()) nam = nam.replace("/D/", "D:/");
+                    if (SystemInfo.isOsx()    ) nam = nam.replace("/D/MP3/", "/Users/joe.merten/Development/");
                 }
             }
 

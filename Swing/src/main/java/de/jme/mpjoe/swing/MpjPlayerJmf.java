@@ -164,7 +164,7 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
 
                 { // Direkt aus dem jar heraus geht offenbar nicht, also kopieren wir das Teil in eine temporäre Datei
                     File tempFile = null;
-                    /*if (SystemInfo.getMachineType() == MachineType.PcWindows)
+                    /*if (SystemInfo.isWindows())
                         // Hmm, unter Windows XP ergibt url.toString() -> "file:/C:/DOKUME~1/Britta/LOKALE~1/Temp/mp3plugin1419834848127383131.jar"
                         // Aber mit mp3plugin.jar im aktuellen Verzeichnis funktioniert es unter Windows auch nicht
                         tempFile = new File("mp3plugin.jar");

@@ -5,9 +5,12 @@ package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
 
@@ -69,13 +72,22 @@ import de.jme.toolbox.SystemInfo.MachineType;
  */
 
 
-
-public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
+// TODO: Evtl. besser von JPanel ableiten?
+public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
 
     static boolean initialized = false;
 
-    public MpjPlayerVlc(String name) throws IOException {
+    //private EventQueue eventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+    private BlockingQueue<Runnable> commandQueue = new ArrayBlockingQueue<Runnable>(100);
+
+    Canvas              canvas;
+    MediaPlayerFactory  mediaPlayerFactory;
+    EmbeddedMediaPlayer mediaPlayer;
+    CanvasVideoSurface  videoSurface;
+
+    public MpjPlayerVlc(String name, JPanel parentPanel) throws IOException {
         super(name);
+        setGuiParent(parentPanel);
 
         synchronized (MpjPlayerVlc.class) {
             if (!initialized) {
@@ -84,90 +96,93 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
             }
         }
 
+        canvas = new Canvas();
+        //canvas.setBackground(Color.BLUE);
+        canvas.setVisible(true);
+        parentPanel.setLayout(new BorderLayout());
+        parentPanel.add(canvas, BorderLayout.CENTER);
+        parentPanel.setVisible(true);
+
+        mediaPlayerFactory = new MediaPlayerFactory();
+        mediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
+        videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+        mediaPlayer.setVideoSurface(videoSurface);
+
+        // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
+        mediaPlayer.setPlaySubItems(true);
+
+
         start();
+    }
+
+    public void start_Track() throws InterruptedException {
+        invokeCommand(new Runnable() { @Override public void run() {
+            MpjTrack track = getTrack();
+            if (track != null) {
+                System.out.println("Start Playback");
+                String nam = track.getUri().toString();
+                if (nam.startsWith("file:")) {
+                    // vlcj verträgt offenbar kein "file:/Blubber%20Bla.mp3"
+                    nam = track.getUri().getPath();
+                    if (SystemInfo.isWindows()) {
+                        // Unter Windows liefert mir getPath() zuweilen sowas wie "/D:/Dir/File.ext", also ein störendes "/" am Stringanfang!?!
+                        if (nam.length() >= 3 && nam.charAt(0) == '/' && nam.charAt(2) == ':')
+                            nam = nam.substring(1);
+                        // Desweiteren verweigert vlcj unter Windows die Wiedergabe, wenn als Pfadtrenner "/" verwendet wird.
+                        nam = nam.replace('/', '\\');
+                    }
+                }
+
+                System.out.println("Preparing (" + nam + ")");
+                mediaPlayer.prepareMedia(nam);
+                //if (!mediaPlayer.isPlayable()) {
+                //    throw new Exception("Could not play this");
+                //}
+                System.out.println("Starting (" + nam + ")");
+                mediaPlayer.play();
+                System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
+                setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
+                System.out.println("Playback started event sent");
+            }
+        }});
+    }
+
+    public void stop_Track() throws InterruptedException {
+        invokeCommand(new Runnable() { @Override public void run() {
+            mediaPlayer.stop();
+        }});
+    }
+
+    private void invokeCommand(final Runnable func) throws InterruptedException {
+        synchronized (this) {
+            commandQueue.put(func);
+        }
+    }
+
+    private void dispatchCommand(int timeout) throws InterruptedException {
+        Runnable func = null;
+        if (timeout < 0)
+            func = commandQueue.take();
+        else
+            func = commandQueue.poll(timeout, TimeUnit.MILLISECONDS);
+        if (func != null)
+            func.run();
     }
 
     @Override public void run() {
         try {
+            // TODO: hier auch auf die Events des Vlc Player reagieren
             while (true) {
-                MpjTrack track = getTrack();
-                if (track != null) {
-                    try {
-                        JPanel parentPanel = (JPanel)getGuiParent();
-                        Canvas canvas = new Canvas();
-                        //canvas.setBackground(Color.BLUE);
-                        canvas.setVisible(true);
-                        parentPanel.setLayout(new BorderLayout());
-                        parentPanel.add(canvas, BorderLayout.CENTER);
-                        parentPanel.setVisible(true);
-
-                        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-                        EmbeddedMediaPlayer mediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
-                        CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-                        mediaPlayer.setVideoSurface(videoSurface);
-
-                        // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
-                        mediaPlayer.setPlaySubItems(true);
-
-                        //frame.setLocation(100, 100);
-                        //frame.setSize(1050, 600);
-                        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        //frame.setVisible(true);
-
-                        //mediaPlayer.setMarqueeText("Tralala");
-                        System.out.println("Start Playback");
-                        String nam = track.getUri().toString();
-                        if (nam.startsWith("file:")) {
-                            // vlcj verträgt offenbar kein "file:/Blubber%20Bla.mp3"
-                            nam = track.getUri().getPath();
-                            if (SystemInfo.getMachineType() == MachineType.PcWindows) {
-                                // Unter Windows liefert mir getPath() zuweilen sowas wie "/D:/Dir/File.ext", also ein störendes "/" am Stringanfang!?!
-                                if (nam.length() >= 3 && nam.charAt(0) == '/' && nam.charAt(2) == ':')
-                                    nam = nam.substring(1);
-                                // Desweiteren verweigert vlcj unter Windows die Wiedergabe, wenn als Pfadtrenner "/" verwendet wird.
-                                nam = nam.replace('/', '\\');
-                            }
-                        }
-
-                        System.out.println("Preparing (" + nam + ")");
-                        mediaPlayer.prepareMedia(nam);
-                        //if (!mediaPlayer.isPlayable()) {
-                        //    throw new Exception("Could not play this");
-                        //}
-                        System.out.println("Starting (" + nam + ")");
-                        mediaPlayer.play();
-                        System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
-                        setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
-                        System.out.println("Playback started event sent");
-
-                        long t0 = System.nanoTime();
-                        int i = 0;
-                        while (true) { // Warten bis der Clip zu Ende ist
-                            //int trackPos = mediaPlayer.get
-                            long t1 = System.nanoTime();
-                            if (t1 - t0 >= 1000 * 1000000) { // Jede Sekunde ein Progress-Event
-                                t0 = t1;
-                                setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_PROGRESS);
-                                if (!mediaPlayer.isPlaying()) { // TODO: Hack erst mal
-                                    ejectTrack();
-                                    mediaPlayer.stop();
-                                    mediaPlayer.release();
-                                    break;
-                                }
-                            }
-                            Thread.sleep(100);
-                        }
-                        // close() rufen wir später, damit uns das hier keine Latenz zwischen den Tracks bringt.
+                if (mediaPlayer.isPlaying()) {
+                    dispatchCommand(1000);
+                    if (mediaPlayer.isPlaying()) {
+                        setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_PROGRESS);
+                    } else {
                         setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_END);
-                    } catch (Throwable e) {
-                        ejectTrack(); // TODO: Hack erst mal
-                        setError(e);
                     }
                 } else {
-                    //currentTrack = null;
-                    //checkCleanup();
                     setPlayerState(PlayerState.IDLE);
-                    Thread.sleep(100);
+                    dispatchCommand(-1);
                 }
             }
         } catch (InterruptedException e) {
@@ -179,7 +194,7 @@ public class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
         // TODO ...
     }
 
-    private void init() throws IOException {
+    private void init() {
         // Siehe auch http://www.capricasoftware.co.uk/legacy/projects/vlcj/tutorial1.html
 
         // Unter Linux bekomme ich folgenden Fehler
