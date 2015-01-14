@@ -111,10 +111,12 @@ public class MainWin {
      */
     public static void main(final String[] args) {
         boolean justPrintVersion = false;
+        boolean justPrintHelp = false;
         String uriString = null;
         PlayerType playerType = PlayerType.AUTO;
         for (String arg : args) {
             if      (arg.equals("--version")) justPrintVersion = true;
+            else if (arg.equals("--help" )) justPrintHelp = true;
             else if (arg.equals("--sound")) playerType = PlayerType.SOUND;
             else if (arg.equals("--jfm"  )) playerType = PlayerType.JMF;
             else if (arg.equals("--vlc"  )) playerType = PlayerType.VLC;
@@ -125,9 +127,21 @@ public class MainWin {
             }
         }
         String version = VersionInfo.getVersionInfo();
-        if (justPrintVersion) {
+        if (justPrintVersion || justPrintHelp) {
             // Ausgabe ohne Logger, damit z.B. vom Shellskript vernünftig auswertbar
-            System.out.println(version);
+            if (justPrintHelp) {
+                System.out.println(version);
+                System.out.println("Usage: Mpjoe [filespec] [uri] [options]");
+                System.out.println("  filespec  =  filename or directory");
+                System.out.println("  uri       =  something like \"http://youtu.be/0w1mP3oFXRU\" or \"file:/MP3/Great%20Track.mp3\"");
+                System.out.println("  options:");
+                System.out.println("  --help     =  show this help");
+                System.out.println("  --version  =  show version info");
+                System.out.println("  --sound    =  media output using javax.sound");
+                System.out.println("  --jmf      =  media output using javax.media (java media framework)");
+                System.out.println("  --vlc      =  media output using vlc, needs to have vlc installed");
+            } else if (justPrintVersion)
+                System.out.println(version);
             System.exit(0);
         }
 
@@ -300,7 +314,7 @@ public class MainWin {
         mpjPlayer.setGuiParent(playerPanel);
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
-        mpjPlayer.addListener(new MpjPlayer.PlayerEventListner() {
+        mpjPlayer.addListener(new MpjPlayer.EventListner() {
             @Override public void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
                 //statusbar.setStatusTextC(player.getPlayerStateString());
                 System.out.println(player.getPlayerStateString());
