@@ -94,7 +94,7 @@ public class FilesystemPanel extends JPanel {
     public void setRootDirectory(String dir) {
         JTree oldTree = tree;
         JTree newTree = null;
-        if (dir != null && !dir.isEmpty()) newTree = new JTree(addNodes(null, new File(dir), dir));
+        if (dir != null && !dir.isEmpty()) newTree = new JTree(addNodes(null, new File(dir), dir, 200));
         if (oldTree != null) scrollpane.getViewport().remove(oldTree);
         tree = newTree;
         if (tree != null) {
@@ -137,11 +137,30 @@ public class FilesystemPanel extends JPanel {
     // Rekursives Füllen des Verzeichnisbaums
     // Achtung, hier wird das gesamte Verzeichnis rekursiv eingelesen, bei "/" kann das also sehr lange dauern!
     // TODO: Files.newDirectoryStream verwenden anstelle von dir.list und Unterverzeichnisse erst beim Aufklappen lesen
-    TreeNode addNodes(DefaultMutableTreeNode curTop, File dir, String nodeName) {
+    //
+    /**
+     * Rekursives Füllen des Verzeichnisbaums
+     *
+     * TODO: Files.newDirectoryStream verwenden anstelle von dir.list?
+     *       Und Unterverzeichnisse erst bei Bedarf einlesen
+     *
+     * @param curTop     Für Rekursion, wird
+     * @param dir        Rootverzeichnis für die Anzeige, z.B. "/home/joe/Music"
+     * @param nodeName   Anzeigetext für das Rootverzeichnis
+     * @param depth      Zur Begrenzung der Rekursionstiefe
+     * @return
+     */
+    TreeNode addNodes(DefaultMutableTreeNode curTop, File dir, String nodeName, int depth) {
         String curPath = dir.getPath();
         DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(nodeName);
         if (curTop != null) // ist null bei unserem Root, also erster Call vor Rekursion
             curTop.add(curDir);
+
+        if (depth <= 1) {
+            curDir.add(new DefaultMutableTreeNode("…"));
+            return curDir;
+        }
+
         Vector<String> ol = new Vector<String>();
         final String[] tmp = dir.list();  // hier wird das Verzeichnis eingelesen
         for (String element : tmp)
@@ -157,7 +176,7 @@ public class FilesystemPanel extends JPanel {
             File f = new File(newPath);
             if (f.isDirectory())
                 // Nur beim Wurzelknoten volle Pfadangabe. Alle Unververzeichnisse nur mit ihrem eigenen Namen eintragen
-                addNodes(curDir, f, element);
+                addNodes(curDir, f, element, depth -1);
             else
                 files.addElement(element);
         }
