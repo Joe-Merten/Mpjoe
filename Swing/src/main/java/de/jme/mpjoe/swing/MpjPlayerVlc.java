@@ -5,12 +5,7 @@ package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
 
@@ -77,9 +72,6 @@ public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
 
     static boolean initialized = false;
 
-    //private EventQueue eventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
-    private BlockingQueue<Runnable> commandQueue = new ArrayBlockingQueue<Runnable>(100);
-
     Canvas              canvas;
     MediaPlayerFactory  mediaPlayerFactory;
     EmbeddedMediaPlayer mediaPlayer;
@@ -115,7 +107,7 @@ public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
         start();
     }
 
-    public void start_Track() throws InterruptedException {
+    @Override public void playTrack() throws InterruptedException {
         invokeCommand(new Runnable() { @Override public void run() {
             MpjTrack track = getTrack();
             if (track != null) {
@@ -147,26 +139,11 @@ public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
         }});
     }
 
-    public void stop_Track() throws InterruptedException {
+    @Override public void stopTrack() throws InterruptedException {
         invokeCommand(new Runnable() { @Override public void run() {
             mediaPlayer.stop();
+            setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
         }});
-    }
-
-    private void invokeCommand(final Runnable func) throws InterruptedException {
-        synchronized (this) {
-            commandQueue.put(func);
-        }
-    }
-
-    private void dispatchCommand(int timeout) throws InterruptedException {
-        Runnable func = null;
-        if (timeout < 0)
-            func = commandQueue.take();
-        else
-            func = commandQueue.poll(timeout, TimeUnit.MILLISECONDS);
-        if (func != null)
-            func.run();
     }
 
     @Override public void run() {

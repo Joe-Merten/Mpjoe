@@ -11,7 +11,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ import de.jme.mpj.MpjPlaylist.PlaylistEvent;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
-import de.jme.toolbox.SystemInfo.MachineType;
 import de.jme.toolbox.swing.JTableColumnFitAdapter;
 
 public class PlaylistPanel extends JPanel {
@@ -318,6 +316,7 @@ public class PlaylistPanel extends JPanel {
             addSampleTrack("/D/MP3/Elisa iPod/Basta - Gimme Hope Joachim - der Jogi Löw a Cappella WM Song 2010.wav");
             addSampleTrack("/D/MP3/Nora de Mar - For your Beauty and Soul/Ogg Vorbis/02 - Island of Hope.ogg");
             addSampleTrack("/D/MP3/Nora de Mar - For your Beauty and Soul/Flac/02 - Island of Hope.flac");
+            addSampleTrack("/D/MP3/Kazaa - Joe/Jürgen von der Lippe/Jürgen von der Lippe - Die Entenjagd .mp3");
         }
 
         addSampleTrack("https://www.youtube.com/watch?v=0w1mP3oFXRU");

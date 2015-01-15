@@ -99,7 +99,11 @@ public class MainWin {
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
         }
         public void actionPerformed(ActionEvent ae) {
-            chooseFileAndPlay();
+            try {
+                chooseFileAndPlay();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
     private ChooseFileAndPlayAction chooseFileAndPlayAction;
@@ -263,10 +267,9 @@ public class MainWin {
         middlePanel.add(playlistPanel, BorderLayout.CENTER);
         playlistPanel.addAcceptEventListner(new PlaylistPanel.AcceptEventListner() {
             @Override public void selectionAccepted(PlaylistPanel playlistPanel) {
-                mpjPlayer.setTrack(playlistPanel.getSelectedEntries()[0]);
-                if (playerType == PlayerType.VLC) try { // TODO: Hack entfernen !!!
-                    ((MpjPlayerVlc)mpjPlayer).stop_Track();
-                    ((MpjPlayerVlc)mpjPlayer).start_Track();
+                try {
+                    mpjPlayer.setTrack(playlistPanel.getSelectedEntries()[0]);
+                    mpjPlayer.playTrack();
                 } catch (InterruptedException e) {
                     // TODO: Hmm, ist das so gut hier?
                     e.printStackTrace();
@@ -377,7 +380,11 @@ public class MainWin {
             System.out.println("Uri.Path = " + uri.getPath());
 
             if (true) {
-                mpjPlayer.setTrack(new MpjTrack(uri));
+                try {
+                    mpjPlayer.setTrack(new MpjTrack(uri));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             } else {
                 // Hier Testcode zum 1:1 Durchreichen des Kommandozeilenparameter an Vlcj, um Verluste bei der URI Konvertierung zu vermeiden
                 EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
@@ -399,7 +406,7 @@ public class MainWin {
             throw new IllegalStateException("just started thread is not alive");
     }
 
-    public boolean chooseFileAndPlay() {
+    public boolean chooseFileAndPlay() throws InterruptedException {
         FileChooser fc = new FileChooser("Open MpjTrack for play", cwd);
         javax.swing.filechooser.FileFilter filterAudio = new javax.swing.filechooser.FileNameExtensionFilter("Audio Files (mp3 ogg flac wav wma)", "mp3", "ogg", "flac", "wav", "wma");
         javax.swing.filechooser.FileFilter filterVideo = new javax.swing.filechooser.FileNameExtensionFilter("Video Files (mpeg avi mov ogv wmv)", "mpeg", "mpg", "mpe", "mp4", "avi", "mov", "ogv", "wmv");

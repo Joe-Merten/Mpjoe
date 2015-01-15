@@ -3,6 +3,9 @@ package de.jme.mpj;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Basisklasse zur Wiedergabe von Audio- und Videodateien
@@ -22,6 +25,9 @@ public class MpjPlayer extends Thread implements AutoCloseable {
         STATE_CHANGED,
         TRACK_START,
         TRACK_END,
+        TRACK_STOP,
+        TRACK_PAUSE,
+        TRACK_RESUME,
         TRACK_PROGRESS,
         ERROR
     }
@@ -50,7 +56,7 @@ public class MpjPlayer extends Thread implements AutoCloseable {
         return guiParent;
     }
 
-    public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) {
+    public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException {
         if (track != null) {
             stopTrack();
             ple = null;
@@ -62,11 +68,11 @@ public class MpjPlayer extends Thread implements AutoCloseable {
         }
     }
 
-    public void setTrack(MpjTrack newTrack) {
+    public void setTrack(MpjTrack newTrack) throws InterruptedException {
         setTrack(newTrack, null);
     }
 
-    public void setTrack(MpjPlaylistEntry ple) {
+    public void setTrack(MpjPlaylistEntry ple) throws InterruptedException {
         if (ple == null) setTrack(null, null);
         else setTrack(ple.track, ple);
     }
@@ -79,22 +85,20 @@ public class MpjPlayer extends Thread implements AutoCloseable {
         return ple;
     }
 
-    public void ejectTrack() {
+    public void ejectTrack() throws InterruptedException {
         setTrack(null, null);
     }
 
-    public void stopTrack() {
-        // TODO: Spezieller Player muss hier auch wirklich die Wiedergabe stoppen
-        setPlayerState(PlayerState.IDLE);
+    public void stopTrack() throws InterruptedException {
     }
 
-    public void playTrack() {
+    public void playTrack() throws InterruptedException {
     }
 
-    public void pauseTrack() {
+    public void pauseTrack() throws InterruptedException {
     }
 
-    public PlayerState getPlayerState()  {
+    public PlayerState getPlayerState() {
         return playerState;
     }
 
@@ -195,6 +199,24 @@ public class MpjPlayer extends Thread implements AutoCloseable {
 
     @Override public void close() throws IOException {
         // TODO Auto-generated method stub
+    }
+
+    private BlockingQueue<Runnable> commandQueue = new ArrayBlockingQueue<Runnable>(100);
+
+    protected void invokeCommand(final Runnable func) throws InterruptedException {
+        synchronized (this) {
+            commandQueue.put(func);
+        }
+    }
+
+    protected void dispatchCommand(int timeout) throws InterruptedException {
+        Runnable func = null;
+        if (timeout < 0)
+            func = commandQueue.take();
+        else
+            func = commandQueue.poll(timeout, TimeUnit.MILLISECONDS);
+        if (func != null)
+            func.run();
     }
 
 }
