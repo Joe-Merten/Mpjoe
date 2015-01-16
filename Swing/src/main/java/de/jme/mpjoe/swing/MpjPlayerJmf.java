@@ -67,8 +67,8 @@ import de.jme.mpj.MpjTrack;
  * "Testfiles/zel3.xm"
  */
 
-
-
+public class MpjPlayerJmf extends MpjPlayerVlc  { public MpjPlayerJmf(String name) throws IOException { super(name); } }
+/*
 public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
 
     static boolean mp3PluginInitialized = false;
@@ -164,11 +164,11 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
 
                 { // Direkt aus dem jar heraus geht offenbar nicht, also kopieren wir das Teil in eine temporäre Datei
                     File tempFile = null;
-                    /*if (SystemInfo.isWindows())
-                        // Hmm, unter Windows XP ergibt url.toString() -> "file:/C:/DOKUME~1/Britta/LOKALE~1/Temp/mp3plugin1419834848127383131.jar"
-                        // Aber mit mp3plugin.jar im aktuellen Verzeichnis funktioniert es unter Windows auch nicht
-                        tempFile = new File("mp3plugin.jar");
-                    else*/
+                    //if (SystemInfo.isWindows())
+                    //    // Hmm, unter Windows XP ergibt url.toString() -> "file:/C:/DOKUME~1/Britta/LOKALE~1/Temp/mp3plugin1419834848127383131.jar"
+                    //    // Aber mit mp3plugin.jar im aktuellen Verzeichnis funktioniert es unter Windows auch nicht
+                    //    tempFile = new File("mp3plugin.jar");
+                    //else
                         tempFile = File.createTempFile("mp3plugin", ".jar");
                     tempFile.deleteOnExit(); // Scheint zumindest unter Windows XP nicht zu funktionieren
                     //System.out.println("TMP=" + tempFile.toString());
@@ -183,19 +183,19 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
                 method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{url});
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
                 e.printStackTrace();
-            }/**/
+            }
 
-            /*
-            // Hier die alten Variante, wenn das mp3plugin.jar auf den Zielsystem als Datei vorliegt (im Working Directory)
-            try {
-                File file = new File("mp3plugin.jar");
-                //File file = new File("src/main/java/de/jme/mpjoe/swing/mp3plugin.jar");
-                java.lang.reflect.Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-                method.setAccessible(true);
-                method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | MalformedURLException e) {
-                e.printStackTrace();
-            }/**/
+
+            // // Hier die alten Variante, wenn das mp3plugin.jar auf den Zielsystem als Datei vorliegt (im Working Directory)
+            // try {
+            //     File file = new File("mp3plugin.jar");
+            //     //File file = new File("src/main/java/de/jme/mpjoe/swing/mp3plugin.jar");
+            //     java.lang.reflect.Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+            //     method.setAccessible(true);
+            //     method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
+            // } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | MalformedURLException e) {
+            //     e.printStackTrace();
+            // }
 
         }
 
@@ -215,3 +215,4 @@ public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
     }
 
 }
+*/

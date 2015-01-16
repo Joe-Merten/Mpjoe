@@ -21,6 +21,9 @@ import de.jme.mpj.MpjTrack;
  *
  * @author Joe Merten
  */
+public class MpjPlayerSound extends MpjPlayerVlc  { public MpjPlayerSound(String name) throws IOException { super(name); } }
+
+/*
 public class MpjPlayerSound extends MpjPlayer implements AutoCloseable {
 
     public MpjPlayerSound(String name) {
@@ -44,8 +47,8 @@ public class MpjPlayerSound extends MpjPlayer implements AutoCloseable {
                         Info info = new DataLine.Info(Clip.class, format);
                         Clip clip = (Clip)AudioSystem.getLine(info);
                         clip.open(stream);
-                        /*pe.*/ long trackLength = clip.getMicrosecondLength();
-                        /*pe.*/ long trackPos = 0;
+                        long trackLength = clip.getMicrosecondLength();
+                        long trackPos = 0;
                         //pe.clip = clip;
                         clip.start();
                         //currentTrack = pe;
@@ -95,3 +98,4 @@ public class MpjPlayerSound extends MpjPlayer implements AutoCloseable {
     }
 
 }
+*/

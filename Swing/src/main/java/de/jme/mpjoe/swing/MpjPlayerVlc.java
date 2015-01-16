@@ -15,6 +15,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import de.jme.mpj.MpjPlayer;
+import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
@@ -67,19 +68,21 @@ import de.jme.toolbox.SystemInfo.MachineType;
  */
 
 
-// TODO: Evtl. besser von JPanel ableiten?
-public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
+public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
     static boolean initialized = false;
 
+    Delegate            delegate;
+    MyThread            thread;
+    JPanel              panel;
     Canvas              canvas;
     MediaPlayerFactory  mediaPlayerFactory;
     EmbeddedMediaPlayer mediaPlayer;
     CanvasVideoSurface  videoSurface;
 
-    public MpjPlayerVlc(String name, JPanel parentPanel) throws IOException {
-        super(name);
-        setGuiParent(parentPanel);
+    public MpjPlayerVlc(String name) throws IOException {
+        delegate = new MpjPlayer.Delegate(this, name);
+        thread = new MyThread(name);
 
         synchronized (MpjPlayerVlc.class) {
             if (!initialized) {
@@ -88,12 +91,14 @@ public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
             }
         }
 
+        panel = new JPanel();
         canvas = new Canvas();
         //canvas.setBackground(Color.BLUE);
         canvas.setVisible(true);
-        parentPanel.setLayout(new BorderLayout());
-        parentPanel.add(canvas, BorderLayout.CENTER);
-        parentPanel.setVisible(true);
+        panel.setLayout(new BorderLayout());
+        panel.add(canvas, BorderLayout.CENTER);
+        panel.setVisible(true);
+        delegate.setGuiComponent(panel);
 
         mediaPlayerFactory = new MediaPlayerFactory();
         mediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
@@ -103,67 +108,33 @@ public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
         mediaPlayer.setPlaySubItems(true);
 
-
-        start();
+        thread.start();
     }
 
-    @Override public void playTrack() throws InterruptedException {
-        invokeCommand(new Runnable() { @Override public void run() {
-            MpjTrack track = getTrack();
-            if (track != null) {
-                System.out.println("Start Playback");
-                String nam = track.getUri().toString();
-                if (nam.startsWith("file:")) {
-                    // vlcj verträgt offenbar kein "file:/Blubber%20Bla.mp3"
-                    nam = track.getUri().getPath();
-                    if (SystemInfo.isWindows()) {
-                        // Unter Windows liefert mir getPath() zuweilen sowas wie "/D:/Dir/File.ext", also ein störendes "/" am Stringanfang!?!
-                        if (nam.length() >= 3 && nam.charAt(0) == '/' && nam.charAt(2) == ':')
-                            nam = nam.substring(1);
-                        // Desweiteren verweigert vlcj unter Windows die Wiedergabe, wenn als Pfadtrenner "/" verwendet wird.
-                        nam = nam.replace('/', '\\');
-                    }
-                }
+    private class MyThread extends Thread {
+        public MyThread(String name) {
+            super(name);
+        }
 
-                System.out.println("Preparing (" + nam + ")");
-                mediaPlayer.prepareMedia(nam);
-                //if (!mediaPlayer.isPlayable()) {
-                //    throw new Exception("Could not play this");
-                //}
-                System.out.println("Starting (" + nam + ")");
-                mediaPlayer.play();
-                System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
-                setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
-                System.out.println("Playback started event sent");
-            }
-        }});
-    }
-
-    @Override public void stopTrack() throws InterruptedException {
-        invokeCommand(new Runnable() { @Override public void run() {
-            mediaPlayer.stop();
-            setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
-        }});
-    }
-
-    @Override public void run() {
-        try {
-            // TODO: hier auch auf die Events des Vlc Player reagieren
-            while (true) {
-                if (mediaPlayer.isPlaying()) {
-                    dispatchCommand(1000);
+        @Override public void run() {
+            try {
+                // TODO: hier auch auf die Events des Vlc Player reagieren
+                while (true) {
                     if (mediaPlayer.isPlaying()) {
-                        setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_PROGRESS);
+                        MpjPlayerVlc.this.delegate.dispatchCommand(1000);
+                        if (mediaPlayer.isPlaying()) {
+                            MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_PROGRESS);
+                        } else {
+                            MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_END);
+                        }
                     } else {
-                        setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_END);
+                        MpjPlayerVlc.this.delegate.setPlayerState(PlayerState.IDLE);
+                        MpjPlayerVlc.this.delegate.dispatchCommand(-1);
                     }
-                } else {
-                    setPlayerState(PlayerState.IDLE);
-                    dispatchCommand(-1);
                 }
+            } catch (InterruptedException e) {
+                // Das ist eine normale Thread-Beendigung
             }
-        } catch (InterruptedException e) {
-            // Das ist eine normale Thread-Beendigung
         }
     }
 
@@ -222,6 +193,112 @@ public final class MpjPlayerVlc extends MpjPlayer implements AutoCloseable {
 
         com.sun.jna.Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
         System.out.println("VlcJ initialized");
+    }
+
+    @Override public void addListener(EventListner listener) {
+        delegate.addListener(listener);
+    }
+
+    @Override public void removeListener(EventListner listener) {
+        delegate.removeListener(listener);
+    }
+
+
+    @Override public String getErrorMessage() {
+        return delegate.getErrorMessage();
+    }
+
+    @Override public PlayerState getPlayerState() {
+        return delegate.getPlayerState();
+    }
+
+    @Override public String getPlayerStateString() {
+        return delegate.getPlayerStateString();
+    }
+
+    @Override public String getName() {
+        return delegate.getName();
+    }
+
+    @Override public Object getGuiComponent() {
+        return delegate.getGuiComponent();
+    }
+
+
+    @Override public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException {
+        delegate.setTrack(newTrack, newPle);
+    }
+
+
+    @Override public void setTrack(MpjTrack newTrack) throws InterruptedException {
+        delegate.setTrack(newTrack);
+    }
+
+    @Override public void setTrack(MpjPlaylistEntry ple) throws InterruptedException {
+        delegate.setTrack(ple);
+    }
+
+    @Override public MpjTrack getTrack() {
+        return delegate.getTrack();
+    }
+
+    @Override public MpjPlaylistEntry getPlaylistEntry() {
+        return delegate.getPlaylistEntry();
+    }
+
+
+    @Override public void ejectTrack() throws InterruptedException {
+        delegate.invokeCommand(new Runnable() { @Override public void run() {
+            mediaPlayer.stop();
+            delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
+        }});
+    }
+
+    @Override public void stopTrack() throws InterruptedException {
+        delegate.invokeCommand(new Runnable() { @Override public void run() {
+            mediaPlayer.stop();
+            delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
+        }});
+    }
+
+    @Override public void playTrack() throws InterruptedException {
+        delegate.invokeCommand(new Runnable() { @Override public void run() {
+            MpjTrack track = getTrack();
+            if (track != null) {
+                System.out.println("Start Playback");
+                String nam = track.getUri().toString();
+                if (nam.startsWith("file:")) {
+                    // vlcj verträgt offenbar kein "file:/Blubber%20Bla.mp3"
+                    nam = track.getUri().getPath();
+                    if (SystemInfo.isWindows()) {
+                        // Unter Windows liefert mir getPath() zuweilen sowas wie "/D:/Dir/File.ext", also ein störendes "/" am Stringanfang!?!
+                        if (nam.length() >= 3 && nam.charAt(0) == '/' && nam.charAt(2) == ':')
+                            nam = nam.substring(1);
+                        // Desweiteren verweigert vlcj unter Windows die Wiedergabe, wenn als Pfadtrenner "/" verwendet wird.
+                        nam = nam.replace('/', '\\');
+                    }
+                }
+
+                System.out.println("Preparing (" + nam + ")");
+                mediaPlayer.prepareMedia(nam);
+                //if (!mediaPlayer.isPlayable()) {
+                //    throw new Exception("Could not play this");
+                //}
+                System.out.println("Starting (" + nam + ")");
+                mediaPlayer.play();
+                System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
+                delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
+                System.out.println("Playback started event sent");
+            }
+        }});
+    }
+
+    @Override public void pauseTrack() throws InterruptedException {
+        // TODO
+    }
+
+    @Override public void resumeTrack() throws InterruptedException {
+        // TODO
     }
 
 }

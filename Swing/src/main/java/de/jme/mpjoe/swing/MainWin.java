@@ -1,6 +1,7 @@
 package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -69,7 +70,7 @@ public class MainWin {
     private JPanel      middlePanel;
     private JPanel      rightPanel;
     private MpjPlayer   mpjPlayer;
-    private JPanel      playerPanel;
+    private Component   playerPanel;
     PlaylistPanel       playlistPanel;
     FilesystemPanel     filesystemPanel;
 
@@ -294,12 +295,6 @@ public class MainWin {
 
         //--------------------
         frame.setVisible(true);
-        playerPanel = leftPanel;
-        splitPaneMain.setLeftComponent(playerPanel);
-        playerPanel.setPreferredSize(new Dimension(200, 200));
-        playerPanel.setMinimumSize(new Dimension(0, 0));
-        //playerPanel.setBackground(Color.CYAN);
-        //playerPanel.setVisible(true);
 
         if (playerType == null || playerType == PlayerType.AUTO) {
             if (SystemInfo.isWindows()) {
@@ -319,10 +314,16 @@ public class MainWin {
         switch (playerType) {
             case SOUND: mpjPlayer = new MpjPlayerSound("Player"); break;
             case JMF:   mpjPlayer = new MpjPlayerJmf("Player");   break;
-            case VLC:   mpjPlayer = new MpjPlayerVlc("Player", playerPanel);   break;
+            case VLC:   mpjPlayer = new MpjPlayerVlc("Player");   break;
             default: break;
         }
-        mpjPlayer.setGuiParent(playerPanel);
+        Object guiComponent = mpjPlayer.getGuiComponent();
+        if (guiComponent instanceof Component) {
+            playerPanel = (Component)guiComponent;
+            playerPanel.setPreferredSize(new Dimension(200, 200));
+            playerPanel.setMinimumSize(new Dimension(0, 0));
+            leftPanel.add(playerPanel, BorderLayout.CENTER);
+        }
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
         mpjPlayer.addListener(new MpjPlayer.EventListner() {
@@ -388,7 +389,7 @@ public class MainWin {
             } else {
                 // Hier Testcode zum 1:1 Durchreichen des Kommandozeilenparameter an Vlcj, um Verluste bei der URI Konvertierung zu vermeiden
                 EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-                playerPanel.add(mediaPlayerComponent);
+                leftPanel.add(mediaPlayerComponent);
                 //playerFrame.setContentPane(mediaPlayerComponent);
                 mediaPlayerComponent.getMediaPlayer().playMedia(nam);
             }
