@@ -176,12 +176,17 @@
         </plugins>
 
         <resources>
+            <!-- TODO: html und mp3plugin.jar auch nach src/main/resources schieben -->
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>log4j2.xml</include><!-- Logger-Konfiguration in's Ausgabeverzeichnis kopieren -->
                 </includes>
                 <targetPath>..</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+            </resource>
+            <resource>
+                <directory>src/main/resources/de/jme/mpj</directory> <!-- Buttons etc. sollen in's Jar -->
+                <targetPath>de/jme/mpj</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
             <resource>
                 <directory>src/main/java/de/jme/mpjoe/swing/help</directory> <!-- Html-Hilfe soll in's Jar -->

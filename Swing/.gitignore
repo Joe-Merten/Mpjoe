@@ -10,3 +10,5 @@ src/main/java/de/jme/thrift
 src/test/java/de/jme/thrift
 src/main/java/de/jme/mpj
 src/test/java/de/jme/mpj
+src/main/resources/de/jme/mpj
+src/test/resources/de/jme/mpj

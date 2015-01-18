@@ -17,6 +17,7 @@ FILES+=("src/main/java/de/jme/toolbox")
 FILES+=("src/main/java/de/jme/jsi")
 FILES+=("src/main/java/de/jme/thrift")
 FILES+=("src/main/java/de/jme/mpj")
+FILES+=("src/main/resources/de/jme/mpj")
 
 
 ########################################################################################################################
