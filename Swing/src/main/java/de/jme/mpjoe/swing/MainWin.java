@@ -20,7 +20,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import de.jme.jsi.Jsi;
@@ -185,64 +184,7 @@ public class MainWin {
      * @throws IOException
      */
     private void initialize(String uriString) throws IOException {
-        if (SystemInfo.isOsx()) {
-            // Unter Osx bekomme ich folgenden Fehler:
-            //   JavaVM WARNING: JAWT_GetAWT must be called after loading a JVM
-            //   java.lang.UnsatisfiedLinkError: Can't load JAWT at com.sun.jna.Native.getWindowHandle0(Native Method) ...
-            // Manuelles laden der Lib hat aber auch nicht geholfen:
-            //   System.loadLibrary("jawt");
-        }
-
-        try {
-            // Significantly improves the look of the output in
-            // terms of the file names returned by FileSystemView!
-            // Look & Feel kann man auch von Kommandozeile mitgeben:
-            //   java -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel MyApp"
-            //   siehe auch http://docs.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-
-            //String lfname = UIManager.getLookAndFeel().getName();
-            //String lfclassname = UIManager.getLookAndFeel().getClass().getName();
-            //System.out.println("L&F = " + lfname + " (" + lfclassname + ")");
-            //LookAndFeelInfo[] lfiList = UIManager.getInstalledLookAndFeels();
-            //for (LookAndFeelInfo lfi : lfiList)
-            //    System.out.println("  " + lfi.getName() + " (" + lfi.getClassName() + ")");
-
-            // Verfügbare Look & Feels
-            // - Kubuntu 14.04, Java 1.7
-            //   - Metal            (javax.swing.plaf.metal.MetalLookAndFeel)                   - default
-            //   - Nimbus           (javax.swing.plaf.nimbus.NimbusLookAndFeel)
-            //   - CDE/Motif        (com.sun.java.swing.plaf.motif.MotifLookAndFeel)
-            //   - GTK+             (com.sun.java.swing.plaf.gtk.GTKLookAndFeel)
-            // - Osx 10.10, Java 1.8
-            //   - Metal            (javax.swing.plaf.metal.MetalLookAndFeel)
-            //   - Nimbus           (javax.swing.plaf.nimbus.NimbusLookAndFeel)
-            //   - CDE/Motif        (com.sun.java.swing.plaf.motif.MotifLookAndFeel)
-            //   - Mac OS X         (com.apple.laf.AquaLookAndFeel)                             - default
-            // - Windows XP, Java 1.7
-            //   - Metal            (javax.swing.plaf.metal.MetalLookAndFeel)
-            //   - Nimbus           (javax.swing.plaf.nimbus.NimbusLookAndFeel)
-            //   - CDE/Motif        (com.sun.java.swing.plaf.motif.MotifLookAndFeel)
-            //   - Windows          (com.sun.java.swing.plaf.windows.WindowsLookAndFeel)        - default
-            //   - Windows Classic  (com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel)
-
-            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");       // -> damit funktionieren meine Listener im FilesystemPanel noch nicht richtig
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");           // -> damit funktionieren meine Listener im FilesystemPanel nicht
-            //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
-
-            // Themes des MetalLookAndFeel
-            //MetalLookAndFeel.setCurrentTheme(new OceanTheme());  // Dies ist der Default ab Java 1.5
-            //MetalLookAndFeel.setCurrentTheme(new DefaultMetalTheme()); // Der Name ist irreführend, das war der Default bis Java 1.4
-            //MetalLookAndFeel.setCurrentTheme(javax.swing.plaf.metal.MetalTheme)
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MpjLookAndFeel.initialize();
 
         frame = new JFrame();
         frame.setBounds(10, 10, 1260, 800);

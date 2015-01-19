@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
@@ -69,7 +70,7 @@ public class PlaylistPanel extends JPanel {
 
     public PlaylistPanel() {
         setLayout(new BorderLayout());
-        setBackground(Color.GREEN);
+        //setBackground(Color.GREEN);
         setPreferredSize(new Dimension(700, 400));
         setMinimumSize(new Dimension(0, 0));
 
@@ -449,16 +450,22 @@ public class PlaylistPanel extends JPanel {
             int rowIndex = table.convertRowIndexToModel(row);           // Notwendig, falls mit RowSorter umsortiert
             TableModel tm = (TableModel) table.getModel();
             MpjPlaylistEntry ple = tm.playlist.get(rowIndex);
-            MpjTrack track = ple.getTrack();
-            URI uri = track.getUri();
-            String scheme = uri.getScheme();
-            if (!isSelected) {
-                if (scheme.equals("http") || scheme.equals("https")) {
-                    setForeground(Color.BLUE); // Nur Spielerei
-                } else {
-                    setForeground(Color.BLACK);
-                }
-            }
+            //MpjTrack track = ple.getTrack();
+            //URI uri = track.getUri();
+            //String scheme = uri.getScheme();
+            // Farben aus dem Look & Feel für Tabellen siehe auch: http://stackoverflow.com/a/1276005/2880699
+            //if (!isSelected) {
+            //    if (scheme.equals("http") || scheme.equals("https")) {
+            //        // das harte Blau passt nicht unbedingt zu allen Farbschamata und eine brauchbare Methode zu Ermittlung der z.B. "Link Text Color" des verwendeten Farbschemas habe ich noch nicht gefunden
+            //        setForeground(Color.BLUE); // Nur Spielerei
+            //    } else {
+            //        //final Color tableForeground = UIManager.getDefaults().getColor("Table.foreground");
+            //        //final Color tableForeground = UIManager.getDefaults().getColor("text");
+            //        //setForeground(tableForeground);
+            //        setForeground(table.getForeground());
+            //        System.out.println("Tabellenfarbe = " + table.getForeground());
+            //    }
+            //}
             setHorizontalAlignment(columnSpecs[columnIndex].alignment);
             if (columnIndex == 0) {
                 if (ple.getState() == MpjPlaylistEntry.State.NONE) setText("");
