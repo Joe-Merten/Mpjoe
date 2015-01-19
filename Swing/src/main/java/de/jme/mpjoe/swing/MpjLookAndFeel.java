@@ -3,12 +3,13 @@ package de.jme.mpjoe.swing;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.plaf.ColorUIResource;
+
+import de.jme.toolbox.SystemInfo;
 
 // Siehe auch:
 // - http://docs.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
@@ -27,15 +28,16 @@ public class MpjLookAndFeel {
             //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
             //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");       // -> damit funktionieren meine Listener im FilesystemPanel noch nicht richtig
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");           // -> damit funktionieren meine Listener im FilesystemPanel nicht
-            //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+            if (!SystemInfo.isOsx()) {
+                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");       // -> damit funktionieren meine Listener im FilesystemPanel noch nicht richtig
+                //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");           // -> damit funktionieren meine Listener im FilesystemPanel nicht
+                //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+                //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 
-
-            setNimbusDarkTheme();
+                setNimbusDarkTheme();
+            }
 
             // printLookAndFeels();
             // printColors();
