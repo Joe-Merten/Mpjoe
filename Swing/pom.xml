@@ -177,7 +177,6 @@
         </plugins>
 
         <resources>
-            <!-- TODO: html und mp3plugin.jar auch nach src/main/resources schieben -->
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
