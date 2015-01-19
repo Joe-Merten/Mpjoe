@@ -70,7 +70,7 @@ public class PlaylistPanel extends JPanel {
     public PlaylistPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.GREEN);
-        setPreferredSize(new Dimension(800, 400));
+        setPreferredSize(new Dimension(700, 400));
         setMinimumSize(new Dimension(0, 0));
 
         JLabel lblHeading = new JLabel("Playlist");
