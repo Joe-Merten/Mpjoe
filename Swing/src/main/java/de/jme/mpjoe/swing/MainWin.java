@@ -2,16 +2,17 @@ package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -76,28 +77,31 @@ public class MainWin {
 
     private static CwdSaver cwd = new CwdSaver(new String[]{"/bbb-d/MP3/OGG-WMA-RM-Test/Testfiles/", "/D/MP3/", "D:/MP3/OGG-WMA-RM-Test/Testfiles/", "D:/MP3/"});  // TODO: Sinnvolle Defaultverzeichnisse
 
-    private class QuitAction extends AbstractAction {
-        private static final long serialVersionUID = 4852834538692097749L;
+    private class QuitAction extends MpjAction {
+        private static final long serialVersionUID = 1L;
         public QuitAction() {
-            super("Quit", null);
-            putValue(SHORT_DESCRIPTION, "Quit the application");
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
-            //toolTipText = "Quit the application"; // Warum ist das Interface so komisch; warum putValue() statt setAccelerator()?
-            //putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  // Todo: Was ist das und warum "new Integer?" Das Beispiel ist aus http://docs.oracle.com/javase/tutorial/uiswing/misc/action.html
+            super("Quit");
+            setIconFromResource("/de/jme/mpj/General/Quit1-16.png");
+            setShortDescription("Quit the application");
+            setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
         }
         public void actionPerformed(ActionEvent ae) {
             //System.out.println("QuitAction: " + ae.toString());
+            // TODO: Quit besser gestalten, auch sowas wie "Vorher Speichert?" etc. berücksichtigen
+            // siehe auch http://stackoverflow.com/questions/258099/how-to-close-a-java-swing-application-from-the-code
             frame.dispose();
+            System.exit(0);
         }
     }
     private QuitAction quitAction;
 
-    private class ChooseFileAndPlayAction extends AbstractAction {
-        private static final long serialVersionUID = 4852834538692097750L;
+    private class ChooseFileAndPlayAction extends MpjAction {
+        private static final long serialVersionUID = 1L;
         public ChooseFileAndPlayAction() {
-            super("Play...", null);
-            putValue(SHORT_DESCRIPTION, "Choose file and play");
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+            super("Play...");
+            setIconFromResource("/de/jme/mpj/Player/Play-16.png");
+            setShortDescription("Choose file and play");
+            setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
         }
         public void actionPerformed(ActionEvent ae) {
             try {
@@ -193,11 +197,56 @@ public class MainWin {
             // Significantly improves the look of the output in
             // terms of the file names returned by FileSystemView!
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch(Exception weTried) {}
+            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+
+            //String lfname = UIManager.getLookAndFeel().getName();
+            //String lfclassname = UIManager.getLookAndFeel().getClass().getName();
+            //System.out.println("L&F = " + lfname + " (" + lfclassname + ")");
+            //LookAndFeelInfo[] lfiList = UIManager.getInstalledLookAndFeels();
+            //for (LookAndFeelInfo lfi : lfiList)
+            //    System.out.println("  " + lfi.getName() + " (" + lfi.getClassName() + ")");
+
+            // Verfügbare Look & Feels
+            // - Kubuntu 14.04, Java 1.7
+            //   - Metal            (javax.swing.plaf.metal.MetalLookAndFeel)                   - default
+            //   - Nimbus           (javax.swing.plaf.nimbus.NimbusLookAndFeel)
+            //   - CDE/Motif        (com.sun.java.swing.plaf.motif.MotifLookAndFeel)
+            //   - GTK+             (com.sun.java.swing.plaf.gtk.GTKLookAndFeel)
+            // - Osx 10.10, Java 1.8
+            //   - Metal            (javax.swing.plaf.metal.MetalLookAndFeel)
+            //   - Nimbus           (javax.swing.plaf.nimbus.NimbusLookAndFeel)
+            //   - CDE/Motif        (com.sun.java.swing.plaf.motif.MotifLookAndFeel)
+            //   - Mac OS X         (com.apple.laf.AquaLookAndFeel)                             - default
+            // - Windows XP, Java 1.7
+            //   - Metal            (javax.swing.plaf.metal.MetalLookAndFeel)
+            //   - Nimbus           (javax.swing.plaf.nimbus.NimbusLookAndFeel)
+            //   - CDE/Motif        (com.sun.java.swing.plaf.motif.MotifLookAndFeel)
+            //   - Windows          (com.sun.java.swing.plaf.windows.WindowsLookAndFeel)        - default
+            //   - Windows Classic  (com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel)
+
+            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            //UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");       // -> damit funktionieren meine Listener im FilesystemPanel noch nicht richtig
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");           // -> damit funktionieren meine Listener im FilesystemPanel nicht
+            //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         frame = new JFrame();
         frame.setBounds(10, 10, 1260, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // TODO: Images mit 48x48 und 64x64 Pixel zufügen
+        ArrayList<Image> iconImages = new ArrayList<Image>(4);
+        iconImages.add(new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-16.png")).getImage());
+        iconImages.add(new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage());
+        frame.setIconImages(iconImages);
+        //Image image = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage();
+        //frame.setIconImage(image);
 
         String version = VersionInfo.getVersionInfo();
         version += " (" + SystemInfo.getUserName() + "@" + SystemInfo.getComputerName() + ")";
@@ -311,6 +360,7 @@ public class MainWin {
 
         version += " (" + playerType + ")"; // TODO, HACK: Playertyp mit im der Fenstertitel anzeigen
         frame.setTitle(version);
+        /*
         switch (playerType) {
             case SOUND: mpjPlayer = new MpjPlayerSound("Player"); break;
             case JMF:   mpjPlayer = new MpjPlayerJmf("Player");   break;
@@ -323,7 +373,12 @@ public class MainWin {
             playerPanel.setPreferredSize(new Dimension(200, 200));
             playerPanel.setMinimumSize(new Dimension(0, 0));
             leftPanel.add(playerPanel, BorderLayout.CENTER);
-        }
+        }*/
+        MpjPlayerSwing mpjPlayerSwing = new MpjPlayerSwing("Player");
+        leftPanel.add(mpjPlayerSwing, BorderLayout.CENTER);
+        mpjPlayer = mpjPlayerSwing.getCorePlayer();
+        mnFile.add(new JMenuItem(mpjPlayerSwing.getPauseAction()));
+        toolbar.add(mpjPlayerSwing.getPauseAction());
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
         mpjPlayer.addListener(new MpjPlayer.EventListner() {
