@@ -1,36 +1,35 @@
-// Achtung, ist nur eine ganz simple Testimplementation.
-// Nicht für Produktivcoode geeignet
-// - Kein Refresh zur Laufzeit
-// - Verzeichnis wird komplett (inkl. aller Unterverzeichnisse) eingelesen
-// - ...
-
 package de.jme.mpjoe.swing.fsysview;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.UIManager;
 
 public class FilesystemPanel extends JPanel {
     private static final long serialVersionUID = 1L;
+
+    JFileChooser  fileChooser;
+    MouseListener mouseListener;
+    KeyListener   keyListener;
 
     // Event bei Enter oder Doppelklick
     public interface AcceptEventListner {
@@ -38,12 +37,9 @@ public class FilesystemPanel extends JPanel {
     }
     private List<AcceptEventListner> listeners = new ArrayList<AcceptEventListner>();
 
-    JTree tree;
-    JScrollPane scrollpane;
-
     public FilesystemPanel() {
         setLayout(new BorderLayout());
-        setBackground(Color.GREEN);
+        //setBackground(Color.GREEN);
         setPreferredSize(new Dimension(220, 400));
         setMinimumSize(new Dimension(0, 0));
 
@@ -55,9 +51,173 @@ public class FilesystemPanel extends JPanel {
         lblHeading.setHorizontalAlignment(SwingConstants.CENTER);
         add(lblHeading, BorderLayout.NORTH);
 
-        // Lastly, put the JTree into a JScrollPane.
-        scrollpane = new JScrollPane();
-        add(BorderLayout.CENTER, scrollpane);
+        // Filechooser soll kein Umbenennen von Dateien zulassen.
+        // -> http://stackoverflow.com/a/8188635/2880699
+        // -> https://community.oracle.com/message/9935325?#9933325
+        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+
+        fileChooser = new JFileChooser();
+        add(BorderLayout.CENTER, fileChooser);
+
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        //fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setApproveButtonText("Add");
+        fileChooser.setControlButtonsAreShown(false); // ausblenden der Buttons "Öffnen" / "Abbruch", sofern Look & Feel das gestattet
+        fileChooser.setDragEnabled(true);
+        fileChooser.setMultiSelectionEnabled(true);
+        //fileChooser.setSelectedFiles(selectedFiles);
+
+        addListeners();
+    }
+
+
+    // Abfangen von Enter und Doppelklick ist beim FileChooser etwas tricky
+    // Hier evtl. eine Alternative Lösung:
+    //   http://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+    private void addListeners() {
+        // addActionListener ruft mich leider nicht bei Enter-Key
+        // fileChooser.addActionListener(new ActionListener() {
+        //     @Override public void actionPerformed(ActionEvent e) {
+        //         System.out.println("Action = " + e.getActionCommand());
+        //         if (e.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)) {
+        //             System.out.println("File selected: " + fileChooser.getSelectedFile());
+        //         }
+        //     }
+        // });
+
+        if (mouseListener == null) {
+            // fileChooser.addAncestorListener(new AncestorListener() {
+            //     @Override public void ancestorRemoved(AncestorEvent evt) { System.out.println("ancestorRemoved" ); }
+            //     @Override public void ancestorMoved  (AncestorEvent evt) { System.out.println("ancestorMoved"  ); }
+            //     @Override public void ancestorAdded  (AncestorEvent evt) { System.out.println("ancestorAdded"  ); }
+            // });
+            //
+            // fileChooser.addComponentListener(new ComponentListener() {
+            //     @Override public void componentHidden (ComponentEvent evt) { System.out.println("componentHidde"  ); }
+            //     @Override public void componentMoved  (ComponentEvent evt) { System.out.println("componentMoved"  ); }
+            //     @Override public void componentResized(ComponentEvent evt) { System.out.println("componentResized"); }
+            //     @Override public void componentShown  (ComponentEvent evt) { System.out.println("componentShown"  ); }
+            // });
+            //
+            // fileChooser.addContainerListener(new ContainerListener() {
+            //     @Override public void componentAdded  (ContainerEvent evt) { System.out.println("componentAdded"  ); }
+            //     @Override public void componentRemoved(ContainerEvent evt) { System.out.println("componentRemoved"); }
+            // });
+            //
+            // fileChooser.addPropertyChangeListener(new PropertyChangeListener() {
+            //     @Override public void propertyChange(PropertyChangeEvent evt) {
+            //         System.out.println("propertyChange " + evt.getPropertyName());
+            //         if (evt.getPropertyName().equals("SelectedFilesChangedProperty")) {
+            //             addListeners();
+            //         }
+            // }});
+
+            // Wenn ich im FileChooser zwischen den Ansichten wechsle, dann gehen offenbar meine registierten Maus- und KeyListener verloren
+            // deshalb muss ich sie zuweilen neu registrieren. Dies tue ich bei jeder Änderung der "SelectedFiles".
+            fileChooser.addPropertyChangeListener("SelectedFilesChangedProperty", new PropertyChangeListener() {
+                @Override public void propertyChange(PropertyChangeEvent evt) {
+                    addListeners();
+            }});
+        }
+
+        if (mouseListener == null) {
+            mouseListener = new MouseListener() {
+                @Override public void mouseReleased(MouseEvent evt) {}
+                @Override public void mousePressed(MouseEvent evt) {}
+                @Override public void mouseExited(MouseEvent evt) {}
+                @Override public void mouseEntered(MouseEvent evt) {}
+                @Override public void mouseClicked(MouseEvent evt) {
+                    //System.out.println("Mouse Event " + evt + " consumed=" + evt.isConsumed());
+                    if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2)
+                        if (sendAcceptEvent())
+                            evt.consume();
+                }
+            };
+        }
+
+        if (keyListener == null) {
+            keyListener = new KeyListener() {
+                @Override public void keyTyped(KeyEvent evt) {}
+                @Override public void keyReleased(KeyEvent evt) {}
+                @Override public void keyPressed(KeyEvent evt) {
+                    // keyTyped geht nicht für VK_ENTER, deshalb keyPressed
+                    //System.out.println("KeyPressed " + evt);
+                    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                        final File[] files = fileChooser.getSelectedFiles();
+                        if (files.length == 1 && files[0].isDirectory()) {
+                            // Verzeichniswechsel via Enter ermöglichen
+                            // geht aber nur, wenn JFileChooser.FILES_AND_DIRECTORIES gesetzt ist
+                            fileChooser.setCurrentDirectory(files[0]);
+                        } else {
+                            if (sendAcceptEvent())
+                                evt.consume();
+                        }
+                    }
+                }
+            };
+        }
+
+        // Unter Ubuntu und Windows finde ich ein sun.swing.FilePane
+        JList<?> fileList = findFileList(fileChooser, "");
+        if (fileList != null) {
+            if (!hasMouseListener(fileList, mouseListener)) fileList.addMouseListener(mouseListener);
+            if (!hasKeyListener(fileList, keyListener)) fileList.addKeyListener(keyListener);
+        }
+
+        // Unter Osx finde ich ein JTableExtension / com.apple.laf.AquaFileChooserUI$TableExtension
+        JTable fileTable = findFileTable(fileChooser, "");
+        if (fileTable != null) {
+            if (!hasMouseListener(fileTable, mouseListener)) fileTable.addMouseListener(mouseListener);
+            if (!hasKeyListener(fileTable, keyListener)) fileTable.addKeyListener(keyListener);
+        }
+    }
+
+    private boolean hasMouseListener(Component comp, MouseListener listener) {
+        final MouseListener[] listeners = comp.getMouseListeners();
+        for (MouseListener l : listeners)
+            if (l == listener)
+                return true;
+        return false;
+    }
+
+    private boolean hasKeyListener(Component comp, KeyListener listener) {
+        final KeyListener[] listeners = comp.getKeyListeners();
+        for (KeyListener l : listeners)
+            if (l == listener)
+                return true;
+        return false;
+    }
+
+    private JList<?> findFileList(Component comp, String indent) {
+        //System.out.println("Checking   " + indent + comp.getClass().getSimpleName() + "  (" + comp.getClass().getName() + ")" + "  (" + comp.getClass().getCanonicalName() + ")");
+        if (comp instanceof JList) {
+            //System.out.println("Gotcha!");
+            return (JList<?>)comp;
+        }
+        if (comp instanceof Container) {
+            for (Component child : ((Container) comp).getComponents()) {
+                JList<?> ret = findFileList(child, indent + "  ");
+                if (ret != null)
+                    return ret;
+            }
+        }
+        return null;
+    }
+
+    private JTable findFileTable(Component comp, String indent) {
+        //System.out.println("Checking   " + indent + comp.getClass().getSimpleName() + "  (" + comp.getClass().getName() + ")" + "  (x=" + comp.getX() + " y=" + comp.getX()+ " size=" + comp.getSize() + ")");
+        if (comp instanceof JTable) {
+            //System.out.println("Gotcha!");
+            return (JTable)comp;
+        }
+        if (comp instanceof Container) {
+            for (Component child : ((Container) comp).getComponents()) {
+                JTable ret = findFileTable(child, indent + "  ");
+                if (ret != null)
+                    return ret;
+            }
+        }
+        return null;
     }
 
     public void addAcceptEventListner(AcceptEventListner listener) {
@@ -68,9 +228,9 @@ public class FilesystemPanel extends JPanel {
         listeners.remove(listener);
     }
 
-    private void sendAcceptEvent() {
-        if (tree.getSelectionCount() < 0) return;
+    private boolean sendAcceptEvent() {
         final File[] files = getSelectedFiles();
+        if (files.length <= 0) return false;
         // Wenn nur Verzeichnisse selektiert sind, dann erst mal kein Event
         // Das ist nämlich genau der Fall, wenn z.B. per Doppelklick ein Node Expanded oder Collapsed wird
         boolean regularFileFound = false;
@@ -80,7 +240,7 @@ public class FilesystemPanel extends JPanel {
                 break;
             }
         }
-        if (!regularFileFound) return;
+        if (!regularFileFound) return false;
 
         for (AcceptEventListner l : listeners) {
             try {
@@ -89,120 +249,15 @@ public class FilesystemPanel extends JPanel {
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
     public void setRootDirectory(String dir) {
-        JTree oldTree = tree;
-        JTree newTree = null;
-        if (dir != null && !dir.isEmpty()) newTree = new JTree(addNodes(null, new File(dir), dir, 200));
-        if (oldTree != null) scrollpane.getViewport().remove(oldTree);
-        tree = newTree;
-        if (tree != null) {
-            scrollpane.getViewport().add(tree);
-            // Add a listener
-            /*tree.addTreeSelectionListener(new TreeSelectionListener() {
-                public void valueChanged(TreeSelectionEvent e) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-                    System.out.println("You selected " + node + " (" + e.toString() + ")");
-                }
-            });*/
-            tree.addMouseListener(new MouseListener() {
-                @Override public void mouseReleased(MouseEvent evt) {}
-                @Override public void mousePressed(MouseEvent evt) {}
-                @Override public void mouseExited(MouseEvent evt) {}
-                @Override public void mouseEntered(MouseEvent evt) {}
-                @Override public void mouseClicked(MouseEvent evt) {
-                    //System.out.println("Mouse Event " + evt + " consumed=" + evt.isConsumed());
-                    if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
-                        sendAcceptEvent();
-                        evt.consume();
-                    }
-                }
-            });
-            tree.addKeyListener(new KeyListener() {
-                @Override public void keyTyped(KeyEvent evt) {}
-                @Override public void keyReleased(KeyEvent evt) {}
-                @Override public void keyPressed(KeyEvent evt) {
-                    // keyTyped geht nicht für VK_ENTER, deshalb keyPressed
-                    //System.out.println("KeyPressed " + evt);
-                    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-                        sendAcceptEvent();
-                        evt.consume();
-                    }
-                }
-            });
-        }
-    }
-
-    // Rekursives Füllen des Verzeichnisbaums
-    // Achtung, hier wird das gesamte Verzeichnis rekursiv eingelesen, bei "/" kann das also sehr lange dauern!
-    // TODO: Files.newDirectoryStream verwenden anstelle von dir.list und Unterverzeichnisse erst beim Aufklappen lesen
-    //
-    /**
-     * Rekursives Füllen des Verzeichnisbaums
-     *
-     * TODO: Files.newDirectoryStream verwenden anstelle von dir.list?
-     *       Und Unterverzeichnisse erst bei Bedarf einlesen
-     *
-     * @param curTop     Für Rekursion, wird
-     * @param dir        Rootverzeichnis für die Anzeige, z.B. "/home/joe/Music"
-     * @param nodeName   Anzeigetext für das Rootverzeichnis
-     * @param depth      Zur Begrenzung der Rekursionstiefe
-     * @return
-     */
-    TreeNode addNodes(DefaultMutableTreeNode curTop, File dir, String nodeName, int depth) {
-        String curPath = dir.getPath();
-        DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(nodeName);
-        if (curTop != null) // ist null bei unserem Root, also erster Call vor Rekursion
-            curTop.add(curDir);
-
-        if (depth <= 1) {
-            curDir.add(new DefaultMutableTreeNode("…"));
-            return curDir;
-        }
-
-        Vector<String> ol = new Vector<String>();
-        final String[] tmp = dir.list();  // hier wird das Verzeichnis eingelesen
-        for (String element : tmp)
-            ol.addElement(element);
-        Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
-        Vector<String> files = new Vector<String>();
-
-        // Verzeichnisse zufügen
-        for (String element : ol) {
-            String newPath;
-            if (curPath.equals(".")) newPath = element;
-            else newPath = curPath + File.separator + element;
-            File f = new File(newPath);
-            if (f.isDirectory())
-                // Nur beim Wurzelknoten volle Pfadangabe. Alle Unververzeichnisse nur mit ihrem eigenen Namen eintragen
-                addNodes(curDir, f, element, depth -1);
-            else
-                files.addElement(element);
-        }
-
-        // Und jetzt die Dateien
-        for (String fnam : files)
-            curDir.add(new DefaultMutableTreeNode(fnam));
-        return curDir;
+        fileChooser.setCurrentDirectory(new File(dir));
     }
 
     public File[] getSelectedFiles() {
-        //int count = tree.getSelectionCount();
-        final TreePath[] treePaths = tree.getSelectionPaths();
-        int count = treePaths.length;
-        File[] files = new File[count];
-        int num = 0;
-        for (TreePath tp : treePaths) {
-            //System.out.println(": " + tp);
-            int n = tp.getPathCount();
-            String fnam = "";
-            for (int i = 0; i < n; i++)
-                fnam = fnam + File.separator + tp.getPathComponent(i);
-            files[num] = new File(fnam);
-            num++;
-        }
-        return files;
+        return fileChooser.getSelectedFiles();
     }
 
 }
