@@ -38,7 +38,7 @@ public class MpjLookAndFeel {
             setNimbusDarkTheme();
 
             // printLookAndFeels();
-            printColors();
+            // printColors();
 
         } catch (Exception e) {
             e.printStackTrace();
