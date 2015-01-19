@@ -1,9 +1,13 @@
 package de.jme.mpjoe.swing;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -184,7 +188,50 @@ public class MainWin {
      * @throws IOException
      */
     private void initialize(String uriString) throws IOException {
+        // Für's Osx Menü
+        // - Der Tip von http://stackoverflow.com/questions/2553941/programatically-setting-the-dockname-java-mac-os-x-jvm-property
+        //   mittels System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tralala");
+        //   functioniert wohl nicht mehr
+        // - wohin gegen das java -Xdock:name="Tralala" -jar myapp.jar
+        //   noch funktioniert
+        //
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Hello World!");
+        System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Trullala");
         MpjLookAndFeel.initialize();
+
+        // Kleiner Test mit dem SystemTray
+        if (SystemTray.isSupported()) {
+            SystemTray tray = SystemTray.getSystemTray();
+            Dimension size = tray.getTrayIconSize();
+            System.out.println("*** Yep, SystemTray found, trayIconSize = " + tray.getTrayIconSize());
+            // TrayIconSize
+            // - Kubuntu      24 x 24  - diese Angabe ich nicht korrekt, es sind 48 x 48!
+            //                           ein zu kleines Icon wird nicht skaliert, sondern links oben in die Ecke geklatscht
+            // - Osx          20 x 20  - mein 16er Icon sient etwas mikrig aus, das 32er wird vermutlich etwas geschrumpft
+            // - Windows XP   16 x 16  - das 16er sieht ok aus, von dem 32er ist aber nur 1/4 zu sehen
+            int iconSize = 16;
+            int sz = Math.min((int)size.getWidth(), (int)size.getHeight());
+            if (sz >= 32) iconSize = 32;
+            if (SystemInfo.isLinux() && sz >= 24)
+                // Hack, weil bei meinem Kubuntu 14.04 eine zu kleine TrayIconSize geliefert wird
+                iconSize = 32;
+
+            Image trayIconImage;
+            if (iconSize < 32)
+                trayIconImage = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-16.png")).getImage();
+            else
+                trayIconImage = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage();
+            TrayIcon trayIcon = new TrayIcon(trayIconImage);
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("*** Sorry, no SystemTray");
+        }
 
         frame = new JFrame();
         frame.setBounds(10, 10, 1260, 800);
