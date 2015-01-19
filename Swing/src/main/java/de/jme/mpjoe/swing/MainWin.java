@@ -196,6 +196,9 @@ public class MainWin {
         try {
             // Significantly improves the look of the output in
             // terms of the file names returned by FileSystemView!
+            // Look & Feel kann man auch von Kommandozeile mitgeben:
+            //   java -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel MyApp"
+            //   siehe auch http://docs.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
@@ -225,12 +228,17 @@ public class MainWin {
             //   - Windows Classic  (com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel)
 
             //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-            //UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");       // -> damit funktionieren meine Listener im FilesystemPanel noch nicht richtig
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");           // -> damit funktionieren meine Listener im FilesystemPanel nicht
             //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+
+            // Themes des MetalLookAndFeel
+            //MetalLookAndFeel.setCurrentTheme(new OceanTheme());  // Dies ist der Default ab Java 1.5
+            //MetalLookAndFeel.setCurrentTheme(new DefaultMetalTheme()); // Der Name ist irreführend, das war der Default bis Java 1.4
+            //MetalLookAndFeel.setCurrentTheme(javax.swing.plaf.metal.MetalTheme)
 
         } catch (Exception e) {
             e.printStackTrace();

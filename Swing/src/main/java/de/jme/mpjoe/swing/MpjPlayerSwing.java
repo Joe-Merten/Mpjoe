@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import de.jme.mpj.MpjPlayer;
 
+// Evtl. interessant: http://www.jug-muenster.de/steelseries-java-swing-component-library-715/
 public class MpjPlayerSwing extends JPanel {
     private static final long serialVersionUID = 1L;
 
