@@ -21,14 +21,21 @@ public class MpjLookAndFeel {
 
     public static void initialize() {
         try {
+            // erforderlich für Osx
+            if (SystemInfo.isOsx())
+                System.setProperty("apple.laf.useScreenMenuBar", "true");
+
             // Look & Feel kann man auch von Kommandozeile mitgeben:
             //   java -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel MyApp"
             //   siehe auch http://docs.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
-            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            // Bei Osx lassen wir das Loog & Feel auf nativ wg. dem Menü an der Bildschirmkante
+            // -> System.setProperty("apple.laf.useScreenMenuBar", "true");  funktioniert leider nicht mit Nimbus
+            // Für die anderen (Linux und Windows) setzen wir "Nimbus Dark"
             if (!SystemInfo.isOsx()) {
+                //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
                 UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
                 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");       // -> damit funktionieren meine Listener im FilesystemPanel noch nicht richtig
                 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");           // -> damit funktionieren meine Listener im FilesystemPanel nicht
@@ -38,9 +45,11 @@ public class MpjLookAndFeel {
 
                 setNimbusDarkTheme();
             }
+            // Apple
+
 
             // printLookAndFeels();
-            // printColors();
+            //printColors();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +77,8 @@ public class MpjLookAndFeel {
       //UIManager.put("control"                  , new Color(128, 128, 128));
         UIManager.put("control"                  , new Color( 64,  64,  64));  // Unbenutzte Bereiche von Panels etc.
         UIManager.put("info"                     , new Color(128, 128, 128));
-        UIManager.put("nimbusBase"               , new Color( 18,  30,  49));  // Menüzeile, Scrollbars, Splitter
+      //UIManager.put("nimbusBase"               , new Color( 18,  30,  49));  // u.a. für Menüzeile, Scrollbars, Splitter, wird aber aufgehellt
+        UIManager.put("nimbusBase"               , new Color( 16,  16,  32));  // u.a. für Menüzeile, Scrollbars, Splitter, wird aber aufgehellt (16,32,32 wird z.B. beim Splitter zu 115,115,115)
         UIManager.put("nimbusAlertYellow"        , new Color(248, 187,   0));
         UIManager.put("nimbusDisabledText"       , new Color(128, 128, 128));
         UIManager.put("nimbusFocus"              , new Color(115, 164, 209));
@@ -82,6 +92,10 @@ public class MpjLookAndFeel {
         UIManager.put("nimbusSelectionBackground", new Color(104,  93, 156));
         UIManager.put("text"                     , new Color(230, 230, 230));
     }
+
+    // UI Defaults für Osx Aqua
+    // - http://www.duncanjauncey.com/java/ui/uimanager/UIDefaults_Java1.6.0_17_Mac_OS_X_10.6.2_Mac_OS_X.html
+    // - http://cr.openjdk.java.net/~dcherepanov/7154516/webrev.0/src/macosx/classes/com/apple/laf/AquaLookAndFeel.java-.html
 
     // Debugausgabe: Alle Color Keys auflisten
     public static void printColors() {

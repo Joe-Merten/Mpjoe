@@ -9,6 +9,10 @@ import javax.swing.KeyStroke;
 // - ich möchte setSelected() / isSelected() statt put/getValue(SELECTED_KEY, ...));
 // - ich möchte an der Action auch das selectedIcon sowie disabledIcon verankern
 // - für Mpjoe brauche ich z.B. bei der kombinierten Play/Pause Action einen zusätzlichen Zustand
+
+// TODO:
+// - Bzgl. der Accelerator Keys schreibt Apple, man solle "java.awt.Tookit.getMenuShortcutKeyMask()" verwenden
+//   siehe https://developer.apple.com/library/mac/documentation/Java/Conceptual/Java14Development/07-NativePlatformIntegration/NativePlatformIntegration.html
 public abstract class MpjAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;

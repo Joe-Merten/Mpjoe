@@ -188,17 +188,6 @@ public class MainWin {
      * @throws IOException
      */
     private void initialize(String uriString) throws IOException {
-        // Für's Osx Menü
-        // - Der Tip von http://stackoverflow.com/questions/2553941/programatically-setting-the-dockname-java-mac-os-x-jvm-property
-        //   mittels System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tralala");
-        //   functioniert wohl nicht mehr
-        // - wohin gegen das java -Xdock:name="Tralala" -jar myapp.jar
-        //   noch funktioniert
-        //
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Hello World!");
-        System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Trullala");
         MpjLookAndFeel.initialize();
 
         // Kleiner Test mit dem SystemTray
