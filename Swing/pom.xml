@@ -3,6 +3,7 @@
     <groupId>de.jme</groupId>
     <artifactId>Mpjoe-Swing</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <!-- <name>Mpjoe</name> hmm, tut das irgendwas? -->
     <dependencies>
       <dependency>
           <groupId>org.apache.logging.log4j</groupId>
@@ -189,18 +190,8 @@
                 <targetPath>de/jme/mpj</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
             <resource>
-                <directory>src/main/java/de/jme/mpjoe/swing/help</directory> <!-- Html-Hilfe soll in's Jar -->
-                <includes>
-                    <include>*.html</include>
-                </includes>
-                <targetPath>de/jme/mpjoe/swing/help</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
-            </resource>
-            <resource>
-                <directory>src/main/java/de/jme/mpjoe/swing</directory> <!-- mp3plugin.jar soll in's Jar -->
-                <includes>
-                    <include>mp3plugin.jar</include>
-                </includes>
-                <targetPath>de/jme/mpjoe/swing</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+                <directory>src/main/resources/de/jme/mpjoe</directory> <!-- Hilfe etc. soll in's Jar -->
+                <targetPath>de/jme/mpjoe</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
         </resources>
     </build>
