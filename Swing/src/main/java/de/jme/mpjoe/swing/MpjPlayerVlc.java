@@ -5,12 +5,23 @@ package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.IOException;
 
 import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
+import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.direct.BufferFormat;
+import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
+import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
+import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
+import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
@@ -75,10 +86,22 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     Delegate            delegate;
     MyThread            thread;
     JPanel              panel;
-    Canvas              canvas;
     MediaPlayerFactory  mediaPlayerFactory;
-    EmbeddedMediaPlayer mediaPlayer;
+    MediaPlayer         mediaPlayer;
+    boolean             directPlayer = true;
+
+    // für EmbeddedMediaPlayer
+    Canvas              canvas;
+    EmbeddedMediaPlayer embeddedMediaPlayer;
     CanvasVideoSurface  videoSurface;
+
+    // für DirectMediaPlayer
+    private final int   maxWidth  = 720;
+    private final int   maxHeight = 480;
+    DirectMediaPlayer   directMediaPlayer;
+    BufferedImage       image;
+    ImagePane           imagePane;
+
 
     public MpjPlayerVlc(String name) throws IOException {
         delegate = new MpjPlayer.Delegate(this, name);
@@ -91,19 +114,40 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             }
         }
 
+        if (directPlayer) {
+            // Vlcj funktioniert auf Mac nicht ohne weiteres, da wird DirectMediaPlayer benötigt; siehe auch:
+            // - http://stackoverflow.com/a/25651219/2880699
+            // - https://github.com/caprica/vlcj/blob/vlcj-3.0.1/src/test/java/uk/co/caprica/vlcj/test/direct/DirectTestPlayer.java
+            image = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(maxWidth, maxHeight);
+            image.setAccelerationPriority(1.0f); // 1.0 = Top Priority
+        }
+
         panel = new JPanel();
-        canvas = new Canvas();
-        //canvas.setBackground(Color.BLUE);
-        canvas.setVisible(true);
         panel.setLayout(new BorderLayout());
-        panel.add(canvas, BorderLayout.CENTER);
         panel.setVisible(true);
         delegate.setGuiComponent(panel);
 
         mediaPlayerFactory = new MediaPlayerFactory();
-        mediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
-        videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-        mediaPlayer.setVideoSurface(videoSurface);
+
+        if (directPlayer) {
+            imagePane = new ImagePane(image);
+            imagePane.setSize(maxWidth, maxHeight);
+            //imagePane.setMinimumSize(new Dimension(width, height));
+            //imagePane.setPreferredSize(new Dimension(width, height));
+            panel.add(imagePane, BorderLayout.CENTER);
+
+            directMediaPlayer = mediaPlayerFactory.newDirectMediaPlayer(new DirectBufferFormatCallback(), new DirectRenderCallback());
+            mediaPlayer = directMediaPlayer;
+        } else {
+            canvas = new Canvas();
+            canvas.setVisible(true);
+            panel.add(canvas, BorderLayout.CENTER);
+
+            embeddedMediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
+            mediaPlayer = embeddedMediaPlayer;
+            videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+            embeddedMediaPlayer.setVideoSurface(videoSurface);
+        }
 
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
         mediaPlayer.setPlaySubItems(true);
@@ -141,6 +185,62 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     @Override public void close() throws IOException {
         // TODO ...
     }
+
+    // Hier 3 Klassen für den DirectMediaPlayer
+    @SuppressWarnings("serial")
+    private final class ImagePane extends JPanel {
+        private final BufferedImage image;
+        //private final Font font = new Font("Sansserif", Font.BOLD, 36);
+
+        public ImagePane(BufferedImage image) {
+            this.image = image;
+        }
+
+        @Override public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.drawImage(image, null, 0, 0);
+            // You could draw on top of the image here...
+            //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+            //g2.setColor(Color.red);
+            //g2.setComposite(AlphaComposite.SrcOver.derive(0.3f));
+            //g2.fillRoundRect(100, 100, 100, 80, 32, 32);
+            //g2.setComposite(AlphaComposite.SrcOver);
+            //g2.setColor(Color.white);
+            //g2.setFont(font);
+            //g2.drawString("vlcj direct media player", 130, 150);
+        }
+    }
+
+    private final class DirectRenderCallback extends RenderCallbackAdapter {
+        public DirectRenderCallback() {
+            super(((DataBufferInt) image.getRaster().getDataBuffer()).getData());
+        }
+
+        @Override public void onDisplay(DirectMediaPlayer mediaPlayer, int[] data) {
+            // The image data could be manipulated here...
+            /* RGB to GRAYScale conversion example */
+            // for(int i=0; i < data.length; i++){
+            // int argb = data[i];
+            // int b = (argb & 0xFF);
+            // int g = ((argb >> 8 ) & 0xFF);
+            // int r = ((argb >> 16 ) & 0xFF);
+            // int grey = (r + g + b + g) >> 2 ; //performance optimized - not real grey!
+            // data[i] = (grey << 16) + (grey << 8) + grey;
+            // }
+            imagePane.repaint();
+        }
+    }
+
+    // Offenbar 1 Callback je Videofile
+    private final class DirectBufferFormatCallback implements BufferFormatCallback {
+        @Override public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
+            //return new RV32BufferFormat(sourceWidth, sourceHeight);
+            System.out.println("sourceWidth=" + sourceWidth + ", sourceHeight=" + sourceHeight);
+            return new RV32BufferFormat(maxWidth, maxHeight);
+        }
+    }
+
 
     private void init() {
         // Siehe auch http://www.capricasoftware.co.uk/legacy/projects/vlcj/tutorial1.html
