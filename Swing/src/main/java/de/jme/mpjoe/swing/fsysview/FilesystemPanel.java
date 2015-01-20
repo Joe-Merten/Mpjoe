@@ -45,7 +45,7 @@ public class FilesystemPanel extends JPanel {
 
         JLabel lblHeading = new JLabel("Filesystem");
         lblHeading.setForeground(Color.DARK_GRAY);
-        lblHeading.setBackground(Color.CYAN);
+        lblHeading.setBackground(new Color(0,128,128));
         lblHeading.setOpaque(true);
         lblHeading.setFont(new Font("Dialog", Font.BOLD, 24));
         lblHeading.setHorizontalAlignment(SwingConstants.CENTER);

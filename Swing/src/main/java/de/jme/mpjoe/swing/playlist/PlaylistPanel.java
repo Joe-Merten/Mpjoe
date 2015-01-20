@@ -75,8 +75,8 @@ public class PlaylistPanel extends JPanel {
         setMinimumSize(new Dimension(0, 0));
 
         JLabel lblHeading = new JLabel("Playlist");
-        lblHeading.setForeground(Color.BLACK);
-        lblHeading.setBackground(Color.CYAN);
+        lblHeading.setForeground(Color.DARK_GRAY);
+        lblHeading.setBackground(new Color(0,128,128));
         lblHeading.setOpaque(true);
         lblHeading.setFont(new Font("Dialog", Font.BOLD, 24));
         lblHeading.setHorizontalAlignment(SwingConstants.CENTER);

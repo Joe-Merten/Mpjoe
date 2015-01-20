@@ -2,7 +2,6 @@ package de.jme.mpjoe.swing;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
@@ -74,7 +73,6 @@ public class MainWin {
     private JPanel      middlePanel;
     private JPanel      rightPanel;
     private MpjPlayer   mpjPlayer;
-    private Component   playerPanel;
     PlaylistPanel       playlistPanel;
     FilesystemPanel     filesystemPanel;
 
@@ -269,7 +267,9 @@ public class MainWin {
         Toolbar toolbar = new Toolbar();
         frame.getContentPane().add(toolbar, BorderLayout.NORTH);
         toolbar.add(quitAction);
+        toolbar.addSeparator();
         toolbar.add(chooseFileAndPlayAction);
+        toolbar.addSeparator();
 
         //--------------------
         // Statusbar
@@ -435,6 +435,60 @@ public class MainWin {
                 mediaPlayerComponent.getMediaPlayer().playMedia(nam);
             }
         }
+
+
+        // Farbwerte von Bildschirmpunkten anzeigen
+        // Thread colorSpyThread = new Thread("ColorSpy") {
+        //     @Override public void run() {
+        //         for (;;) {
+        //             try {
+        //                 EventQueue.invokeLater(new Runnable() { public void run() {
+        //                     try {
+        //                         //PointerInfo pointer;
+        //                         //pointer = MouseInfo.getPointerInfo();
+        //                         //Point coord = pointer.getLocation();
+        //                         Robot robot = new Robot();
+        //                         Point coord = MouseInfo.getPointerInfo().getLocation();
+        //                         int x = (int)coord.getX();
+        //                         int y = (int)coord.getY();
+        //                         Color color = robot.getPixelColor(x, y);
+        //
+        //                         String msg = "";
+        //                         msg += "x=" + x + " y=" + y;
+        //                         msg += " r=" + color.getRed() + " g=" + color.getGreen() + " b=" + color.getBlue();
+        //
+        //                         // Jetzt noch versuchen, die Farbe im Look & Feel zu finden
+        //                         final ThemeColor[] themeMatches = MpjLookAndFeel.getMatchingThemeColors(color);
+        //                         if (themeMatches.length == 1) {
+        //                             msg += " name=\"" + themeMatches[0].name + "\"";
+        //                         } else if (themeMatches.length > 0) {
+        //                             msg += " " + themeMatches.length + " names: ";
+        //                             int i = 0;
+        //                             for (ThemeColor tm : themeMatches) {
+        //                                 if (i > 0) msg += ",";
+        //                                 i++;
+        //                                 if (i >= 3) {
+        //                                     msg += "…";
+        //                                     break;
+        //                                 }
+        //                                 msg += " \"" + themeMatches[0].name + "\"";
+        //                             }
+        //                         }
+        //
+        //                         statusbar.setStatusTextC(msg);
+        //                     } catch (AWTException e) {
+        //                         e.printStackTrace();
+        //                     }
+        //                 }});
+        //
+        //                 sleep(500);
+        //             } catch (InterruptedException e) { }
+        //         }
+        //     }
+        // };
+        // colorSpyThread.setDaemon(true);
+        // colorSpyThread.start();
+
 
         // TODO: moniThread woanders einbauen?
         Jsi jsi = Jsi.instance;
