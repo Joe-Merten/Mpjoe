@@ -61,7 +61,7 @@ public class MpjLookAndFeel {
                 setNimbusDarkTheme();
             } else {
                 // Apple
-                setAquaDarkTheme();
+                //setAquaDarkTheme();
             }
 
             // printLookAndFeels();
