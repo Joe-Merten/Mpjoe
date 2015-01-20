@@ -45,8 +45,10 @@ public class MpjLookAndFeel {
 
             // Bei Osx lassen wir das Loog & Feel auf nativ wg. dem Menü an der Bildschirmkante
             // -> System.setProperty("apple.laf.useScreenMenuBar", "true");  funktioniert leider nicht mit Nimbus
-            //
             // Für die anderen (Linux und Windows) setzen wir "Nimbus Dark"
+            // - Unter Windows XP habe ich bei Nimbus kein Antialiasing, hat aber der Windows Explorer und Mpjoe1 auch nicht - allerdings fällt das bei denen nicht so auf.
+            //   - Windows Explorer macht schwarz auf weiss und Mpjoe1 hat Font Strichstärke 2 Pixel
+            //   - Metal hätte zumindest im FileChooser Antialiasing, evtl. weil dort ein etwas größerer / fetterer Font verwendet wird
             if (!SystemInfo.isOsx()) {
                 //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
                 UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -62,9 +64,8 @@ public class MpjLookAndFeel {
                 setAquaDarkTheme();
             }
 
-
             // printLookAndFeels();
-            printColors();
+            //printColors();
 
             // Splitpanes bitte ohne Rand -> http://stackoverflow.com/a/12800669/2880699
             UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
