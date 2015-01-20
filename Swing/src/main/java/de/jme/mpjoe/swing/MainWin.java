@@ -29,6 +29,7 @@ import de.jme.jsi.Jsi;
 import de.jme.jsi.MoniStd;
 import de.jme.jsi.Monitor;
 import de.jme.mpj.MpjPlayer;
+import de.jme.mpj.MpjPlayer.MpjPlayerException;
 import de.jme.mpj.MpjPlayer.PlayerEvent;
 import de.jme.mpj.MpjPlayer.PlayerState;
 import de.jme.mpj.MpjTrack;
@@ -107,7 +108,7 @@ public class MainWin {
         public void actionPerformed(ActionEvent ae) {
             try {
                 chooseFileAndPlay();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
         }
@@ -306,7 +307,7 @@ public class MainWin {
                 try {
                     mpjPlayer.setTrack(playlistPanel.getSelectedEntries()[0]);
                     mpjPlayer.playTrack();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | MpjPlayerException e) {
                     // TODO: Hmm, ist das so gut hier?
                     e.printStackTrace();
                 }
@@ -369,9 +370,11 @@ public class MainWin {
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
         mpjPlayer.addListener(new MpjPlayer.EventListner() {
             @Override public void playerEvent(final MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
-                System.out.println(player.getPlayerStateString());
+                //final String msg = evt.toString() + " / " + player.getPlayerStateString();
+                final String msg = player.getPlayerStateString();
+                System.out.println(msg);
                 EventQueue.invokeLater(new Runnable() { public void run() {
-                    statusbar.setStatusTextC(player.getPlayerStateString());
+                    statusbar.setStatusTextC(msg);
                 }});
             }
         });
@@ -424,7 +427,7 @@ public class MainWin {
             if (true) {
                 try {
                     mpjPlayer.setTrack(new MpjTrack(uri));
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | MpjPlayerException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -502,7 +505,7 @@ public class MainWin {
             throw new IllegalStateException("just started thread is not alive");
     }
 
-    public boolean chooseFileAndPlay() throws InterruptedException {
+    public boolean chooseFileAndPlay() throws InterruptedException, MpjPlayerException {
         FileChooser fc = new FileChooser("Open MpjTrack for play", cwd);
         javax.swing.filechooser.FileFilter filterAudio = new javax.swing.filechooser.FileNameExtensionFilter("Audio Files (mp3 ogg flac wav wma)", "mp3", "ogg", "flac", "wav", "wma");
         javax.swing.filechooser.FileFilter filterVideo = new javax.swing.filechooser.FileNameExtensionFilter("Video Files (mpeg avi mov ogv wmv)", "mpeg", "mpg", "mpe", "mp4", "avi", "mov", "ogv", "wmv");

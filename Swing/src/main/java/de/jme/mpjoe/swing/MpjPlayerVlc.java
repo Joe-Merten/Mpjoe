@@ -26,8 +26,10 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import de.jme.mpj.MpjPlayer;
+import de.jme.mpj.MpjPlayer.Delegate.MpjRunnable;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
+import de.jme.mpj.MpjPlayer.Delegate.MpjAnswer;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
 
@@ -164,6 +166,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             try {
                 // TODO: hier auch auf die Events des Vlc Player reagieren
                 while (true) {
+                    // TODO: Das ist so wohl noch nicht ok!
                     if (mediaPlayer.isPlaying()) {
                         MpjPlayerVlc.this.delegate.dispatchCommand(1000);
                         if (mediaPlayer.isPlaying()) {
@@ -325,16 +328,16 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     }
 
 
-    @Override public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException {
+    @Override public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
         delegate.setTrack(newTrack, newPle);
     }
 
 
-    @Override public void setTrack(MpjTrack newTrack) throws InterruptedException {
+    @Override public void setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException {
         delegate.setTrack(newTrack);
     }
 
-    @Override public void setTrack(MpjPlaylistEntry ple) throws InterruptedException {
+    @Override public void setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException {
         delegate.setTrack(ple);
     }
 
@@ -347,22 +350,22 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     }
 
 
-    @Override public void ejectTrack() throws InterruptedException {
-        delegate.invokeCommand(new Runnable() { @Override public void run() {
+    @Override public void ejectTrack() throws InterruptedException, MpjPlayerException {
+        delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             mediaPlayer.stop();
             delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
         }});
     }
 
-    @Override public void stopTrack() throws InterruptedException {
-        delegate.invokeCommand(new Runnable() { @Override public void run() {
+    @Override public void stopTrack() throws InterruptedException, MpjPlayerException {
+        delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             mediaPlayer.stop();
             delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
         }});
     }
 
-    @Override public void playTrack() throws InterruptedException {
-        delegate.invokeCommand(new Runnable() { @Override public void run() {
+    @Override public void playTrack() throws InterruptedException, MpjPlayerException {
+        delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             MpjTrack track = getTrack();
             if (track != null) {
                 System.out.println("Start Playback");
@@ -381,23 +384,30 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
                 System.out.println("Preparing (" + nam + ")");
                 mediaPlayer.prepareMedia(nam);
-                //if (!mediaPlayer.isPlayable()) {
-                //    throw new Exception("Could not play this");
-                //}
+                //if (!mediaPlayer.isPlayable()) // Hmm, der liefert mir bei allem false?!
+                //    throw new MpjPlayerException("Could not play this \"" + track.getUri() + "\"");
                 System.out.println("Starting (" + nam + ")");
-                mediaPlayer.play();
+
+                // Vlcj MediaPlayer: play() startet die Wiedergabe asynchron, start() hingegen blockiert bis wirklich gestartet wurde
+                //mediaPlayer.play();
+                if (!mediaPlayer.start()) {
+                    String msg = "Failed to start " + track.getUri() + "\"";
+                    delegate.setError(msg);
+                    delegate.setPlayerStateWithEvent(PlayerState.ERROR, PlayerEvent.STATE_CHANGED);
+                    throw new MpjPlayerException(msg);
+                }
                 System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
                 delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
-                System.out.println("Playback started event sent");
+                //System.out.println("Playback started event sent");
             }
         }});
     }
 
-    @Override public void pauseTrack() throws InterruptedException {
+    @Override public void pauseTrack() throws InterruptedException, MpjPlayerException {
         // TODO
     }
 
-    @Override public void resumeTrack() throws InterruptedException {
+    @Override public void resumeTrack() throws InterruptedException, MpjPlayerException {
         // TODO
     }
 

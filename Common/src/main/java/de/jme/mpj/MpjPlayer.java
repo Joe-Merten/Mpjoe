@@ -13,6 +13,13 @@ import java.util.concurrent.TimeUnit;
  */
 public interface MpjPlayer {
 
+    @SuppressWarnings("serial")
+    class MpjPlayerException extends Exception {
+        public MpjPlayerException(String message) {
+            super(message);
+        }
+    };
+
     public enum PlayerState {
         IDLE,
         PLAYING,
@@ -44,17 +51,17 @@ public interface MpjPlayer {
     public String getName();
     public Object getGuiComponent();
 
-    public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException;
-    public void setTrack(MpjTrack newTrack) throws InterruptedException;
-    public void setTrack(MpjPlaylistEntry ple) throws InterruptedException;
+    public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException;
+    public void setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException;
+    public void setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException;
     public MpjTrack getTrack();
     public MpjPlaylistEntry getPlaylistEntry();
 
-    public void ejectTrack() throws InterruptedException;
-    public void stopTrack() throws InterruptedException;
-    public void playTrack() throws InterruptedException;
-    public void pauseTrack() throws InterruptedException;
-    public void resumeTrack() throws InterruptedException;
+    public void ejectTrack() throws InterruptedException, MpjPlayerException;
+    public void stopTrack() throws InterruptedException, MpjPlayerException;
+    public void playTrack() throws InterruptedException, MpjPlayerException;
+    public void pauseTrack() throws InterruptedException, MpjPlayerException;
+    public void resumeTrack() throws InterruptedException, MpjPlayerException;
 
 
     // Delegation helper class
@@ -89,7 +96,7 @@ public interface MpjPlayer {
 
         // =============================================================================================================
         // Track loading
-        public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException {
+        public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
             if (track != null) {
                 player.stopTrack();
                 ple = null;
@@ -101,11 +108,11 @@ public interface MpjPlayer {
             }
         }
 
-        public void setTrack(MpjTrack newTrack) throws InterruptedException {
+        public void setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException {
             setTrack(newTrack, null);
         }
 
-        public void setTrack(MpjPlaylistEntry ple) throws InterruptedException {
+        public void setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException {
             if (ple == null) setTrack(null, null);
             else setTrack(ple.track, ple);
         }
@@ -219,22 +226,46 @@ public interface MpjPlayer {
 
         // =============================================================================================================
         // Command Queue for inter-thread communication
-        private BlockingQueue<Runnable> commandQueue = new ArrayBlockingQueue<Runnable>(100);
 
-        public void invokeCommand(final Runnable func) throws InterruptedException {
+        public interface MpjRunnable {
+            public void run(MpjAnswer answer) throws MpjPlayerException;
+        }
+
+        public class MpjAnswer {
+            public MpjPlayerException exception;
+        }
+
+        private BlockingQueue<MpjRunnable> commandQueue = new ArrayBlockingQueue<MpjRunnable>(1);
+        private BlockingQueue<MpjAnswer>   answerQueue  = new ArrayBlockingQueue<MpjAnswer>(1);
+
+        public MpjAnswer invokeCommand(final MpjRunnable func) throws InterruptedException, MpjPlayerException {
             synchronized (this) {
                 commandQueue.put(func);
+                MpjAnswer answer = answerQueue.take();
+                if (answer.exception != null) {
+                    // TODO: Wie macht man das
+                    //throw answer.exception;
+                    throw new MpjPlayerException("[[" + answer.exception.toString() + "]]");
+                }
+                return answer;
             }
         }
 
         public void dispatchCommand(int timeout) throws InterruptedException {
-            Runnable func = null;
+            MpjRunnable func = null;
             if (timeout < 0)
                 func = commandQueue.take();
             else
                 func = commandQueue.poll(timeout, TimeUnit.MILLISECONDS);
-            if (func != null)
-                func.run();
+            if (func != null) {
+                MpjAnswer answer = new MpjAnswer();
+                try {
+                    func.run(answer);
+                } catch (MpjPlayerException e) {
+                    answer.exception = e;
+                }
+                answerQueue.put(answer);
+            }
         }
     }
 

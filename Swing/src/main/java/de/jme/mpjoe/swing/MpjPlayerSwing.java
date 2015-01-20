@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 import de.jme.mpj.MpjPlayer;
+import de.jme.mpj.MpjPlayer.MpjPlayerException;
 
 // Evtl. interessant: http://www.jug-muenster.de/steelseries-java-swing-component-library-715/
 public class MpjPlayerSwing extends JPanel {
@@ -37,7 +38,8 @@ public class MpjPlayerSwing extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             try {
                 mpjPlayer.ejectTrack();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | MpjPlayerException e) {
+                // TODO: Exceptions ins Log und auf UI wenigstens ein bisschen signalisieren
                 e.printStackTrace();
             }
         }
@@ -55,7 +57,7 @@ public class MpjPlayerSwing extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             try {
                 mpjPlayer.stopTrack();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
         }
@@ -73,7 +75,7 @@ public class MpjPlayerSwing extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             try {
                 mpjPlayer.playTrack();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
         }
@@ -91,7 +93,7 @@ public class MpjPlayerSwing extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             try {
                 mpjPlayer.pauseTrack();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
         }
@@ -110,7 +112,7 @@ public class MpjPlayerSwing extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             try {
                 mpjPlayer.playTrack();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
         }
