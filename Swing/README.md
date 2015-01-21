@@ -1,13 +1,51 @@
 Joe’s Media Player & DJ’ing App
 ===============================
 
-Swing application
+Java Swing application, very early alpha version!
+
+
+Prerequisites
+=============
+
+All platforms
+-------------
+- java jdk 1.7 (or later)
+- vlc 2.1.5 (or later)
+
+Linux
+-----
+- sudo apt-get install git openjdk-7-jdk maven vlc
+- git clone https://github.com/Joe-Merten/Mpjoe.git
+- vlc must be at least 2.1.5
+  - it's because of GnuTls issues in vlc 2.1.4
+  - I succeed by adding [this ppa](https://launchpad.net/~djcj/+archive/ubuntu/vlc-stable) which updates my vlc to 2.2.0-rc2
+- tested using Kubuntu 14.04 (32 Bit and 64 Bit), OpenJdk 1.7.0_65
+
+OS X
+----
+- install [Homebrew](http://brew.sh)
+- brew update
+- brew install maven
+- sudo echo "JAVA_HOME=$(/usr/libexec/java_home)" >>/etc/mavenrc
+  - because of an maven issue, [see here](http://blog.tompawlak.org/maven-default-java-version-mac-osx) or [here](http://www.jayway.com/2013/03/08/configuring-maven-to-use-java-7-on-mac-os-x/)
+  - of course, there are some different approched to fix this issue, e.g.
+    - export JAVA_HOME=$(/usr/libexec/java_home) within your .bash_profile et cetera
+- download & install vlc from https://www.videolan.org
+- download & install java from https://www.java.com (e.g. jdk 8 from [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
+- tested using Yosemite 10.10 (64 Bit), Sun Jdk 1.8.0_31
+
+Windows
+-------
+- TODO
+
 
 Build & run
 ===========
 
+    git clone https://github.com/Joe-Merten/Mpjoe.git
+    cd Mpjoe/Swing
     ./Update-Symlinks.sh
-    mvn -q clean install
+    mvn clean install
     java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 
 
@@ -38,11 +76,7 @@ javafx
 
 vlcj
 ----
-- Läuft bei mir noch nicht auf Mac Osx
-- spielt diverse Formate (auch ogg)
-- flac auf Linux -> Crash
-- unter Windows geht Video Output
-- Video Output auf Linux noch nicht zum Laufen bekommen
+- spielt diverse Formate (auch ogg, flac, div. Video)
 - bei mehreren parallelen Playern "out of process" erforderlich
   - Macht auch Sinn, damit beim Vlc Crash nicht gleich mein ganzer Player wegstürzt
   - http://capricasoftware.co.uk/legacy/projects/vlcj/out-of-process.html
@@ -74,6 +108,7 @@ Todo
 - Open Source Projekte, die ich mir noch näher ansehen sollte
   - siehe auch: http://alternativeto.net/software/spotify/?license=opensource&platform=linux
   - http://alternativeto.net/software/tomahawk-player/
+    - wie verwenden wohl auch vlc
   - DeaDBeeF
     - Linux, Mac, Android
     - deadbeef.sourceforge.net
