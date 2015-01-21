@@ -187,7 +187,16 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     }
 
     @Override public void close() throws IOException {
-        // TODO ...
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+            embeddedMediaPlayer = null;
+            directMediaPlayer = null;
+        }
+        if (mediaPlayerFactory != null) {
+            mediaPlayerFactory.release();
+            mediaPlayerFactory = null;
+        }
     }
 
     // Hier 3 Klassen für den DirectMediaPlayer
