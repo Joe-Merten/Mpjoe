@@ -21,7 +21,7 @@ import de.jme.mpj.MpjTrack;
  *
  * @author Joe Merten
  */
-public class MpjPlayerSound extends MpjPlayerVlc  { public MpjPlayerSound(String name) throws IOException { super(name); } }
+public class MpjPlayerSound extends MpjPlayerVlc  { public MpjPlayerSound(String name) throws IOException { super(name, false); } }
 
 /*
 public class MpjPlayerSound extends MpjPlayer implements AutoCloseable {

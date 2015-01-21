@@ -105,7 +105,8 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     ImagePane           imagePane;
 
 
-    public MpjPlayerVlc(String name) throws IOException {
+    public MpjPlayerVlc(String name, boolean directPlayer) throws IOException {
+        this.directPlayer = directPlayer;
         delegate = new MpjPlayer.Delegate(this, name);
         thread = new MyThread(name);
 

@@ -67,7 +67,7 @@ import de.jme.mpj.MpjTrack;
  * "Testfiles/zel3.xm"
  */
 
-public class MpjPlayerJmf extends MpjPlayerVlc  { public MpjPlayerJmf(String name) throws IOException { super(name); } }
+public class MpjPlayerJmf extends MpjPlayerVlc  { public MpjPlayerJmf(String name) throws IOException { super(name, false); } }
 /*
 public class MpjPlayerJmf extends MpjPlayer implements AutoCloseable {
 

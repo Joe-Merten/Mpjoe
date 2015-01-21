@@ -211,8 +211,8 @@ public class MpjPlayerSwing extends JPanel {
     public MpjAction getNextTrackAction() { return nextTrackAction; }
 
 
-    public MpjPlayerSwing(String name) throws IOException {
-        mpjPlayer = new MpjPlayerVlc(name);
+    public MpjPlayerSwing(String name, MpjPlayer mpjPlayer) throws IOException {
+        this.mpjPlayer = mpjPlayer;
 
         setLayout(new BorderLayout());
         // preferredSize bei z.B. 10 Butons

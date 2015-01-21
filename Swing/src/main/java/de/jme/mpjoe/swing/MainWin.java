@@ -51,22 +51,26 @@ import de.jme.toolbox.VersionInfo;
  */
 public class MainWin {
 
-    private enum PlayerType {
+    public enum PlayerType {
         AUTO,
         SOUND,
         JMF,
-        VLC;
+        VLC,
+        VLC_EMBEDDED,
+        VLC_DIRECT;
         @Override public String toString() {
             switch(this) {
-                case AUTO  : return "auto";
-                case SOUND : return "java.sound";
-                case JMF   : return "jmf";
-                case VLC   : return "vlcj";
+                case AUTO        : return "auto";
+                case SOUND       : return "java.sound";
+                case JMF         : return "jmf";
+                case VLC         : return "vlcj";
+                case VLC_EMBEDDED: return "vlcj.embedded";
+                case VLC_DIRECT  : return "vlcj.direct";
                 default: throw new IllegalArgumentException();
             }
         }
+    }
 
-    };
     private PlayerType playerType = PlayerType.AUTO;
 
     private JFrame      frame;
@@ -131,6 +135,8 @@ public class MainWin {
             else if (arg.equals("--sound")) playerType = PlayerType.SOUND;
             else if (arg.equals("--jfm"  )) playerType = PlayerType.JMF;
             else if (arg.equals("--vlc"  )) playerType = PlayerType.VLC;
+            else if (arg.equals("--vld"  )) playerType = PlayerType.VLC_DIRECT;
+            else if (arg.equals("--vle"  )) playerType = PlayerType.VLC_EMBEDDED;
             else if (uriString == null) uriString = arg;
             else {
                 System.err.println("Unreconized parameter: \"" + arg + "\"");
@@ -150,7 +156,9 @@ public class MainWin {
                 System.out.println("  --version  =  show version info");
                 System.out.println("  --sound    =  media output using javax.sound");
                 System.out.println("  --jmf      =  media output using javax.media (java media framework)");
-                System.out.println("  --vlc      =  media output using vlc, needs to have vlc installed");
+                System.out.println("  --vlc      =  media output using vlc (auto selection), needs to have vlc installed");
+                System.out.println("  --vld      =  media output using vlc direct media player");
+                System.out.println("  --vle      =  media output using vlc embedded media player");
             } else if (justPrintVersion)
                 System.out.println(version);
             System.exit(0);
@@ -362,34 +370,45 @@ public class MainWin {
 
         if (playerType == null || playerType == PlayerType.AUTO) {
             if (SystemInfo.isWindows()) {
-                // Unter Windows funktioniert Jmf noch nicht mit MP3, deshalb hier erst mal Vlc verwenden
-                playerType = PlayerType.VLC;
+                // Unter Windows funktioniert Jmf noch nicht mit MP3
+                // Vlc Embedded scheint hier eine gute Wahl zu sein
+                playerType = PlayerType.VLC_EMBEDDED;
             } else if (SystemInfo.isOsx()) {
-                // Auf Mac frunzt Vlcj noch nicht, deshalb vorerst Jmf verwenden
-                playerType = PlayerType.JMF;
+                // Auf Mac funktiniert Vlcj nur als Direct (Embedded ist nicht unterstützt)
+                // Jmf ginge aber auch
+                playerType = PlayerType.VLC_DIRECT;
             } else {
                 // Unter Linux verwende ich per default erst mal Vlc
-                playerType = PlayerType.VLC;
+                playerType = PlayerType.VLC_EMBEDDED;
+            }
+        }
+        if (playerType == PlayerType.VLC) {
+            if (SystemInfo.isOsx()) {
+                // Auf Mac funktiniert Vlcj nur als Direct
+                playerType = PlayerType.VLC_DIRECT;
+            } else {
+                playerType = PlayerType.VLC_EMBEDDED;
             }
         }
 
         version += " (" + playerType + ")"; // TODO, HACK: Playertyp mit im der Fenstertitel anzeigen
         frame.setTitle(version);
-        /*
+
         switch (playerType) {
-            case SOUND: mpjPlayer = new MpjPlayerSound("Player"); break;
-            case JMF:   mpjPlayer = new MpjPlayerJmf("Player");   break;
-            case VLC:   mpjPlayer = new MpjPlayerVlc("Player");   break;
+            case SOUND       : mpjPlayer = new MpjPlayerSound("Player");      break;
+            case JMF         : mpjPlayer = new MpjPlayerJmf("Player");        break;
+            case VLC_EMBEDDED: mpjPlayer = new MpjPlayerVlc("Player", false); break;
+            case VLC_DIRECT  : mpjPlayer = new MpjPlayerVlc("Player", true);  break;
             default: break;
         }
-        Object guiComponent = mpjPlayer.getGuiComponent();
+        /*Object guiComponent = mpjPlayer.getGuiComponent();
         if (guiComponent instanceof Component) {
             playerPanel = (Component)guiComponent;
             playerPanel.setPreferredSize(new Dimension(200, 200));
             playerPanel.setMinimumSize(new Dimension(0, 0));
             leftPanel.add(playerPanel, BorderLayout.CENTER);
         }*/
-        MpjPlayerSwing mpjPlayerSwing = new MpjPlayerSwing("Player");
+        MpjPlayerSwing mpjPlayerSwing = new MpjPlayerSwing("Player", mpjPlayer);
         leftPanel.add(mpjPlayerSwing, BorderLayout.CENTER);
         mpjPlayer = mpjPlayerSwing.getCorePlayer();
         mnFile.add(new JMenuItem(mpjPlayerSwing.getPauseAction()));
