@@ -24,7 +24,13 @@ function CopyToBBB {
 #}
 
 function RunLocal {
-    java -Djna.nosys=true -jar "$TARGET_FILE" "${argv[@]}"
+    local jvmOpts=""
+    # für remote Debugging
+    # jvmOpts+=" -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+    # für vlcj (wg. dem jni Problem auf meinem Kubuntu 14.04)
+    jvmOpts+=" -Djna.nosys=true"
+
+    java $jvmOpts -jar "$TARGET_FILE" "${argv[@]}"
 }
 
 function CompileAndRun {
