@@ -189,28 +189,41 @@ public class MainWin {
     private void initialize(String uriString) throws IOException {
         MpjLookAndFeel.initialize();
 
+        Image icon16  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-16.png")).getImage();
+        Image icon20  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-20.png")).getImage();
+        Image icon24  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-24.png")).getImage();
+        Image icon32  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-32.png")).getImage();
+        Image icon48  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-48.png")).getImage();
+        Image icon64  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-64.png")).getImage();
+        Image icon128 = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-128.png")).getImage();
+        Image icon256 = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-256.png")).getImage();
+
         // Kleiner Test mit dem SystemTray
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
             Dimension size = tray.getTrayIconSize();
             System.out.println("*** Yep, SystemTray found, trayIconSize = " + tray.getTrayIconSize());
             // TrayIconSize
-            // - Kubuntu      24 x 24  - diese Angabe ich nicht korrekt, es sind 48 x 48!
+            // - Kubuntu      24 x 24  - auf BBB korrekt, aber auf Ernie nicht diese Angabe ich nicht korrekt, es sind 48 x 48!
             //                           ein zu kleines Icon wird nicht skaliert, sondern links oben in die Ecke geklatscht
             // - Osx          20 x 20  - mein 16er Icon sient etwas mikrig aus, das 32er wird vermutlich etwas geschrumpft
             // - Windows XP   16 x 16  - das 16er sieht ok aus, von dem 32er ist aber nur 1/4 zu sehen
-            int iconSize = 16;
-            int sz = Math.min((int)size.getWidth(), (int)size.getHeight());
-            if (sz >= 32) iconSize = 32;
-            if (SystemInfo.isLinux() && sz >= 24)
+            int iconSize = Math.min((int)size.getWidth(), (int)size.getHeight());
+            if (SystemInfo.isLinux() && iconSize == 24) {
                 // Hack, weil bei meinem Kubuntu 14.04 eine zu kleine TrayIconSize geliefert wird
-                iconSize = 32;
+                iconSize = 48;
+            }
 
             Image trayIconImage;
-            if (iconSize < 32)
-                trayIconImage = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-16.png")).getImage();
-            else
-                trayIconImage = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage();
+            if      (iconSize >= 256) trayIconImage = icon256;
+            else if (iconSize >= 128) trayIconImage = icon128;
+            else if (iconSize >=  64) trayIconImage = icon64;
+            else if (iconSize >=  48) trayIconImage = icon48;
+            else if (iconSize >=  32) trayIconImage = icon32;
+            else if (iconSize >=  24) trayIconImage = icon24;
+            else if (iconSize >=  20) trayIconImage = icon20;
+            else                      trayIconImage = icon16;
+
             TrayIcon trayIcon = new TrayIcon(trayIconImage);
             try {
                 tray.add(trayIcon);
@@ -227,8 +240,14 @@ public class MainWin {
 
         // TODO: Images mit 48x48 und 64x64 Pixel zufügen
         ArrayList<Image> iconImages = new ArrayList<Image>(4);
-        iconImages.add(new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-16.png")).getImage());
-        iconImages.add(new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage());
+        iconImages.add(icon16 );
+        iconImages.add(icon20 );
+        iconImages.add(icon24 );
+        iconImages.add(icon32 );
+        iconImages.add(icon48 );
+        iconImages.add(icon64 );
+        iconImages.add(icon128);
+        iconImages.add(icon256);
         frame.setIconImages(iconImages);
         //Image image = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage();
         //frame.setIconImage(image);
