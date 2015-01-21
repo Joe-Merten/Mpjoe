@@ -255,7 +255,6 @@ public class MainWin {
         frame.setBounds(10, 10, 1260, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // TODO: Images mit 48x48 und 64x64 Pixel zufügen
         ArrayList<Image> iconImages = new ArrayList<Image>(4);
         iconImages.add(icon16 );
         iconImages.add(icon20 );
@@ -266,13 +265,20 @@ public class MainWin {
         iconImages.add(icon128);
         iconImages.add(icon256);
         frame.setIconImages(iconImages);
-        //Image image = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Icon-32.png")).getImage();
-        //frame.setIconImage(image);
 
         String version = VersionInfo.getVersionInfo();
         version += " (" + SystemInfo.getUserName() + "@" + SystemInfo.getComputerName() + ")";
         frame.setTitle(version);
 
+        // Folgender Code soll wohl bei OpenSuse den Applikationstitel setzen (nicht getestet).
+        // Bei Windows XP und Osx gibt's eine Exception "NoSuchFieldException: awtAppClassName"
+        // Bei Kubuntu keine Exception, aber auch keine sichtbare Wirkung (z.B. Prozessname)
+        try {
+            Toolkit xToolkit = Toolkit.getDefaultToolkit();
+            java.lang.reflect.Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
+            awtAppClassNameField.setAccessible(true);
+            awtAppClassNameField.set(xToolkit, "Mpjoe-Appname");
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e1) { }
 
         //--------------------
         // Actions
