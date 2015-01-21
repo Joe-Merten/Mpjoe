@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -198,6 +199,10 @@ public class MainWin {
         Image icon128 = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-128.png")).getImage();
         Image icon256 = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-256.png")).getImage();
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+        System.out.println("*** Screen = " + screenSize.width + "x" + screenSize.height + ", " + dpi + " dpi");
+
         // Kleiner Test mit dem SystemTray
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
@@ -210,8 +215,12 @@ public class MainWin {
             // - Windows XP   16 x 16  - das 16er sieht ok aus, von dem 32er ist aber nur 1/4 zu sehen
             int iconSize = Math.min((int)size.getWidth(), (int)size.getHeight());
             if (SystemInfo.isLinux() && iconSize == 24) {
-                // Hack, weil bei meinem Kubuntu 14.04 eine zu kleine TrayIconSize geliefert wird
-                iconSize = 48;
+                if (SystemInfo.getComputerName().toLowerCase().equals("ernie") && Toolkit.getDefaultToolkit().getScreenResolution() == 145) {
+                    // Hack, weil bei meinem Kubuntu 14.04 eine zu kleine TrayIconSize geliefert wird
+                    // getScreenResolution() liefert auf meinem Dell Notebook 145 dpi, auch wenn ich die Auflösung mit xrdb auf 100 gesetzt habe
+                    System.out.println("*** SystemTray size corrected to 48 pixel");
+                    iconSize = 48;
+                }
             }
 
             Image trayIconImage;
