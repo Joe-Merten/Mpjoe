@@ -36,7 +36,12 @@ function RunLocal {
     # -> http://stackoverflow.com/a/11140556/2880699
     jvmOpts+=" -Dapple.awt.UIElement=true"
 
-    java $jvmOpts -jar "$TARGET_FILE" "${argv[@]}"
+    # Bei Kubuntu bekomme ich hier mit 'nem Symlink Hack das "java" in der Prozessliste gegen "Mpjoe" getauscht
+    # Beim Mac funktioniert das jedoch leider nicht.
+    rm -f /tmp/Mpjoe
+    ln -s $(which java) Mpjoe
+    /tmp/Mpjoe $jvmOpts -jar "$TARGET_FILE" "${argv[@]}"
+    rm /tmp/Mpjoe
 }
 
 function CompileAndRun {
