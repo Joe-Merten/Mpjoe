@@ -39,7 +39,7 @@ function RunLocal {
     # Bei Kubuntu bekomme ich hier mit 'nem Symlink Hack das "java" in der Prozessliste gegen "Mpjoe" getauscht
     # Beim Mac funktioniert das jedoch leider nicht.
     rm -f /tmp/Mpjoe
-    ln -s $(which java) Mpjoe
+    ln -s $(which java) /tmp/Mpjoe
     /tmp/Mpjoe $jvmOpts -jar "$TARGET_FILE" "${argv[@]}"
     rm /tmp/Mpjoe
 }
