@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -169,6 +170,11 @@ public class FilesystemPanel extends JPanel {
         if (fileTable != null) {
             if (!hasMouseListener(fileTable, mouseListener)) fileTable.addMouseListener(mouseListener);
             if (!hasKeyListener(fileTable, keyListener)) fileTable.addKeyListener(keyListener);
+
+            // Tab soll nicht zur nächsten »Zelle« der Tabelle, sondern zum nächsten Control!
+            // -> http://stackoverflow.com/questions/12154734/change-focus-to-next-component-in-jtable-using-tab
+            fileTable.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, null);
+            fileTable.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, null);
         }
     }
 

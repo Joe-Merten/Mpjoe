@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -98,6 +99,12 @@ public class PlaylistPanel extends JPanel {
             column.setMinWidth(0); // Damit erlaube ich, dass Spalten z.B. per Maus auf Breite 0 reduziert (also "ausgeblendet") werden können. Per Default steht die Breite offenbar auf 15.
             column.setCellRenderer(tr);
         }
+
+        // Tab soll nicht zur nächsten »Zelle« der Tabelle, sondern zum nächsten Control!
+        // -> http://stackoverflow.com/questions/12154734/change-focus-to-next-component-in-jtable-using-tab
+        table.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, null);
+        table.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, null);
+
         JTableHeader header = table.getTableHeader();
         // header.setReorderingAllowed(false); ... falls ich das mal unterbinden möchte
         header.addMouseListener(new JTableColumnFitAdapter());
