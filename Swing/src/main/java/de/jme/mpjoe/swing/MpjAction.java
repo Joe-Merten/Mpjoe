@@ -1,5 +1,7 @@
 package de.jme.mpjoe.swing;
 
+import java.awt.event.KeyEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -220,10 +222,26 @@ public abstract class MpjAction extends AbstractAction {
     }
 
     /**
-     * Get the Action short description
+     * Get the Action accelerator key
      */
     public KeyStroke getAccelerator() {
         return (KeyStroke)getValue(ACCELERATOR_KEY);
+    }
+
+    /**
+     * Set the Action mnemonic
+     * This is the e.g. underlined letter of a menue entry
+     * e.g. setMnemonic(KeyEvent.VK_A);
+     */
+    public void setMnemonic(int mnemonic) {
+        putValue(MNEMONIC_KEY, mnemonic);
+    }
+
+    /**
+     * Get the Action mnemonic
+     */
+    public int getMnemonic() {
+        return (int)getValue(MNEMONIC_KEY);
     }
 
     /**
