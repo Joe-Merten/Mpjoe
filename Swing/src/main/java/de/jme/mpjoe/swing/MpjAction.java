@@ -60,7 +60,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action Icon from resource
      */
     public void setIconFromResource(String resourcePath) {
-        setIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action largeIcon from resource
      */
     public void setLargeIconFromResource(String resourcePath) {
-        setLargeIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setLargeIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
@@ -103,7 +103,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action selectedIcon from resource
      */
     public void setSelectedIconFromResource(String resourcePath) {
-        setSelectedIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setSelectedIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action thirdstateIcon from resource
      */
     public void setThirdstateIconFromResource(String resourcePath) {
-        setThirdstateIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setThirdstateIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
@@ -145,7 +145,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action disabledIcon from resource
      */
     public void setDisabledIconFromResource(String resourcePath) {
-        setDisabledIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setDisabledIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
@@ -166,7 +166,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action pressedIcon from resource
      */
     public void setPressedIconFromResource(String resourcePath) {
-        setPressedIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setPressedIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
@@ -187,7 +187,7 @@ public abstract class MpjAction extends AbstractAction {
      * Set the Action rolloverIcon from resource
      */
     public void setRolloverIconFromResource(String resourcePath) {
-        setRolloverIcon(new ImageIcon(getClass().getResource(resourcePath)));
+        setRolloverIcon(new ImageIcon(System.class.getResource(resourcePath)));
     }
 
     /**
