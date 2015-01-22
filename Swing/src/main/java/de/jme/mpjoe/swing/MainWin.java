@@ -73,6 +73,8 @@ public class MainWin {
 
     private JFrame      frame;
     private Statusbar   statusbar;
+    JSplitPane          splitPaneMain;
+    JSplitPane          splitPaneRight;
     private JPanel      leftPanel;
     private JPanel      middlePanel;
     private JPanel      rightPanel;
@@ -117,6 +119,32 @@ public class MainWin {
         }
     }
     private ChooseFileAndPlayAction chooseFileAndPlayAction;
+
+    private class ToggleDarkThemeAction extends MpjAction {
+        private static final long serialVersionUID = 1L;
+        public ToggleDarkThemeAction() {
+            super("Dark");
+            setShortDescription("Toggle dark color theme");
+            setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+        }
+        public void actionPerformed(ActionEvent ae) {
+            toggleDarkTheme();
+        }
+    }
+    private ToggleDarkThemeAction toggleDarkThemeAction;
+
+    private class ToggleLookAndFeelAction extends MpjAction {
+        private static final long serialVersionUID = 1L;
+        public ToggleLookAndFeelAction() {
+            super("Look & Feel");
+            setShortDescription("Toggle look & feel");
+            setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
+        }
+        public void actionPerformed(ActionEvent ae) {
+            toggleLookAndFeel();
+        }
+    }
+    private ToggleLookAndFeelAction toggleLookAndFeelAction;
 
 
     /**
@@ -214,6 +242,8 @@ public class MainWin {
         // Actions
         quitAction = new QuitAction();
         chooseFileAndPlayAction = new ChooseFileAndPlayAction();
+        toggleDarkThemeAction = new ToggleDarkThemeAction();
+        toggleLookAndFeelAction = new ToggleLookAndFeelAction();
 
         // SystemTray
         final MpjSystray systray = new MpjSystray();
@@ -221,6 +251,8 @@ public class MainWin {
             final JPopupMenu trayPopup = systray.getPopup();
             trayPopup.add(new JMenuItem(quitAction));
             trayPopup.add(new JMenuItem(chooseFileAndPlayAction));
+            trayPopup.add(new JMenuItem(toggleDarkThemeAction));
+            trayPopup.add(new JMenuItem(toggleLookAndFeelAction));
         }
 
         frame = new JFrame();
@@ -259,12 +291,12 @@ public class MainWin {
 
         JMenu mnFile = new JMenu("File");
         menuBar.add(mnFile);
-
-        JMenuItem mntmQuit = new JMenuItem(quitAction);
-        mnFile.add(mntmQuit);
+        mnFile.add(new JMenuItem(quitAction));
 
         JMenu mnView = new JMenu("View");
         menuBar.add(mnView);
+        mnView.add(new JMenuItem(toggleDarkThemeAction));
+        mnView.add(new JMenuItem(toggleLookAndFeelAction));
 
         JMenu mnHelp = new JMenu("Help");
         menuBar.add(mnHelp);
@@ -275,11 +307,17 @@ public class MainWin {
         //--------------------
         // Toolbar
         Toolbar toolbar = new Toolbar();
-        frame.getContentPane().add(toolbar, BorderLayout.NORTH);
+        toolbar.setBorderPainted(true);
+        toolbar.setFloatable(true);
         toolbar.add(quitAction);
         toolbar.addSeparator();
         toolbar.add(chooseFileAndPlayAction);
         toolbar.addSeparator();
+        toolbar.add(toggleDarkThemeAction);
+        toolbar.addSeparator();
+        toolbar.add(toggleLookAndFeelAction);
+        toolbar.addSeparator();
+        frame.getContentPane().add(toolbar, BorderLayout.NORTH);
 
         //--------------------
         // Statusbar
@@ -289,11 +327,11 @@ public class MainWin {
 
         //--------------------
         // Restlicher Fensterbereich
-        JSplitPane splitPaneMain = new JSplitPane();
+        splitPaneMain = new JSplitPane();
         splitPaneMain.setContinuousLayout(true);
         //splitPaneMain.setDividerLocation(192); nicht setzen, weil ergibt sich durch die PreferredSize des leftPanel
         frame.getContentPane().add(splitPaneMain, BorderLayout.CENTER);
-        JSplitPane splitPaneRight = new JSplitPane();
+        splitPaneRight = new JSplitPane();
         splitPaneRight.setContinuousLayout(true);
         splitPaneMain.setRightComponent(splitPaneRight);
 
@@ -565,5 +603,34 @@ public class MainWin {
             mpjPlayer.setTrack(new MpjTrack(uri));
         }
         return ret;
+    }
+
+    public void toggleDarkTheme() {
+        MpjLookAndFeel.setDarkTheme(!MpjLookAndFeel.isDarkTheme());
+        toggleDarkThemeAction.setSelected(MpjLookAndFeel.isDarkTheme());
+        // revalidate() hilft leider nicht
+        // SplitPaneUI spui = splitPaneMain.getUI();
+        // BasicSplitPaneUI bspui = (BasicSplitPaneUI)spui;
+        // BasicSplitPaneDivider div = bspui.getDivider();
+        // div.setBackground(new Color(255,0,0));
+        // div.setForeground(new Color(0,255,0));
+        // div.setDividerSize(100);
+        // div.setEnabled(false);
+        // div.invalidate();
+        // div.validate();
+        // div.repaint();
+        // div.revalidate();
+        // div.setEnabled(true);
+        //Another idea would be to go directly over JSplitPane.getUI(), which returns u a SplitPaneUI, which you probably can cast to a BasicSplitPaneUI. There you will find a function getDivider() and this is a Component, where you can set any Color.
+        //splitPaneMain.revalidate();
+        //splitPaneRight.revalidate();
+    }
+
+    public void toggleLookAndFeel() {
+        int count = MpjLookAndFeel.getLookAndFeelCount();
+        int index = MpjLookAndFeel.getCurrentLookAndFeelIndex();
+        index++;
+        if (index >= count) index = 0;
+        MpjLookAndFeel.setCurrentLookAndFeelIndex(index);
     }
 }

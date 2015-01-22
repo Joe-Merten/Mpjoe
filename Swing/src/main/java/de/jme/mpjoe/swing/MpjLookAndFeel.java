@@ -1,6 +1,7 @@
 package de.jme.mpjoe.swing;
 
 import java.awt.Color;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,8 +9,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import de.jme.toolbox.SystemInfo;
 
@@ -23,6 +26,7 @@ import de.jme.toolbox.SystemInfo;
 // Weiteres Interessantes zu Swing Farben
 // - http://nadeausoftware.com/articles/2010/12/java_tip_how_use_systemcolors_access_os_user_interface_theme_colors#SystemColorsvsUIDefaults
 public class MpjLookAndFeel {
+    static boolean darkTheme = false;
 
     public static void initialize() {
         try {
@@ -57,14 +61,10 @@ public class MpjLookAndFeel {
                 //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
                 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
-
-                setNimbusDarkTheme();
-            } else {
-                // Apple
-                //setAquaDarkTheme();
+                setDarkTheme(true);
             }
 
-            // printLookAndFeels();
+            //printLookAndFeels();
             //printColors();
 
             // Splitpanes bitte ohne Rand -> http://stackoverflow.com/a/12800669/2880699
@@ -73,6 +73,89 @@ public class MpjLookAndFeel {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public static LookAndFeelInfo[] getLookAndFeels() {
+        return UIManager.getInstalledLookAndFeels();
+    }
+
+    public static int getLookAndFeelCount() {
+        return UIManager.getInstalledLookAndFeels().length;
+    }
+
+    public static int getCurrentLookAndFeelIndex() {
+        String lfclassname = UIManager.getLookAndFeel().getClass().getName();
+        final LookAndFeelInfo[] lfiList = UIManager.getInstalledLookAndFeels();
+        int index = 0;
+        for (LookAndFeelInfo lfi : lfiList) {
+            if (lfi.getClassName() == lfclassname) return index;
+            index++;
+        }
+        return -1;
+    }
+
+    // Look & Feel Umschaltung scheint irgendwie noch buggee zu sein
+    public static void setCurrentLookAndFeelIndex(int n) {
+        final LookAndFeelInfo[] lfiList = UIManager.getInstalledLookAndFeels();
+        if (n < 0) n = 0;
+        if (n > lfiList.length-1) n = lfiList.length-1;
+        try {
+            System.out.println("Switching to LookAndFeel " + n + " of " + lfiList.length + " \"" + lfiList[n].getName() + "\"" + " \"" + lfiList[n].getClassName() + "\"");
+            setCurrentLookAndFeelClassName(lfiList[n].getClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setCurrentLookAndFeelClassName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+        UIManager.setLookAndFeel(className);
+        updateUI();
+    }
+
+    public static boolean isDarkTheme() {
+        return darkTheme;
+    }
+
+    // Umschalten des Farbschema zur Laufzeit funktioniert noch nicht richtig
+    public static void setDarkTheme(boolean dark) {
+        if (dark == darkTheme) return;
+
+        if (!dark) {
+            UIManager.getDefaults().putAll(UIManager.getLookAndFeelDefaults());
+        } else {
+            if (!SystemInfo.isOsx())
+                setNimbusDarkTheme();
+            else
+                setAquaDarkTheme();
+        }
+
+        updateUI();
+        darkTheme = dark;
+    }
+
+    private static void updateUI() {
+        // updateComponentTreeUI() über alle Frames oder Windows?
+        // Hab' bisher noch keinen Unterschied gesehen
+        // Bei Nimbus werden leider einige Elemente nicht korrekt dargestellt (bei Umschaltung DarkTheme)
+        // - Header von JTable
+        // - Devider von JSplitPane
+        // - Scrollbar Buttons von JScrollPane
+        // revalidate() hilft hier leider auch nicht (getestet am JSplitPane)
+
+        //final Frame[] frames = Frame.getFrames();
+        //for (Frame frame : frames) {
+        //    SwingUtilities.updateComponentTreeUI(frame);
+        //    // Danach noch pack() aufrufen? Nein, das verkleinert mein Applikationsfenster!
+        //    //window.pack();
+        //}
+
+        final Window[] windows = Window.getWindows();
+        for (Window window : windows) {
+            SwingUtilities.updateComponentTreeUI(window);
+            // Danach noch pack() aufrufen? Nein, das verkleinert mein Applikationsfenster!
+            //window.pack();
         }
     }
 
@@ -124,7 +207,7 @@ public class MpjLookAndFeel {
     // - http://cr.openjdk.java.net/~dcherepanov/7154516/webrev.0/src/macosx/classes/com/apple/laf/AquaLookAndFeel.java-.html
 
     public static void setAquaDarkTheme() {
-        {
+        /*{
             // Beim Mac bekomme ich hiermit offenbar alles schwarz, ausser
             // - Scrollbars
             // - Fenstertitel
@@ -189,19 +272,18 @@ public class MpjLookAndFeel {
         UIManager.put("TextPane.selectionBackground"              , unknown);             //          (164,205,255)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=164,g=205,b=255]
 
 
-        // Von der Toolbar hat sich bei mir bislang nur eine Farbe bemerkbar gemacht
-        // Schwarz wäre hier ungünstig, weil die ButtonTexte auch schwarz sind
-        UIManager.put("ToolBar.background"                        , controlFace);         //          (238,238,238)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=238,g=238,b=238]
-        UIManager.put("ToolBar.borderHandleColor"                 , unknown);             //          (140,140,140)    // javax.swing.plaf.ColorUIResource[r=140,g=140,b=140]
-        UIManager.put("ToolBar.darkShadow"                        , unknown);             //          (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-        UIManager.put("ToolBar.dockingBackground"                 , unknown);             //          (238,238,238)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=238,g=238,b=238]
-        UIManager.put("ToolBar.dockingForeground"                 , unknown);             //          (  9, 80,208)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=9,g=80,b=208]
-        UIManager.put("ToolBar.floatingBackground"                , unknown);             //          (238,238,238)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=238,g=238,b=238]
-        UIManager.put("ToolBar.floatingForeground"                , unknown);             //          ( 64, 64, 64)    // javax.swing.plaf.ColorUIResource[r=64,g=64,b=64]
-        UIManager.put("ToolBar.foreground"                        , unknown);             //          (128,128,128)    // javax.swing.plaf.ColorUIResource[r=128,g=128,b=128]
-        UIManager.put("ToolBar.highlight"                         , unknown);             //          (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
-        UIManager.put("ToolBar.light"                             , unknown);             //          (  9, 80,208)    // javax.swing.plaf.ColorUIResource[r=9,g=80,b=208]
-        UIManager.put("ToolBar.shadow"                            , unknown);             //          (142,142,142)    // javax.swing.plaf.ColorUIResource[r=142,g=142,b=142]
+        // Schwarz für Toolbar Background wäre ungünstig, weil die ButtonTexte auch schwarz sind
+        UIManager.put("ToolBar.background"                        , controlFace);            // Farbe der Toolbar an sich
+        UIManager.put("ToolBar.borderHandleColor"                 , unknown);                //          (140,140,140)    // javax.swing.plaf.ColorUIResource[r=140,g=140,b=140]
+        UIManager.put("ToolBar.darkShadow"                        , unknown);                //          (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("ToolBar.dockingBackground"                 , new Color(64,64,64));    // Beim Verschieben der Toolbar, wenn im Dock-Bereich
+        UIManager.put("ToolBar.dockingForeground"                 , new Color(128,128,128)); // Beim Verschieben der Toolbar, wenn im Dock-Bereich
+        UIManager.put("ToolBar.floatingBackground"                , new Color(0,0,0));       // Beim Verschieben der Toolbar, wenn im Float-Bereich
+        UIManager.put("ToolBar.floatingForeground"                , new Color(64,64,64));    // Beim Verschieben der Toolbar, wenn im Float-Bereich
+        UIManager.put("ToolBar.foreground"                        , new Color(80,80,80));    // Separatoren
+        UIManager.put("ToolBar.highlight"                         , unknown);                //          (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("ToolBar.light"                             , unknown);                //          (  9, 80,208)    // javax.swing.plaf.ColorUIResource[r=9,g=80,b=208]
+        UIManager.put("ToolBar.shadow"                            , unknown);                //          (142,142,142)    // javax.swing.plaf.ColorUIResource[r=142,g=142,b=142]
 
         UIManager.put("control"           , backgroundColor);     // Fensterhintergrund, wird beim App Start kurz angezeigt bevor das Fenster dann gefüllt wird
         UIManager.put("controlDkShadow"   , unknown);             // (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
@@ -311,7 +393,7 @@ public class MpjLookAndFeel {
         String lfname = UIManager.getLookAndFeel().getName();
         String lfclassname = UIManager.getLookAndFeel().getClass().getName();
         System.out.println("L&F = " + lfname + " (" + lfclassname + ")");
-        LookAndFeelInfo[] lfiList = UIManager.getInstalledLookAndFeels();
+        final LookAndFeelInfo[] lfiList = UIManager.getInstalledLookAndFeels();
         for (LookAndFeelInfo lfi : lfiList)
             System.out.println("  " + lfi.getName() + " (" + lfi.getClassName() + ")");
     }
