@@ -1,13 +1,10 @@
 package de.jme.mpjoe.swing;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
-import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -22,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
@@ -89,7 +87,7 @@ public class MainWin {
         public QuitAction() {
             super("Quit");
             setIconFromResource("/de/jme/mpj/General/Quit1-16.png");
-            setShortDescription("Quit the application");
+            setShortDescription("Quit Mpjoe");
             setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
         }
         public void actionPerformed(ActionEvent ae) {
@@ -198,57 +196,31 @@ public class MainWin {
     private void initialize(String uriString) throws IOException {
         MpjLookAndFeel.initialize();
 
-        Image icon16  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-16.png")).getImage();
-        Image icon20  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-20.png")).getImage();
-        Image icon24  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-24.png")).getImage();
-        Image icon32  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-32.png")).getImage();
-        Image icon48  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-48.png")).getImage();
-        Image icon64  = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-64.png")).getImage();
-        Image icon128 = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-128.png")).getImage();
-        Image icon256 = new ImageIcon(getClass().getResource("/de/jme/mpj/Icon/Mpjoe-Icon-256.png")).getImage();
+        // TODO: Icons nur 1x laden und an verschiedenen Stellen verwenden, siehe auch MpjSystray
+        final Image icon16  = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-16.png")).getImage();
+        final Image icon20  = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-20.png")).getImage();
+        final Image icon24  = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-24.png")).getImage();
+        final Image icon32  = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-32.png")).getImage();
+        final Image icon48  = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-48.png")).getImage();
+        final Image icon64  = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-64.png")).getImage();
+        final Image icon128 = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-128.png")).getImage();
+        final Image icon256 = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-256.png")).getImage();
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         System.out.println("*** Screen = " + screenSize.width + "x" + screenSize.height + ", " + dpi + " dpi");
 
-        // Kleiner Test mit dem SystemTray
-        if (SystemTray.isSupported()) {
-            SystemTray tray = SystemTray.getSystemTray();
-            Dimension size = tray.getTrayIconSize();
-            System.out.println("*** Yep, SystemTray found, trayIconSize = " + tray.getTrayIconSize());
-            // TrayIconSize
-            // - Kubuntu      24 x 24  - auf BBB korrekt, aber auf Ernie nicht diese Angabe ich nicht korrekt, es sind 48 x 48!
-            //                           ein zu kleines Icon wird nicht skaliert, sondern links oben in die Ecke geklatscht
-            // - Osx          20 x 20  - mein 16er Icon sient etwas mikrig aus, das 32er wird vermutlich etwas geschrumpft
-            // - Windows XP   16 x 16  - das 16er sieht ok aus, von dem 32er ist aber nur 1/4 zu sehen
-            int iconSize = Math.min((int)size.getWidth(), (int)size.getHeight());
-            if (SystemInfo.isLinux() && iconSize == 24) {
-                if (SystemInfo.getComputerName().toLowerCase().equals("ernie") && Toolkit.getDefaultToolkit().getScreenResolution() == 145) {
-                    // Hack, weil bei meinem Kubuntu 14.04 eine zu kleine TrayIconSize geliefert wird
-                    // getScreenResolution() liefert auf meinem Dell Notebook 145 dpi, auch wenn ich die Auflösung mit xrdb auf 100 gesetzt habe
-                    System.out.println("*** SystemTray size corrected to 48 pixel");
-                    iconSize = 48;
-                }
-            }
+        //--------------------
+        // Actions
+        quitAction = new QuitAction();
+        chooseFileAndPlayAction = new ChooseFileAndPlayAction();
 
-            Image trayIconImage;
-            if      (iconSize >= 256) trayIconImage = icon256;
-            else if (iconSize >= 128) trayIconImage = icon128;
-            else if (iconSize >=  64) trayIconImage = icon64;
-            else if (iconSize >=  48) trayIconImage = icon48;
-            else if (iconSize >=  32) trayIconImage = icon32;
-            else if (iconSize >=  24) trayIconImage = icon24;
-            else if (iconSize >=  20) trayIconImage = icon20;
-            else                      trayIconImage = icon16;
-
-            TrayIcon trayIcon = new TrayIcon(trayIconImage);
-            try {
-                tray.add(trayIcon);
-            } catch (AWTException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("*** Sorry, no SystemTray");
+        // SystemTray
+        final MpjSystray systray = new MpjSystray();
+        if (systray.isSupported()) {
+            final JPopupMenu trayPopup = systray.getPopup();
+            trayPopup.add(new JMenuItem(quitAction));
+            trayPopup.add(new JMenuItem(chooseFileAndPlayAction));
         }
 
         frame = new JFrame();
@@ -279,11 +251,6 @@ public class MainWin {
             awtAppClassNameField.setAccessible(true);
             awtAppClassNameField.set(xToolkit, "Mpjoe-Appname");
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e1) { }
-
-        //--------------------
-        // Actions
-        quitAction = new QuitAction();
-        chooseFileAndPlayAction = new ChooseFileAndPlayAction();
 
         //--------------------
         // Hauptmenü
@@ -372,6 +339,7 @@ public class MainWin {
 
 
         //--------------------
+        //frame.pack(); // dieses pack() findet man in vielen Beispielsourcen, führt bei mir aber dazu, dass das Player Panel auf Breite 0 reduziert wird
         frame.setVisible(true);
 
         if (playerType == null || playerType == PlayerType.AUTO) {
@@ -426,6 +394,7 @@ public class MainWin {
                 //final String msg = evt.toString() + " / " + player.getPlayerStateString();
                 final String msg = player.getPlayerStateString();
                 System.out.println(msg);
+                systray.setIconAnimation(newState == PlayerState.PLAYING);
                 EventQueue.invokeLater(new Runnable() { public void run() {
                     statusbar.setStatusTextC(msg);
                 }});
