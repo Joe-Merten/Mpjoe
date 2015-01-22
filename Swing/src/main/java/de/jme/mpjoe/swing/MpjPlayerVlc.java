@@ -15,7 +15,9 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
+import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
 import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
 import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
@@ -155,7 +157,141 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
         mediaPlayer.setPlaySubItems(true);
 
+        addVlcListeners();
         thread.start();
+    }
+
+    private void addVlcListeners() {
+        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventListener() {
+            @Override public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media, String mrl) {
+                System.out.println("Vlc event: mediaChanged media = " + media + " mrl = " + mrl);
+            }
+
+            @Override public void opening(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: opening");
+            }
+
+            @Override public void buffering(MediaPlayer mediaPlayer, float newCache) {
+                System.out.println("Vlc event: buffering " + newCache);
+            }
+
+            @Override public void playing(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: playing");
+            }
+
+            @Override public void paused(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: paused");
+            }
+
+            @Override public void stopped(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: stopped");
+            }
+
+            @Override public void forward(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: forward");
+            }
+
+            @Override public void backward(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: backward");
+            }
+
+            @Override public void finished(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: finished");
+            }
+
+            @Override public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+                System.out.println("Vlc event: timeChanged " + newTime);
+            }
+
+            @Override public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+                System.out.println("Vlc event: positionChanged " + newPosition);
+            }
+
+            @Override public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
+                System.out.println("Vlc event: seekableChanged " + newSeekable);
+            }
+
+            @Override public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
+                System.out.println("Vlc event: pausableChanged " + newPausable);
+            }
+
+            @Override public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
+                System.out.println("Vlc event: titleChanged " + newTitle);
+            }
+
+            @Override public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
+                System.out.println("Vlc event: snapshotTaken " + filename);
+            }
+
+            @Override public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
+                System.out.println("Vlc event: lengthChanged " + newLength);
+            }
+
+            @Override public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
+                System.out.println("Vlc event: videoOutput " + newCount);
+            }
+
+            @Override public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
+                System.out.println("Vlc event: scrambledChanged " + newScrambled);
+            }
+
+            @Override public void elementaryStreamAdded(MediaPlayer mediaPlayer, int type, int id) {
+                System.out.println("Vlc event: elementaryStreamAdded " + type + " " + id);
+            }
+
+            @Override public void elementaryStreamDeleted(MediaPlayer mediaPlayer, int type, int id) {
+                System.out.println("Vlc event: elementaryStreamDeleted " + type + " " + id);
+            }
+
+            @Override public void elementaryStreamSelected(MediaPlayer mediaPlayer, int type, int id) {
+                System.out.println("Vlc event: elementaryStreamSelected " + type + " " + id);
+            }
+
+            @Override public void error(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: error!!!");
+            }
+
+            @Override public void mediaMetaChanged(MediaPlayer mediaPlayer, int metaType) {
+                System.out.println("Vlc event: mediaMetaChanged " + metaType);
+            }
+
+            @Override public void mediaSubItemAdded(MediaPlayer mediaPlayer, libvlc_media_t subItem) {
+                System.out.println("Vlc event: mediaSubItemAdded");
+            }
+
+            @Override public void mediaDurationChanged(MediaPlayer mediaPlayer, long newDuration) {
+                System.out.println("Vlc event: mediaDurationChanged " + newDuration);
+            }
+
+            @Override public void mediaParsedChanged(MediaPlayer mediaPlayer, int newStatus) {
+                System.out.println("Vlc event: mediaParsedChanged " + newStatus);
+            }
+
+            @Override public void mediaFreed(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: mediaFreed");
+            }
+
+            @Override public void mediaStateChanged(MediaPlayer mediaPlayer, int newState) {
+                System.out.println("Vlc event: mediaStateChanged " + newState);
+            }
+
+            @Override public void newMedia(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: newMedia");
+            }
+
+            @Override public void subItemPlayed(MediaPlayer mediaPlayer, int subItemIndex) {
+                System.out.println("Vlc event: subItemPlayed " + subItemIndex);
+            }
+
+            @Override public void subItemFinished(MediaPlayer mediaPlayer, int subItemIndex) {
+                System.out.println("Vlc event: subItemFinished" + subItemIndex);
+            }
+
+            @Override public void endOfSubItems(MediaPlayer mediaPlayer) {
+                System.out.println("Vlc event: endOfSubItems");
+            }
+        });
+
     }
 
     private class MyThread extends Thread {
