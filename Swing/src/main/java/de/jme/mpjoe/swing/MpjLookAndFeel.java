@@ -27,6 +27,67 @@ import de.jme.toolbox.SystemInfo;
 // - http://nadeausoftware.com/articles/2010/12/java_tip_how_use_systemcolors_access_os_user_interface_theme_colors#SystemColorsvsUIDefaults
 public class MpjLookAndFeel {
     static boolean darkTheme = false;
+    static boolean initialized = false;
+
+    static String[] yellow1;
+    static String[] yellow2;
+
+    // setYello() sind Hilfsfunktionen für's Feintuning der Farbschemata
+    public static void setYellow1(String[] y) {
+        yellow1 = y;
+    }
+
+    public static void setYellow2(String[] y) {
+        yellow2 = y;
+    }
+
+    public static void setYellow(String[] yellow) {
+        if (yellow == null || yellow.length == 0) return;
+
+        final ArrayList<String> colorKeys = new ArrayList<String>();
+        final Set<Entry<Object, Object>> entries = UIManager.getDefaults().entrySet(); // der hier liefert die von mir geänderten Farben
+        for (final Entry<Object, Object> entry : entries)
+            if (entry.getValue() instanceof Color)
+                colorKeys.add((String)entry.getKey());
+
+        final Color col = new Color(255,255,0);
+        for (String y : yellow) {
+            boolean isInt = false;
+            int index = 0;
+            try {
+                index = Integer.parseInt(y);
+                isInt = true;
+            } catch(NumberFormatException e) {}
+            if (y.contains("-")) {
+                // Vermutlich sowas wie "0-100"
+                String[] vals = y.split("-");
+                try {
+                    int a = Integer.parseInt(vals[0]);
+                    int b = Integer.parseInt(vals[1]);
+                    for (int i = a; i <= b; i++) {
+                        if (i >=0 && i < colorKeys.size()) {
+                            System.out.println("Setting color " + i + " \"" + colorKeys.get(i) + "\"");
+                            UIManager.put(colorKeys.get(i), col);
+                        }
+                    }
+                } catch(NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            } else if (isInt) {
+                System.out.println("Setting color " + index + " \"" + colorKeys.get(index) + "\"");
+                UIManager.put(colorKeys.get(index), col);
+            } else {
+                index = -1;
+                int i = 0;
+                for (String k : colorKeys) {
+                    if (k.equals(y)) index = i;
+                    i++;
+                }
+                System.out.println("Setting color " + index + " \"" + y + "\"");
+                UIManager.put(index, col);
+            }
+        }
+    }
 
     public static void initialize() {
         try {
@@ -61,11 +122,8 @@ public class MpjLookAndFeel {
                 //UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
                 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
-                setDarkTheme(true);
+                darkTheme = true;
             }
-
-            //printLookAndFeels();
-            //printColors();
 
             // Splitpanes bitte ohne Rand -> http://stackoverflow.com/a/12800669/2880699
             UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
@@ -74,6 +132,17 @@ public class MpjLookAndFeel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        initialized = true;
+
+        setYellow(yellow1);
+        if (darkTheme) {
+            darkTheme = false;
+            setDarkTheme(true);
+        }
+        setYellow(yellow2);
+
+        //printLookAndFeels();
+        //printColors();
     }
 
 
@@ -122,16 +191,18 @@ public class MpjLookAndFeel {
     public static void setDarkTheme(boolean dark) {
         if (dark == darkTheme) return;
 
-        if (!dark) {
-            UIManager.getDefaults().putAll(UIManager.getLookAndFeelDefaults());
-        } else {
-            if (!SystemInfo.isOsx())
-                setNimbusDarkTheme();
-            else
-                setAquaDarkTheme();
+        if (initialized) {
+            if (!dark) {
+                UIManager.getDefaults().putAll(UIManager.getLookAndFeelDefaults());
+            } else {
+                if (!SystemInfo.isOsx())
+                    setNimbusDarkTheme();
+                else
+                    setAquaDarkTheme();
+            }
+            updateUI();
         }
 
-        updateUI();
         darkTheme = dark;
     }
 
@@ -216,14 +287,21 @@ public class MpjLookAndFeel {
 
             // Bei Verwendung von "new ColorUIResource" bleiben die Spaltenüberschriften von JTable unverändert, mit "new Color" bekomme ich die aber auch geändert
             // Dabei spielt es auch keine Rolle, ob ich "new Color" oder "new ColorUIResource" verwende
-            ArrayList<String> colorKeys = new ArrayList<String>();
-            Set<Entry<Object, Object>> entries = UIManager.getDefaults().entrySet(); // der hier liefert die von mir geänderten Farben
-            for (Entry<Object, Object> entry : entries)
+            final ArrayList<String> colorKeys = new ArrayList<String>();
+            final Set<Entry<Object, Object>> entries = UIManager.getDefaults().entrySet(); // der hier liefert die von mir geänderten Farben
+            for (final Entry<Object, Object> entry : entries)
                 if (entry.getValue() instanceof Color)
                     colorKeys.add((String)entry.getKey());
-            for (String colorKey : colorKeys)
-                UIManager.put(colorKey, new Color(10, 20, 30));
-        }/**/
+            int i = 0;
+            final int j = 0;
+            final int k = 277;
+            for (String colorKey : colorKeys) {
+                if (i >= j && i <= k)
+                    UIManager.put(colorKey, new Color(255, 255, 0));
+                i++;
+            }
+            System.out.println("Found " + colorKeys.size() + " color keys, changed [" + j + "..." + k + "] ");
+        }*/
 
 
         // Hier erst mal ein paar Farben für das Aqua Dark Theme zusammen gebastelt
@@ -249,9 +327,12 @@ public class MpjLookAndFeel {
         UIManager.put("ToggleButton.light"                        , unknown);               //          (  9, 80,208)    // javax.swing.plaf.ColorUIResource[r=9,g=80,b=208]
         UIManager.put("ToggleButton.shadow"                       , unknown);               //          (142,142,142)    // javax.swing.plaf.ColorUIResource[r=142,g=142,b=142]
 
-        UIManager.put("Label.foreground"                          , controlText);           //          (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-        UIManager.put("Button.foreground"                         , new Color(0,0,0));      //          (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-        UIManager.put("ComboBox.foreground"                       , new Color(0,0,0));      //          (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("Label.foreground"                          , controlText);           //
+        UIManager.put("Label.background"                          , controlFace);           //  Wird für die "Umrandung" meiner Statusbar verwendet
+        UIManager.put("Button.foreground"                         , new Color(0,0,0));      //
+        UIManager.put("ComboBox.foreground"                       , controlText);           //  Textfarbe
+        UIManager.put("ComboBox.background"                       , new Color(0,0,0));      //
+        UIManager.put("ComboBox.selectionForeground"              , new Color(0,0,0));      //  Textfarbe des fokussierten Eintrags
 
         UIManager.put("SplitPane.background"                      , controlFace);         //          (238,238,238)    // Das Splitpane an sich
         UIManager.put("SplitPane.shadow"                          , backgroundColor);     //          (142,142,142)    // Splitpane Border, aber den hab' ich eh abgeschaltet
@@ -311,7 +392,7 @@ public class MpjLookAndFeel {
         UIManager.put("Table.focusCellBackground"                , new Color(104,93,156));
         UIManager.put("Table.focusCellForeground"                , backgroundColor);
         UIManager.put("Table.foreground"                         , foregroundColor);
-        UIManager.put("Table.gridColor"                          , new Color(64,64,64));
+        UIManager.put("Table.gridColor"                          , new Color(32,32,32));
         UIManager.put("Table.selectionBackground"                , new Color(104,93,156));
         UIManager.put("Table.selectionForeground"                , backgroundColor);
         UIManager.put("Table.selectionInactiveBackground"        , new Color(104,93,156));
@@ -324,7 +405,42 @@ public class MpjLookAndFeel {
         UIManager.put("activeCaptionText", new Color(255,0,255));
         UIManager.put("controlText", new Color(255,255,0));
 
-        UIManager.put("Viewport.background", new Color(0,0,0)); // Unbenutzter Bereich von Scrollpanes (z.B. in Verbindung mit JTable oder im JFileChooser
+        UIManager.put("Viewport.background", backgroundColor);    // Unbenutzter Bereich von Scrollpanes (z.B. in Verbindung mit JTable oder im JFileChooser)
+        UIManager.put("ScrollPane.background", backgroundColor);  // ein kleiner Bereich der frei bleibt, bei Kombination von Scrollpane mit Table (die Ecke zwischen Table Header und Vertical Scrollbar)
+
+        // Hmm, PopupMenu wird zumindest nicht fürs TrayIcon-Popup verwendet (bzw. nur ganz wenig)
+        UIManager.put("PopupMenu.background"                     , backgroundColor); // Popup des TrayIcon, aber dort nur der Randbereich (oben und unten)
+        UIManager.put("PopupMenu.foreground"                     , unknown);         //         (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("PopupMenu.selectionBackground"            , unknown);         //         ( 48,131,251)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=48,g=131,b=251]
+        UIManager.put("PopupMenu.selectionForeground"            , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("PopupMenu.translucentBackground"          , backgroundColor); // Erscheint kurzzeitig beim Aufklappen von z.B. Dropdown Listboxen
+
+        UIManager.put("Menu.acceleratorForeground"               , unknown);         //         (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("Menu.acceleratorSelectionForeground"      , unknown);         //         (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("Menu.background"                          , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("Menu.disabledBackground"                  , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("Menu.disabledForeground"                  , unknown);         //         (128,128,128)    // javax.swing.plaf.ColorUIResource[r=128,g=128,b=128]
+        UIManager.put("Menu.foreground"                          , unknown);         //         (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("Menu.selectionBackground"                 , unknown);         //         ( 48,131,251)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=48,g=131,b=251]
+        UIManager.put("Menu.selectionForeground"                 , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+
+        UIManager.put("MenuBar.background"                       , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("MenuBar.disabledBackground"               , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("MenuBar.disabledForeground"               , unknown);         //         (128,128,128)    // javax.swing.plaf.ColorUIResource[r=128,g=128,b=128]
+        UIManager.put("MenuBar.foreground"                       , unknown);         //         (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("MenuBar.highlight"                        , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("MenuBar.selectionBackground"              , unknown);         //         ( 48,131,251)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=48,g=131,b=251]
+        UIManager.put("MenuBar.selectionForeground"              , unknown);         //         (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("MenuBar.shadow"                           , unknown);         //         (142,142,142)    // javax.swing.plaf.ColorUIResource[r=142,g=142,b=142]
+
+        UIManager.put("MenuItem.acceleratorForeground"           , unknown);                //           (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("MenuItem.acceleratorSelectionForeground"  , unknown);                //           (  0,  0,  0)    // javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+        UIManager.put("MenuItem.background"                      , backgroundColor);        // Hintergrund
+        UIManager.put("MenuItem.disabledBackground"              , unknown);                // offenber nicht änderbar    //           (255,255,255)    // javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
+        UIManager.put("MenuItem.disabledForeground"              , new Color(64,64,64));    // Textfarbe disabled
+        UIManager.put("MenuItem.foreground"                      , new Color(128,128,128)); // Textfarbe
+        UIManager.put("MenuItem.selectionBackground"             , unknown);                // offenber nicht änderbar  ( 48,131,251)    // com.apple.laf.AquaImageFactory$SystemColorProxy[r=48,g=131,b=251]
+        UIManager.put("MenuItem.selectionForeground"             , new Color(0,0,0));       // Textfarbe des fokussierten Items
     }
 
     public static class ThemeColor {

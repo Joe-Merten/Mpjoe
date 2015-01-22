@@ -126,6 +126,7 @@ public class MainWin {
             super("Dark");
             setShortDescription("Toggle dark color theme");
             setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+            //setMnemonic(KeyEvent.VK_D);
         }
         public void actionPerformed(ActionEvent ae) {
             toggleDarkTheme();
@@ -155,7 +156,9 @@ public class MainWin {
         boolean justPrintHelp = false;
         String uriString = null;
         PlayerType playerType = PlayerType.AUTO;
-        for (String arg : args) {
+        int index = 0;
+        while (index < args.length) {
+            String arg = args[index];
             if      (arg.equals("--version")) justPrintVersion = true;
             else if (arg.equals("--help" )) justPrintHelp = true;
             else if (arg.equals("--sound")) playerType = PlayerType.SOUND;
@@ -163,11 +166,23 @@ public class MainWin {
             else if (arg.equals("--vlc"  )) playerType = PlayerType.VLC;
             else if (arg.equals("--vld"  )) playerType = PlayerType.VLC_DIRECT;
             else if (arg.equals("--vle"  )) playerType = PlayerType.VLC_EMBEDDED;
+            else if (arg.equals("--dark")) MpjLookAndFeel.setDarkTheme(true);
+            else if (arg.equals("--yellow")) {
+                index++;
+                if (index >= args.length) {
+                    System.err.println("Missing argument");
+                    System.exit(1);
+                }
+                arg = args[index];
+                String[] yellow = arg.split(",");
+                MpjLookAndFeel.setYellow(yellow);
+            }
             else if (uriString == null) uriString = arg;
             else {
                 System.err.println("Unreconized parameter: \"" + arg + "\"");
                 System.exit(1);
             }
+            index++;
         }
         String version = VersionInfo.getVersionInfo();
         if (justPrintVersion || justPrintHelp) {
@@ -242,6 +257,7 @@ public class MainWin {
         // Actions
         quitAction = new QuitAction();
         chooseFileAndPlayAction = new ChooseFileAndPlayAction();
+        //chooseFileAndPlayAction.setEnabled(false);
         toggleDarkThemeAction = new ToggleDarkThemeAction();
         toggleLookAndFeelAction = new ToggleLookAndFeelAction();
 
