@@ -149,6 +149,20 @@ public class PlaylistPanel extends JPanel {
             }
         });
 
+        scrollPane.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent evt) {}
+            @Override public void mousePressed(MouseEvent evt) {}
+            @Override public void mouseExited(MouseEvent evt) {}
+            @Override public void mouseEntered(MouseEvent evt) {}
+            @Override public void mouseClicked(MouseEvent evt) {
+                //System.out.println("Mouse Event " + evt + " consumed=" + evt.isConsumed());
+                if (evt.getButton() == MouseEvent.BUTTON1) {
+                    table.requestFocus();
+                }
+            }
+        });
+
+
         // Für Drag & Drop von Zeilen, abgeguckt aus http://stackoverflow.com/a/26765460/2880699
         //   War mal testweise, aber nicht zu ende um gesetzt
         //   muss dann aber table.reorder bzw. TableUtil implementieren
@@ -353,6 +367,10 @@ public class PlaylistPanel extends JPanel {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override public void requestFocus() {
+        table.requestFocus();
     }
 
     static class TableModel extends AbstractTableModel {
