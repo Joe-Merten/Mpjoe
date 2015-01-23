@@ -2,6 +2,7 @@ package de.jme.mpjoe.swing;
 
 // TODO: Video angucken: https://www.youtube.com/watch?v=orMgNh0o38A
 //                       https://www.youtube.com/watch?v=uRK6MHlBi-0
+// vlcj Api: http://caprica.github.io/vlcj/javadoc/3.1.0
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -11,11 +12,15 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
+import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
+import uk.co.caprica.vlcj.player.AudioDevice;
+import uk.co.caprica.vlcj.player.AudioOutput;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -28,10 +33,10 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import de.jme.mpj.MpjPlayer;
+import de.jme.mpj.MpjPlayer.Delegate.MpjAnswer;
 import de.jme.mpj.MpjPlayer.Delegate.MpjRunnable;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
-import de.jme.mpj.MpjPlayer.Delegate.MpjAnswer;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
 
@@ -90,6 +95,8 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     Delegate            delegate;
     MyThread            thread;
     JPanel              panel;
+    LibVlcFactory       libVlcFactory;
+    LibVlc              libVlc;
     MediaPlayerFactory  mediaPlayerFactory;
     MediaPlayer         mediaPlayer;
     boolean             directPlayer = true;
@@ -134,6 +141,19 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
         mediaPlayerFactory = new MediaPlayerFactory();
 
+        {
+            System.out.println("Detected audio outputs:");
+            final List<AudioOutput> audioOutputs = mediaPlayerFactory.getAudioOutputs();
+            for (AudioOutput audioOutput : audioOutputs) {
+                System.out.println("  name = \"" + audioOutput.getName() + "\", description = \"" + audioOutput.getDescription() + "\"");
+                final List<AudioDevice> devices = audioOutput.getDevices();
+                for (AudioDevice device : devices) {
+                    System.out.println("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
+                }
+            }
+        }
+
+
         if (directPlayer) {
             imagePane = new ImagePane(image);
             imagePane.setSize(maxWidth, maxHeight);
@@ -154,141 +174,188 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             embeddedMediaPlayer.setVideoSurface(videoSurface);
         }
 
+        /*{
+            System.out.println("Available audio devices for this player:");
+            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices(); // gibt's wohl noch nicht in vlcj 3.1.0
+            for (AudioDevice device : devices)
+                System.out.println("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
+        }*/
+
+
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
         mediaPlayer.setPlaySubItems(true);
+
+        // final String[] standardMediaOptions = { "video-filter=logo", "Mpjoe-Icon-256.png", "logo-opacity=25" };
+        // mediaPlayer.setStandardMediaOptions(standardMediaOptions);
+        // mediaPlayer.setLogoFile("Mpjoe-Icon-256.png");
+        // mediaPlayer.setLogoOpacity(25);
+        // mediaPlayer.setLogoLocation(10, 10);
+        // mediaPlayer.enableLogo(true);
 
         addVlcListeners();
         thread.start();
     }
 
+    // TODO: log4j in betrieb nehmen!
+    static int LOG_TRACE = 1;
+    static int LOG_DEBUG = 2;
+    static int LOG_INFO  = 3;
+    static int LOG_WARN  = 4;
+    static int LOG_ERROR = 5;
+    static int LOG_FATAL = 6;
+    private void impLog(int loglevel, String msg) {
+        if (loglevel >= LOG_DEBUG)
+            System.out.println(msg);
+    }
+
     private void addVlcListeners() {
         mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventListener() {
             @Override public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media, String mrl) {
-                System.out.println("Vlc event: mediaChanged media = " + media + " mrl = " + mrl);
+                impLog(LOG_DEBUG, "Vlc event: mediaChanged" + /*" media = " + media +*/ " mrl = \"" + mrl + "\"");
             }
 
             @Override public void opening(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: opening");
+                impLog(LOG_DEBUG, "Vlc event: opening");
             }
 
             @Override public void buffering(MediaPlayer mediaPlayer, float newCache) {
-                System.out.println("Vlc event: buffering " + newCache);
+                if (newCache <= 0.01 || newCache >= 99.99)
+                    impLog(LOG_DEBUG, "Vlc event: buffering " + newCache);
+                else
+                    impLog(LOG_TRACE, "Vlc event: buffering " + newCache);
             }
 
             @Override public void playing(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: playing");
+                impLog(LOG_DEBUG, "Vlc event: playing");
+                // Der Event kommt beim initialen Start des Track sowie auch bei Resume nach Pause
+                // TODO: bei den Callbacks Synchronize erforderlich?
+                if (getPlayerState() == PlayerState.PAUSE)
+                    MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_RESUME);
+                else
+                    MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
             }
 
             @Override public void paused(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: paused");
+                impLog(LOG_DEBUG, "Vlc event: paused");
+                MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.PAUSE, PlayerEvent.TRACK_PAUSE);
             }
 
             @Override public void stopped(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: stopped");
+                impLog(LOG_DEBUG, "Vlc event: stopped");
+                MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.STOP, PlayerEvent.TRACK_STOP);
             }
 
             @Override public void forward(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: forward");
+                impLog(LOG_DEBUG, "Vlc event: forward");
             }
 
             @Override public void backward(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: backward");
+                impLog(LOG_DEBUG, "Vlc event: backward");
             }
 
             @Override public void finished(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: finished");
+                impLog(LOG_DEBUG, "Vlc event: finished");
+                MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.END, PlayerEvent.TRACK_END);
             }
 
             @Override public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-                System.out.println("Vlc event: timeChanged " + newTime);
+                impLog(LOG_TRACE, "Vlc event: timeChanged " + newTime);
             }
 
             @Override public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
-                System.out.println("Vlc event: positionChanged " + newPosition);
+                impLog(LOG_TRACE, "Vlc event: positionChanged " + newPosition);
             }
 
             @Override public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
-                System.out.println("Vlc event: seekableChanged " + newSeekable);
+                impLog(LOG_DEBUG, "Vlc event: seekableChanged " + newSeekable);
             }
 
             @Override public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
-                System.out.println("Vlc event: pausableChanged " + newPausable);
+                impLog(LOG_DEBUG, "Vlc event: pausableChanged " + newPausable);
             }
 
             @Override public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
-                System.out.println("Vlc event: titleChanged " + newTitle);
+                impLog(LOG_DEBUG, "Vlc event: titleChanged " + newTitle);
             }
 
             @Override public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-                System.out.println("Vlc event: snapshotTaken " + filename);
+                impLog(LOG_DEBUG, "Vlc event: snapshotTaken " + filename);
             }
 
             @Override public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-                System.out.println("Vlc event: lengthChanged " + newLength);
+                // Hmm, ändert sich ständig, auch bei lokalen Files
+                impLog(LOG_TRACE, "Vlc event: lengthChanged " + newLength);
             }
 
             @Override public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
-                System.out.println("Vlc event: videoOutput " + newCount);
+                impLog(LOG_DEBUG, "Vlc event: videoOutput " + newCount);
             }
 
             @Override public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
-                System.out.println("Vlc event: scrambledChanged " + newScrambled);
+                impLog(LOG_DEBUG, "Vlc event: scrambledChanged " + newScrambled);
             }
 
             @Override public void elementaryStreamAdded(MediaPlayer mediaPlayer, int type, int id) {
-                System.out.println("Vlc event: elementaryStreamAdded " + type + " " + id);
+                impLog(LOG_DEBUG, "Vlc event: elementaryStreamAdded " + type + " " + id);
             }
 
             @Override public void elementaryStreamDeleted(MediaPlayer mediaPlayer, int type, int id) {
-                System.out.println("Vlc event: elementaryStreamDeleted " + type + " " + id);
+                impLog(LOG_DEBUG, "Vlc event: elementaryStreamDeleted " + type + " " + id);
             }
 
             @Override public void elementaryStreamSelected(MediaPlayer mediaPlayer, int type, int id) {
-                System.out.println("Vlc event: elementaryStreamSelected " + type + " " + id);
+                impLog(LOG_DEBUG, "Vlc event: elementaryStreamSelected " + type + " " + id);
             }
 
             @Override public void error(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: error!!!");
+                // Hmm, bei »file not found« liefert libvlc_errmsg() null :(
+                impLog(LOG_ERROR, "Vlc event: error, msg = " + libVlc.libvlc_errmsg());
             }
 
             @Override public void mediaMetaChanged(MediaPlayer mediaPlayer, int metaType) {
-                System.out.println("Vlc event: mediaMetaChanged " + metaType);
+                impLog(LOG_DEBUG, "Vlc event: mediaMetaChanged " + metaType);
             }
 
             @Override public void mediaSubItemAdded(MediaPlayer mediaPlayer, libvlc_media_t subItem) {
-                System.out.println("Vlc event: mediaSubItemAdded");
+                impLog(LOG_DEBUG, "Vlc event: mediaSubItemAdded");
             }
 
             @Override public void mediaDurationChanged(MediaPlayer mediaPlayer, long newDuration) {
-                System.out.println("Vlc event: mediaDurationChanged " + newDuration);
+                // Hmm, ändert sich ständig, auch bei lokalen Files
+                impLog(LOG_TRACE, "Vlc event: mediaDurationChanged " + newDuration);
             }
 
             @Override public void mediaParsedChanged(MediaPlayer mediaPlayer, int newStatus) {
-                System.out.println("Vlc event: mediaParsedChanged " + newStatus);
+                impLog(LOG_DEBUG, "Vlc event: mediaParsedChanged " + newStatus);
             }
 
             @Override public void mediaFreed(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: mediaFreed");
+                impLog(LOG_DEBUG, "Vlc event: mediaFreed");
             }
 
             @Override public void mediaStateChanged(MediaPlayer mediaPlayer, int newState) {
-                System.out.println("Vlc event: mediaStateChanged " + newState);
+                impLog(LOG_DEBUG, "Vlc event: mediaStateChanged " + newState);
             }
 
             @Override public void newMedia(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: newMedia");
+                impLog(LOG_DEBUG, "Vlc event: newMedia");
+                if (getTrack() != null) {
+                    delegate.setPlayerState(PlayerState.STOP);
+                } else {
+                    delegate.setPlayerState(PlayerState.EJECT);
+                }
             }
 
             @Override public void subItemPlayed(MediaPlayer mediaPlayer, int subItemIndex) {
-                System.out.println("Vlc event: subItemPlayed " + subItemIndex);
+                impLog(LOG_DEBUG, "Vlc event: subItemPlayed " + subItemIndex);
             }
 
             @Override public void subItemFinished(MediaPlayer mediaPlayer, int subItemIndex) {
-                System.out.println("Vlc event: subItemFinished" + subItemIndex);
+                impLog(LOG_DEBUG, "Vlc event: subItemFinished" + subItemIndex);
             }
 
             @Override public void endOfSubItems(MediaPlayer mediaPlayer) {
-                System.out.println("Vlc event: endOfSubItems");
+                impLog(LOG_DEBUG, "Vlc event: endOfSubItems");
             }
         });
 
@@ -301,8 +368,12 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
         @Override public void run() {
             try {
+                for (;;) {
+                    MpjPlayerVlc.this.delegate.dispatchCommand(-1);
+                }
+
                 // TODO: hier auch auf die Events des Vlc Player reagieren
-                while (true) {
+                /*for (;;) {
                     // TODO: Das ist so wohl noch nicht ok!
                     if (mediaPlayer.isPlaying()) {
                         MpjPlayerVlc.this.delegate.dispatchCommand(1000);
@@ -315,7 +386,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
                         MpjPlayerVlc.this.delegate.setPlayerState(PlayerState.IDLE);
                         MpjPlayerVlc.this.delegate.dispatchCommand(-1);
                     }
-                }
+                }*/
             } catch (InterruptedException e) {
                 // Das ist eine normale Thread-Beendigung
             }
@@ -394,7 +465,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     private void init() {
         // Siehe auch http://www.capricasoftware.co.uk/legacy/projects/vlcj/tutorial1.html
 
-        // Unter Linux bekomme ich folgenden Fehler
+        // Auf meinem Dell M4400 (Kubuntu 14.04) bekomme ich folgenden Fehler
         //   Exception in thread "AWT-EventQueue-0" java.lang.Error:
         //   There is an incompatible JNA native library installed on this system.
         //   To resolve this issue you may do one of the following:
@@ -406,14 +477,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         //   java -Djna.nosys=true -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
         // Nicht funktioniert hat hingegen:
         //   java -Djna.boot.library.path=/usr/lib/jni -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-
-        // Auf Osx läuft Vlcj bei mir noch nicht. Vielleicht mal versuchen:
-        //     final String jnaLibraryPath = System.getProperty("jna.library.path");
-        //     final StringBuilder newJnaLibraryPath = new StringBuilder(jnaLibraryPath != null ? (jnaLibraryPath + ":") : "");
-        //     newJnaLibraryPath.append("/Applications/VLC.app/Contents/MacOS/lib");
-        //     System.setProperty("jna.library.path", newJnaLibraryPath.toString());
-        // Siehe hier: http://stackoverflow.com/questions/11078586/vlcj-creating-multiple-video-panels
-
+        // Auf BBB (ebenfalls Kubuntu 14.04) trat das Problem nicht auf
 
         System.out.println("Initializing VlcJ");
         MachineType machineType = SystemInfo.getMachineType();
@@ -441,7 +505,12 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }
 
         com.sun.jna.Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-        System.out.println("VlcJ initialized");
+
+        //libVlc = LibVlc.INSTANCE;
+        libVlcFactory = LibVlcFactory.factory();
+        libVlc = libVlcFactory.create();
+        String version = libVlc.libvlc_get_version();
+        System.out.println("VlcJ initialized, vlc version = " + version);
     }
 
     @Override public void addListener(EventListner listener) {
@@ -498,15 +567,34 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
     @Override public void ejectTrack() throws InterruptedException, MpjPlayerException {
         delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
-            mediaPlayer.stop();
-            delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
+            // Wenn ich dem Vlc hier ein mediaPlayer.stop() schicke obwohl kein Track geladen ist, dann bekomme ich von dem ein »stopped« Event Callback.
+            // Wäre eigentlich nicht weiter schlimm, nervt mich nur ein klein wenig - deshalb fange ich das hier ab.
+            if (getTrack() != null) {
+                if (getPlayerState() != PlayerState.STOP)
+                    mediaPlayer.stop();
+                // eine besseren Weg zum "loslassen" des Track habe ich bislang noch nicht gefunden
+                // TODO: Mail an vlcj
+                mediaPlayer.prepareMedia("/dev/null");
+                // impSetTrack(), damit nicht stop() gerufen wird
+                delegate.impSetTrack(null, null);
+                // TODO: etwas doofe Grauzone(n) hier
+                // - ich habe mich schon von dem Track verabschieded, aber der Event zu meinen Client(s) wird erst später über die vlcj Callbacks generiert
+                // - gleiches habe ich ja auch bei allen anderen Aktionen (play, pause, ...)
+                // Schön wäre wenn:
+                // - der Aufrufer ejectTrack() aufruft und nach Rückkehr wirklich alles erledigt ist
+                // - ich müsste also auf die vlcj Callbacks warten, vielleicht sowas wie
+                //   delegate.waitForState() oder delegate.waitForEvent(), natürlich mit Timeout und so
+                // - ob das aber auch für die UI Buttons sinnvoll ist, ist noch fraglich
+                //   falls z.B. prepareMedia() mal deutlich länger dauert hängt dann das UI ...
+                // - Aber: Der Client soll im Event Callback durchaus neue Aktionen an demselben Player ausführen können (setTrack & Play, ...), das wird ja letztlich für die Playlist benötigt
+            }
         }});
     }
 
     @Override public void stopTrack() throws InterruptedException, MpjPlayerException {
         delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
-            mediaPlayer.stop();
-            delegate.setPlayerStateWithEvent(PlayerState.IDLE, PlayerEvent.TRACK_STOP);
+            if (getTrack() != null && getPlayerState() != PlayerState.STOP)
+                mediaPlayer.stop();
         }});
     }
 
@@ -514,7 +602,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             MpjTrack track = getTrack();
             if (track != null) {
-                System.out.println("Start Playback");
+                //System.out.println("Start Playback");
                 String nam = track.getUri().toString();
                 if (nam.startsWith("file:")) {
                     // vlcj verträgt offenbar kein "file:/Blubber%20Bla.mp3"
@@ -528,11 +616,16 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
                     }
                 }
 
-                System.out.println("Preparing (" + nam + ")");
-                mediaPlayer.prepareMedia(nam);
+                //System.out.println("Preparing (" + nam + ")");
+                if (!mediaPlayer.prepareMedia(nam)) {
+                    String msg = "Failed to load " + track.getUri() + "\"";
+                    delegate.setError(msg);
+                    delegate.setPlayerStateWithEvent(PlayerState.ERROR, PlayerEvent.STATE_CHANGED);
+                    throw new MpjPlayerException(msg);
+                }
                 //if (!mediaPlayer.isPlayable()) // Hmm, der liefert mir bei allem false?!
                 //    throw new MpjPlayerException("Could not play this \"" + track.getUri() + "\"");
-                System.out.println("Starting (" + nam + ")");
+                //System.out.println("Starting (" + nam + ")");
 
                 // Vlcj MediaPlayer: play() startet die Wiedergabe asynchron, start() hingegen blockiert bis wirklich gestartet wurde
                 //mediaPlayer.play();
@@ -542,19 +635,67 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
                     delegate.setPlayerStateWithEvent(PlayerState.ERROR, PlayerEvent.STATE_CHANGED);
                     throw new MpjPlayerException(msg);
                 }
-                System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
-                delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
+                //System.out.println("Playback started (" + nam + ", name = " + track.getName() + ")");
+                //delegate.setPlayerStateWithEvent(PlayerState.PLAYING, PlayerEvent.TRACK_START);
                 //System.out.println("Playback started event sent");
             }
         }});
     }
 
     @Override public void pauseTrack() throws InterruptedException, MpjPlayerException {
-        // TODO
+        delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
+            if (getTrack() != null)
+                // TODO: evtl. getPlayerState()? Fading etc. müsste ich hier auch abfangen
+                mediaPlayer.pause();
+        }});
     }
 
     @Override public void resumeTrack() throws InterruptedException, MpjPlayerException {
-        // TODO
+        delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
+            if (getTrack() != null)
+                // TODO: evtl. getPlayerState()? Fading etc. müsste ich hier auch abfangen
+                // Hier ist wohl egal
+                mediaPlayer.pause();
+                //mediaPlayer.start();
+        }});
     }
 
 }
+
+/*
+  Bzgl. Audio Outputs
+  Dell M4400 Kubuntu 14.04:
+    Systemsteuerung:
+        "Internes Audio analog Stereo"
+    Vlc:
+        "Internes Audio analog Stereo"
+    vlcj:
+        name = "pulse", description = "Pulseaudio audio output"
+        name = "adummy", description = "Dummy audio output"
+        name = "alsa", description = "ALSA audio output"
+          id = "default", longName = "Playback/recording through the PulseAudio sound server"
+          id = "null", longName = "Discard all samples (playback) or generate zero samples (capture)"
+          id = "pulse", longName = "PulseAudio Sound Server"
+          id = "sysdefault:CARD=Intel", longName = "HDA Intel, 92HD71B7X Analog Default Audio Device"
+          id = "front:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog Front speakers"
+          id = "surround40:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog 4.0 Surround output to Front and Rear speakers"
+          id = "surround41:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog 4.1 Surround output to Front, Rear and Subwoofer speakers"
+          id = "surround50:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog 5.0 Surround output to Front, Center and Rear speakers"
+          id = "surround51:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog 5.1 Surround output to Front, Center, Rear and Subwoofer speakers"
+          id = "surround71:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog 7.1 Surround output to Front, Center, Side, Rear and Woofer speakers"
+          id = "dmix:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog Direct sample mixing device"
+          id = "dsnoop:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog Direct sample snooping device"
+          id = "hw:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog Direct hardware device without any conversions"
+          id = "plughw:CARD=Intel,DEV=0", longName = "HDA Intel, 92HD71B7X Analog Hardware device with all software conversions"
+        name = "amem", description = "Audio memory output"
+        name = "afile", description = "File audio output"
+
+    Mit BM8810 Bluetooth Headphone, verbunden via Iogear Bluetooth 4.0 USB Stick als "Audio Sink"
+    Systemsteuerung zusätzlich:
+        "BM-8810"
+    Vlc zusätzlich:
+        "BM-8810"
+    vlcj:
+        hmm, nichts neues dabei?!
+  Beim Macbook sehe ich weniger Einträge (adummy, afile, amem, auhal), aber mit "BM-8810" auch keine Veränderung
+*/

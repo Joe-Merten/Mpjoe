@@ -21,9 +21,27 @@ public interface MpjPlayer {
     };
 
     public enum PlayerState {
-        IDLE,
-        PLAYING,
-        ERROR
+        EJECT,         // no track loaded
+        STOP,          // track loaded but not started yet
+        PLAYING,       // track is playing
+        PAUSE,         // track playback is paused
+        END,           // track playback has reached the end
+        FADING_IN,     // track is playing, volume is currently increasing
+        FADING_OUT,    // track is playing, volume is currently decreasing
+        ERROR;
+        @Override public String toString() {
+            switch(this) {
+                case EJECT     : return "eject";
+                case STOP      : return "stop";
+                case PLAYING   : return "playing";
+                case PAUSE     : return "pause";
+                case END       : return "end";
+                case FADING_IN : return "fading in";
+                case FADING_OUT: return "fading out";
+                case ERROR     : return "ERROR";
+                default: throw new IllegalArgumentException();
+            }
+        }
     }
 
     public enum PlayerEvent {
@@ -35,7 +53,23 @@ public interface MpjPlayer {
         TRACK_PAUSE,
         TRACK_RESUME,
         TRACK_PROGRESS,
-        ERROR
+        TRACK_EJECTED,
+        ERROR;
+        public String toString() {
+            switch(this) {
+                case NONE          : return "none";
+                case STATE_CHANGED : return "state changed";
+                case TRACK_START   : return "track start";
+                case TRACK_END     : return "track end";
+                case TRACK_STOP    : return "track stop";
+                case TRACK_PAUSE   : return "track pause";
+                case TRACK_RESUME  : return "track resume";
+                case TRACK_PROGRESS: return "track progress";
+                case TRACK_EJECTED : return "track ejected";
+                case ERROR         : return "ERROR";
+                default: throw new IllegalArgumentException();
+            }
+        }
     }
 
     public interface EventListner {
@@ -96,6 +130,13 @@ public interface MpjPlayer {
 
         // =============================================================================================================
         // Track loading
+        public void impSetTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) {
+            track = newTrack;
+            ple = newPle;
+        }
+
+        // TODO: newTrack=null muss zu Eject führen (inkl. State & Event - klären wer hier wen für was aufruft!
+        //       Ausserdem brauche ich einen Event, sowas wie TRACK_LOADED (oder nur STATE_CHANGED?) der vom Status EJECTED nach STOP führt.
         public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
             if (track != null) {
                 player.stopTrack();
@@ -184,13 +225,9 @@ public interface MpjPlayer {
         }
 
         public String getPlayerStateString() {
-            String msg = "";
+            String msg = playerState.toString();
             switch (playerState) {
-                case IDLE:
-                    msg = "Idle";
-                    break;
                 case PLAYING:
-                    msg = "Playing";
                     if (getTrack() != null) {
                         // Name des MpjTrack, sofern vorhanden
                         String name = getTrack().getName();
@@ -215,10 +252,9 @@ public interface MpjPlayer {
                     }
                     break;
                 case ERROR:
-                    msg = "Error: " + getErrorMessage();
+                    msg += ": " + getErrorMessage();
                     break;
                 default:
-                    msg = "Unknown state";
                     break;
             }
             return msg;

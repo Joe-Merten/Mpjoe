@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 
 import de.jme.mpj.MpjPlayer;
 import de.jme.mpj.MpjPlayer.MpjPlayerException;
+import de.jme.mpj.MpjPlayer.PlayerEvent;
+import de.jme.mpj.MpjPlayer.PlayerState;
 
 // Evtl. interessant: http://www.jug-muenster.de/steelseries-java-swing-component-library-715/
 public class MpjPlayerSwing extends JPanel {
@@ -259,6 +261,27 @@ public class MpjPlayerSwing extends JPanel {
         buttonPanel.add(btnNextTrack);
 
         add(buttonPanel, BorderLayout.SOUTH);
+
+        updateActionStates();
+
+        mpjPlayer.addListener(new MpjPlayer.EventListner() {
+            @Override public void playerEvent(MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
+                updateActionStates();
+            }
+        });
+    }
+
+    private void updateActionStates() {
+        PlayerState state = mpjPlayer.getPlayerState();
+        boolean trackLoaded = mpjPlayer.getTrack() != null;
+        ejectAction.setSelected(!trackLoaded);
+        stopAction.setSelected(trackLoaded && (state == PlayerState.STOP || state == PlayerState.END));
+        playAction.setSelected(trackLoaded && state == PlayerState.PLAYING);
+        pauseAction.setSelected(trackLoaded && state == PlayerState.PAUSE);
+        playPauseAction.setSelected(trackLoaded && state == PlayerState.PLAYING);
+        muteAction.setSelected(false);
+        fadeAction.setSelected(trackLoaded && (state == PlayerState.FADING_IN || state == PlayerState.FADING_OUT));
+        headphoneAction.setSelected(false);
     }
 
     MpjPlayer getCorePlayer() {
