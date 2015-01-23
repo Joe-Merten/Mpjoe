@@ -39,6 +39,12 @@ public class MpjSystray {
         final Image icon128 = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-128.png")).getImage();
         final Image icon256 = new ImageIcon(System.class.getResource("/de/jme/mpj/Icon/Mpjoe-Icon-256.png")).getImage();
 
+        // TODO: Auf Kubuntu wird mein TrayIcon bzgl. der Transparenz nicht korrekt dargestellt, siehe auch
+        //       - https://www.kubuntuforums.net/archive/index.php/t-47358.html
+        //       - http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6453521
+        //       - der Bug ist wohl von July 2006
+        //       Außerdem flackert die Animation.
+        //       Auf den anderen Systemen (Osx und Winxp) sieht das aber ok aus.
         //--------------------
         // Kleiner Test mit dem SystemTray
         if (SystemTray.isSupported()) {
@@ -52,9 +58,11 @@ public class MpjSystray {
             // - Windows XP   16 x 16  - das 16er sieht ok aus, von dem 32er ist aber nur 1/4 zu sehen
             int iconSize = Math.min((int)size.getWidth(), (int)size.getHeight());
             if (SystemInfo.isLinux() && iconSize == 24) {
-                if (SystemInfo.getComputerName().toLowerCase().equals("ernie") && Toolkit.getDefaultToolkit().getScreenResolution() == 145) {
+                if (SystemInfo.getComputerName().toLowerCase().equals("ernie") && Toolkit.getDefaultToolkit().getScreenResolution() >= 140 && Toolkit.getDefaultToolkit().getScreenResolution() <= 150) {
                     // Hack, weil bei meinem Kubuntu 14.04 eine zu kleine TrayIconSize geliefert wird
                     // getScreenResolution() liefert auf meinem Dell Notebook 145 dpi, auch wenn ich die Auflösung mit xrdb auf 100 gesetzt habe
+                    // Hmm, seltsam, nach Reboot lieferte mir getScreenResolution() 147 dpi
+                    // xdpyinfo | grep resolution meldet hingegen 145x146 dpi
                     System.out.println("*** SystemTray size corrected to 48 pixel");
                     iconSize = 48;
                 }
