@@ -148,6 +148,7 @@ public class MainWin {
     private ToggleLookAndFeelAction toggleLookAndFeelAction;
 
 
+    private static MainWin mainWindow;
     /**
      * Start der Applikation
      */
@@ -208,16 +209,23 @@ public class MainWin {
         final PlayerType playerTypeFinal = playerType;
         final String uriStringFinal = uriString;
         EventQueue.invokeLater(new Runnable() {
-            public void run() {
+            @Override public void run() {
                 if (DauWarning.isWarningNeeded()) {
                     DauWarning warn = new DauWarning();
                     warn.setVisible(true);
                 }
                 try {
-                    MainWin window = new MainWin(playerTypeFinal, uriStringFinal);
-                    window.frame.setVisible(true);
+                    mainWindow = new MainWin(playerTypeFinal, uriStringFinal);
+                    mainWindow.frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+        EventQueue.invokeLater(new Runnable() {
+            @Override public void run() {
+                if (mainWindow != null && mainWindow.playlistPanel != null) {
+                    mainWindow.playlistPanel.requestFocus();
                 }
             }
         });
@@ -394,7 +402,7 @@ public class MainWin {
 
         //--------------------
         //frame.pack(); // dieses pack() findet man in vielen Beispielsourcen, führt bei mir aber dazu, dass das Player Panel auf Breite 0 reduziert wird
-        frame.setVisible(true);
+        //frame.setVisible(true);
 
         if (playerType == null || playerType == PlayerType.AUTO) {
             if (SystemInfo.isWindows()) {
@@ -447,7 +455,7 @@ public class MainWin {
             @Override public void playerEvent(final MpjPlayer player, PlayerEvent evt, PlayerState newState, PlayerState oldState) {
                 //final String msg = evt.toString() + " / " + player.getPlayerStateString();
                 final String msg = player.getPlayerStateString();
-                System.out.println(msg);
+                System.out.println("Player event: " + evt + ", state = " + msg);
                 systray.setIconAnimation(newState == PlayerState.PLAYING);
                 EventQueue.invokeLater(new Runnable() { public void run() {
                     statusbar.setStatusTextC(msg);
@@ -455,7 +463,10 @@ public class MainWin {
             }
         });
 
-        {
+        // Hmm, leider keine Wirkung beim Mac, dort steht der Fokus nach wie vor auf dem Filesystem Panel
+        //playlistPanel.requestFocus();
+
+        /*{
             String nam = uriString;
             URI uri = null;
             if (nam == null || nam.isEmpty()) {
@@ -513,7 +524,7 @@ public class MainWin {
                 //playerFrame.setContentPane(mediaPlayerComponent);
                 mediaPlayerComponent.getMediaPlayer().playMedia(nam);
             }
-        }
+        }*/
 
 
         // Farbwerte von Bildschirmpunkten anzeigen
