@@ -45,7 +45,15 @@ function RunLocal {
 }
 
 function CompileAndRun {
-    if mvn -q clean install; then
+    local mvnOpts=""
+
+    # Tests überspringen
+    #mvnOpts+="-Dmaven.test.skip=true"
+
+    # Outputreduktion
+    mvnOpts+="-quiet"
+
+    if mvn $mvnOpts clean install; then
         CopyToBBB
         RunLocal
         #RunRemote
