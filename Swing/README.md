@@ -80,6 +80,7 @@ vlcj
 - bei mehreren parallelen Playern "out of process" erforderlich
   - Macht auch Sinn, damit beim Vlc Crash nicht gleich mein ganzer Player wegstürzt
   - http://capricasoftware.co.uk/legacy/projects/vlcj/out-of-process.html
+- läuft auf 32 Bit Linux momentan noch etwas instabil (64 Bit Linux, Osx & Windows sieht auch stabil aus)
 
 Todo
 ----

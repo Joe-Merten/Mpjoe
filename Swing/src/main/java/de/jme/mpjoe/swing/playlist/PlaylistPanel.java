@@ -70,6 +70,7 @@ public class PlaylistPanel extends JPanel {
     };
 
     public PlaylistPanel() {
+        // TODO: Bei TinyCore Linux gibt's hier eine Exception, vermutlich beim C'tor Call von JPanel
         setLayout(new BorderLayout());
         //setBackground(Color.GREEN);
         setPreferredSize(new Dimension(700, 400));
