@@ -44,7 +44,6 @@ Build & run
 
     git clone https://github.com/Joe-Merten/Mpjoe.git
     cd Mpjoe/Swing
-    ./Update-Symlinks.sh
     mvn clean install
     java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 
