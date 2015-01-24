@@ -87,6 +87,15 @@
                                     </pluginExecutionFilter>
                                     <action> <!-- M2E should ignore the plugin --> <ignore/> </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>org.codehaus.mojo</groupId>
+                                		<artifactId>exec-maven-plugin</artifactId>
+                                		<versionRange>[1.3.2,)</versionRange>
+                                		<goals><goal>exec</goal></goals>
+                                	</pluginExecutionFilter>
+                                	<action> <!-- M2E should ignore the plugin --> <ignore/> </action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
