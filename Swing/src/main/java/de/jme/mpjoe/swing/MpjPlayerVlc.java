@@ -12,15 +12,13 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
-import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
-import uk.co.caprica.vlcj.player.AudioDevice;
-import uk.co.caprica.vlcj.player.AudioOutput;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -141,7 +139,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
         mediaPlayerFactory = new MediaPlayerFactory();
 
-        {
+        /*{
             System.out.println("Detected audio outputs:");
             final List<AudioOutput> audioOutputs = mediaPlayerFactory.getAudioOutputs();
             for (AudioOutput audioOutput : audioOutputs) {
@@ -151,7 +149,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
                     System.out.println("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
                 }
             }
-        }
+        }*/
 
 
         if (directPlayer) {
@@ -191,7 +189,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         // mediaPlayer.setLogoOpacity(25);
         // mediaPlayer.setLogoLocation(10, 10);
         // mediaPlayer.enableLogo(true);
-
+        
         addVlcListeners();
         thread.start();
     }
@@ -509,8 +507,23 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         //libVlc = LibVlc.INSTANCE;
         libVlcFactory = LibVlcFactory.factory();
         libVlc = libVlcFactory.create();
-        String version = libVlc.libvlc_get_version();
-        System.out.println("VlcJ initialized, vlc version = " + version);
+
+
+        String vlcjVersion;
+        try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/uk/co/caprica/vlcj/build.properties"));
+            vlcjVersion = properties.getProperty("build.version");
+        } catch (Exception e) {
+            vlcjVersion = e.toString();
+        } // This can only happen if something went wrong with the build
+
+        System.out.println("vlcj:      " + vlcjVersion);
+        System.out.println("java:      " + System.getProperty("java.version") + " " + System.getProperty("java.vendor"));
+        System.out.println("java home: " + System.getProperty("java.home"));
+        System.out.println("os:        " + System.getProperty("os.name") + " " + System.getProperty("os.version") + "" + System.getProperty("os.arch"));
+        System.out.println("vlc:       " + libVlc.libvlc_get_version());
+        //System.out.println("libvlc:    " + libVlcFactory.getNativeLibraryPath(libVlc)); // ist leider private
     }
 
     @Override public void addListener(EventListner listener) {
