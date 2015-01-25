@@ -536,11 +536,11 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             vlcjVersion = e.toString();
         } // This can only happen if something went wrong with the build
 
-        logger.info("vlcj:      {}"      , vlcjVersion);
-        logger.info("java:      {} {}"   , System.getProperty("java.version"), System.getProperty("java.vendor"));
-        logger.info("java home: {}"      , System.getProperty("java.home"));
-        logger.info("os:        {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
-        logger.info("vlc:       {}"      , libVlc.libvlc_get_version());
+        logger.info("vlcj:  {}"      , vlcjVersion);
+        logger.info("java:  {} {}"   , System.getProperty("java.version"), System.getProperty("java.vendor"));
+        logger.info("jhome: {}"      , System.getProperty("java.home"));
+        logger.info("os:    {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
+        logger.info("vlc:   {}"      , libVlc.libvlc_get_version());
         //logger.info("libvlc:    " + libVlcFactory.getNativeLibraryPath(libVlc)); // ist leider private
     }
 
