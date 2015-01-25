@@ -308,23 +308,31 @@ public class PlaylistPanel extends JPanel {
     */
 
     // Debug-/Testfunktionen
-    void addSampleTrack(String name) {
-        if (name.startsWith("/D/")) {
-            if (SystemInfo.isWindows()) name = name.replace("/D/", "D:/");
-            if (SystemInfo.isOsx()    ) name = name.replace("/D/MP3/", "/Users/joe.merten/Development/");
+    void addSampleTrack(String urlName, String humanName) {
+        if (urlName.startsWith("/D/")) {
+            if (SystemInfo.isWindows()) urlName = urlName.replace("/D/", "D:/");
+            if (SystemInfo.isOsx()    ) urlName = urlName.replace("/D/MP3/", "/Users/joe.merten/Development/");
         }
 
         URI uri;
-        if (name.startsWith("http://") || name.startsWith("https://")) {
-            uri = URI.create(name);
+        if (urlName.startsWith("http://") || urlName.startsWith("https://")) {
+            uri = URI.create(urlName);
         } else {
             // URI.create(nam) geht nicht, weil da sind dann keine Leerzeichen in Dateinamen erlaubt
-            File f = new File(name);
+            File f = new File(urlName);
             uri = f.toURI();
         }
 
-        playlist.add(new MpjPlaylistEntry(new MpjTrack(uri)));
+        if (humanName != null && !humanName.isEmpty())
+            playlist.add(new MpjPlaylistEntry(new MpjTrack(humanName, uri)));
+        else
+            playlist.add(new MpjPlaylistEntry(new MpjTrack(uri)));
     }
+
+    void addSampleTrack(String urlName) {
+        addSampleTrack(urlName, null);
+    }
+
 
     void addSomeSampleTracks() {
         // TODO: Testcode entfernen
@@ -342,13 +350,16 @@ public class PlaylistPanel extends JPanel {
             addSampleTrack("/D/MP3/Kazaa - Joe/Jürgen von der Lippe/Jürgen von der Lippe - Die Entenjagd .mp3");
         }
 
-        addSampleTrack("https://www.youtube.com/watch?v=0w1mP3oFXRU");
-        addSampleTrack("http://www.youtube.com/watch?v=0w1mP3oFXRU");
-        addSampleTrack("http://youtu.be/0w1mP3oFXRU");
-        addSampleTrack("https://www.youtube.com/watch?v=5oGXmvy0--w");
-        addSampleTrack("https://www.youtube.com/watch?v=oJh-jusiDvU");
+        addSampleTrack("https://www.youtube.com/watch?v=0w1mP3oFXRU", "Youtube Durango https");
+        addSampleTrack("http://www.youtube.com/watch?v=0w1mP3oFXRU" , "Youtube Durango http");
+        addSampleTrack("http://youtu.be/0w1mP3oFXRU"                , "Youtube Durango shortcut");
+        addSampleTrack("https://www.youtube.com/watch?v=5oGXmvy0--w", "Youtube mit Johnboy");
+        addSampleTrack("https://www.youtube.com/watch?v=oJh-jusiDvU", "Youtube Action");
 
-        addSampleTrack("http://www.myvideo.de/watch/7880291/Joe_AFF_Level_V_VII");
+        addSampleTrack("http://www.myvideo.de/watch/7880291/Joe_AFF_Level_V_VII", "Myvideo Test");
+
+        addSampleTrack("http://icecast4.pulsradio.com:80/relaxHD.mp3", "Pulsradio.com");
+        addSampleTrack("http://ducks.and.ponies.listen.bassjunkees.com:80/bjr_128.mp3", "Bassjunkees.com");
     }
 
     public void addAcceptEventListner(AcceptEventListner listener) {
