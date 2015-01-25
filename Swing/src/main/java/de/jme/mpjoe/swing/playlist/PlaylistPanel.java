@@ -358,8 +358,13 @@ public class PlaylistPanel extends JPanel {
 
         addSampleTrack("http://www.myvideo.de/watch/7880291/Joe_AFF_Level_V_VII", "Myvideo Test");
 
-        addSampleTrack("http://icecast4.pulsradio.com:80/relaxHD.mp3", "Pulsradio.com");
-        addSampleTrack("http://ducks.and.ponies.listen.bassjunkees.com:80/bjr_128.mp3", "Bassjunkees.com");
+        addSampleTrack("http://icecast4.pulsradio.com:80/relaxHD.mp3"                   , "Pulsradio.com - Relax");
+        addSampleTrack("http://ducks.and.ponies.listen.bassjunkees.com:80/bjr_128.mp3"  , "Bassjunkees.com");
+        addSampleTrack("http://streaming202.radionomy.com:80/LCR-Linedance-CountryRadio", "Radionomy.com - Linedance Country Radio");
+        addSampleTrack("http://streaming201.radionomy.com:80/RadioCountryMusic4Ever"    , "Radionomy.com - Radio Country Music 4 Eve");
+        addSampleTrack("http://streaming206.radionomy.com:80/countryradiousacom"        , "Radionomy.com - Country Radio USA");
+        addSampleTrack("http://streaming304.radionomy.com:80/nowcountry"                , "Radionomy.com - Now Country Radio");
+
     }
 
     public void addAcceptEventListner(AcceptEventListner listener) {
