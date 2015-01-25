@@ -6,6 +6,106 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/***********************************************************************************************************************
+  Empfehlung für Status und Funktionen für Buttons von Player Gui's
+  - Eigentlich reden wir hier gar nicht von Buttons, sondern von den Actions die mit den Buttons assoziiert sind
+  - Blinkend bedeutet: Wechsel zwischen normal und highlight
+  - Drag & Drop:
+    - Akzeptiert werden:
+      - Tracks aus der Lib
+      - Playlist Entries
+      - Track / Playlist Entry aus einem anderen Player
+      - Files (Drag & Drop vom Filemanager)
+      - Url's z.B. vom Weebbrowser
+    - während Dragover soll der Button mit der betreffenden Zielaktion z.B. highlight oder blinkend dargestellt werden
+    - wenn Drop nicht über einem Button sondern irgendwo anders im Panel des Player, dann wird eine Defaultaktion ausgeführt (z.B. Play)
+      Dragover soll dann diese Zielaktion entsprechend visualisieren
+  - Bei Klick muss für jeden aktuellen State überleg werden, welche Aktion ausgelöst werden soll:
+    - EJECT
+    - LOADING
+    - STOP
+    - PLAYING
+    - PAUSE
+    - END
+    - FADING_IN
+    - FADING_OUT
+------------------------------------------------------------------------------------------------------------------------
+  Eject
+  - Highlight: Playerstate = EJECT
+  - Blinkend: Playerstate = LOADING
+  - Klick wirft den Track aus dem Player, die Wiedergabe wird natürlich vorher ggf. noch gestoppt
+------------------------------------------------------------------------------------------------------------------------
+  Stop
+  - Highlight: Playerstate = STOP, also Track geladen und Trackposition auf 0
+    - Highlight aber auch bei Playerstate = END
+  - Klick stoppt die aktuelle Wiedergabe und setzt die Trackposition auf 0
+    - TODO bzgl. LOADING, siehe "Play"
+  - Drag & Drop:
+    - Highlight bei Dragover eines Track
+    - Drop eines Track: Track laden aber noch keine Wiedergabe starten
+------------------------------------------------------------------------------------------------------------------------
+  Play
+  - Highlight: Playerstate = PLAY
+  - Klick startet die Wiedergabe, macht aber nichts wenn bereits Playerstate = PLAY (also kein Neustart des aktuellen Track)
+    - STOP, END -> Wiedergabe ab Anfang starten
+    - PLAYING   -> nichts tun
+    - PAUSE, FADING_IN, FADING_OUT -> PLAY
+    - evtl. bei EJECT
+      - Überlegen, ob man hier einen Dialog zur Dateiauswahl und / oder Eingabe einer Url anbietet
+    - TODO bzgl. LOADING
+      - dieser Zustand ist tempörär (anders tempörär als z.B. PLAYING oder FADING_IN / FADING_OUT)
+      - es wird hier immer einen Zielzustand geben, nämlich z.B. STOP, PLAYING, FADING_IN
+      - nach setTrack() sind wir zwar erst mal auf STOP, aber die initiierende Aktion (z.B. via Gui, Remote oder Playlist Scheduling)
+        möchte danach möglicherweise auf PLAYING, FADING_IN (evtl. auch mit vorherigem setPosition) machen
+       -> TODO: Überlegen was ich in diesem Fall mit Aktionen wie STOP, PLAY, PAUSE, EJECT etc. mache.
+                Am sinnvolsten wäre vermutlich, ich würde die einfach via CommandQueue serialisieren
+------------------------------------------------------------------------------------------------------------------------
+  Pause
+  - Blinkend: Playerstate = PAUSE
+  - Klick toggelt zwischen Pause an/aus:
+    - PAUSE -> PLAY
+    - PLAY  -> PAUSE
+    - FADING_IN, FADING_OUT -> PAUSE
+    - TODO bzgl. LOADING, siehe "Play"
+------------------------------------------------------------------------------------------------------------------------
+  PlayPause
+  - Dieser Button ist eine Kombination aus Play und Pause (platzsparend, statt der 2 Buttons wird also nur einer benötigt)
+  - Highlight: Playerstate = PLAY
+------------------------------------------------------------------------------------------------------------------------
+  Mute
+  - "Highlight": Mute aktiviert
+    TODO: Highlight ist hier eher der falsche Betriff, da eher ein durchgestrichenen Lautsprecher dargestellt wird
+  - Klick: Toggelt zwischen Mute ein/aus
+------------------------------------------------------------------------------------------------------------------------
+  Fade
+  - Blinkend: Playerstate = FADING_IN oder FADING_OUT
+  - Klick:
+    - PAUSE      -> FADING_IN
+    - PLAY       -> FADING_OUT
+    - FADING_OUT -> FADING_IN
+    - FADING_IN  -> FADING_OUT
+    - TODO bzgl. LOADING, siehe "Play"
+  - Drag & Drop:
+    - Highlight bei Dragover eines Track
+    - Drop eines Track: Wiedergabe auf mit FADING_IN
+------------------------------------------------------------------------------------------------------------------------
+  Headphone
+  - Highlight: Wiedergabe auf Headphone
+  - Klick = Umschaltung Master / Headphone output
+  - Drag & Drop:
+    - Highlight bei Dragover eines Track
+    - Drop eines Track: Wiedergabe auf Headphone
+------------------------------------------------------------------------------------------------------------------------
+  PrevTrack
+  NextTrack
+  - Blinkend: Übergang zum vorherigen / nächsten Track (Fade blinkt mit)
+    Blinken aber nur bei manueller Auslösung, also nicht bei normalem Playlist Scheduling
+  - Klick = Fade to prev/next Track
+  - TODO: Evtl. Klick mit Modifier ohne Fade?
+  - Mehrere Klicks = entsprechend mehrere Tracks der Playlist überspringen (wie bei Mpjoe V1)
+  Gesteuert wird dies (also PrevTrack / NextTrack) allerdings nicht hier vom Player, sondern von aussen (Listener)
+***********************************************************************************************************************/
+
 /**
  * Basisklasse zur Wiedergabe von Audio- und Videodateien
  *
@@ -22,6 +122,7 @@ public interface MpjPlayer {
 
     public enum PlayerState {
         EJECT,         // no track loaded
+        LOADING,       // track is currently opening (could need some time e.g. for network streams)
         STOP,          // track loaded but not started yet
         PLAYING,       // track is playing
         PAUSE,         // track playback is paused
@@ -32,6 +133,7 @@ public interface MpjPlayer {
         @Override public String toString() {
             switch(this) {
                 case EJECT     : return "eject";
+                case LOADING   : return "loading";
                 case STOP      : return "stop";
                 case PLAYING   : return "playing";
                 case PAUSE     : return "pause";

@@ -14,6 +14,11 @@ import de.jme.mpj.MpjPlayer.PlayerEvent;
 import de.jme.mpj.MpjPlayer.PlayerState;
 
 // Evtl. interessant: http://www.jug-muenster.de/steelseries-java-swing-component-library-715/
+
+/***********************************************************************************************************************
+  Status und Funktionen der Buttons siehe MpjPlayer.java
+***********************************************************************************************************************/
+
 public class MpjPlayerSwing extends JPanel {
     private static final long serialVersionUID = 1L;
 
