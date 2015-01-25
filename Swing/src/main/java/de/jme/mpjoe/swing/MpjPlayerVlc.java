@@ -358,9 +358,9 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             }
 
             // Neu ab vlcj 3.2.0
-            @Override public void mediaSubItemTreeAdded(MediaPlayer mediaPlayer, libvlc_media_t item) {
+            /*@Override public void mediaSubItemTreeAdded(MediaPlayer mediaPlayer, libvlc_media_t item) {
                 impLog(LOG_DEBUG, "Vlc event: mediaSubItemTreeAdded");
-            }
+            }*/
         });
 
     }
