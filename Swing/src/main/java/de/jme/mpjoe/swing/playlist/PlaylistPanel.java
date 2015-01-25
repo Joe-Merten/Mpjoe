@@ -350,6 +350,8 @@ public class PlaylistPanel extends JPanel {
             addSampleTrack("/D/MP3/Kazaa - Joe/Jürgen von der Lippe/Jürgen von der Lippe - Die Entenjagd .mp3");
         }
 
+        addSampleTrack("/wrong file name/for/this/example.mp3", "Example for a wrong filename");
+
         addSampleTrack("https://www.youtube.com/watch?v=0w1mP3oFXRU", "Youtube Durango https");
         addSampleTrack("http://www.youtube.com/watch?v=0w1mP3oFXRU" , "Youtube Durango http");
         addSampleTrack("http://youtu.be/0w1mP3oFXRU"                , "Youtube Durango shortcut");

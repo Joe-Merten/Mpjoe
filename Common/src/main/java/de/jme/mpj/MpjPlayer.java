@@ -192,17 +192,27 @@ public interface MpjPlayer {
     public String getName();
     public Object getGuiComponent();
 
-    public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException;
-    public void setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException;
-    public void setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException;
+    // Die Aufrufe setTrack(), ejectTrack(), stopTrack(), playTrack() et cetera sind (u.U.) asynchron implementiert.
+    // D.h. der Call returniert bevor die Aktion tatsächlich ausgeführt wurde
+    // - entsprechend ist der PlayerState noch nicht auf dem erwarteten Zustand
+    // - im Fehlerfall sieht man auch keine Exception
+    // Wenn der Aufrufer dan Call Synchron (also blockierend) haben möchte, dann schreibt er ein waitfor() drum herum.
+    // Beispielaufrufe:
+    //   waitfor(setTrack(track, PlayerState.FADING_IN));
+    //   waitfor(playTrack())
+    public Delegate.MpjAnswer waitfor(Delegate.MpjAnswerHandle answerHandle) throws InterruptedException, MpjPlayerException;
+
+    public Delegate.MpjAnswerHandle setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException;
     public MpjTrack getTrack();
     public MpjPlaylistEntry getPlaylistEntry();
 
-    public void ejectTrack() throws InterruptedException, MpjPlayerException;
-    public void stopTrack() throws InterruptedException, MpjPlayerException;
-    public void playTrack() throws InterruptedException, MpjPlayerException;
-    public void pauseTrack() throws InterruptedException, MpjPlayerException;
-    public void resumeTrack() throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle ejectTrack() throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle stopTrack() throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle playTrack() throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle pauseTrack() throws InterruptedException, MpjPlayerException;
+    public Delegate.MpjAnswerHandle resumeTrack() throws InterruptedException, MpjPlayerException;
 
 
     // Delegation helper class
@@ -245,7 +255,7 @@ public interface MpjPlayer {
 
         // TODO: newTrack=null muss zu Eject führen (inkl. State & Event - klären wer hier wen für was aufruft!
         //       Ausserdem brauche ich einen Event, sowas wie TRACK_LOADED (oder nur STATE_CHANGED?) der vom Status EJECTED nach STOP führt.
-        public void setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
+        public MpjAnswerHandle setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
             if (track != null) {
                 player.stopTrack();
                 ple = null;
@@ -255,15 +265,16 @@ public interface MpjPlayer {
                 track = newTrack;
                 ple = newPle;
             }
+            return null; // TODO...
         }
 
-        public void setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException {
-            setTrack(newTrack, null);
+        public MpjAnswerHandle setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException {
+            return setTrack(newTrack, null);
         }
 
-        public void setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException {
-            if (ple == null) setTrack(null, null);
-            else setTrack(ple.track, ple);
+        public MpjAnswerHandle setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException {
+            if (ple == null) return setTrack(null, null);
+            else return setTrack(ple.track, ple);
         }
 
         public MpjTrack getTrack() {
@@ -374,33 +385,43 @@ public interface MpjPlayer {
         // =============================================================================================================
         // Command Queue for inter-thread communication
 
-        public interface MpjRunnable {
-            public void run(MpjAnswer answer) throws MpjPlayerException;
+        static abstract public class MpjRunnable {
+            public BlockingQueue<MpjAnswer> answerQueue = null;
+            abstract public void run(MpjAnswer answer) throws MpjPlayerException;
+        }
+
+        public class MpjAnswerHandle {
+            public BlockingQueue<MpjAnswer> answerQueue = new ArrayBlockingQueue<MpjAnswer>(1);
         }
 
         public class MpjAnswer {
             public MpjPlayerException exception;
         }
 
-        private BlockingQueue<MpjRunnable> commandQueue = new ArrayBlockingQueue<MpjRunnable>(1);
-        private BlockingQueue<MpjAnswer>   answerQueue  = new ArrayBlockingQueue<MpjAnswer>(1);
+        private BlockingQueue<MpjRunnable> commandQueue = new ArrayBlockingQueue<MpjRunnable>(10);
 
-        public MpjAnswer invokeCommand(final MpjRunnable func) throws InterruptedException, MpjPlayerException {
+        public MpjAnswerHandle invokeCommand(final MpjRunnable func) throws InterruptedException, MpjPlayerException {
             synchronized (this) {
                 logger.trace("Player(" + name + ") invokeCommand");
+                MpjAnswerHandle answerHandle = new MpjAnswerHandle();
+                func.answerQueue = answerHandle.answerQueue;
                 commandQueue.put(func);
-                logger.trace("Player(" + name + ") waiting for answer");
-                MpjAnswer answer = answerQueue.take();
-                if (answer.exception != null) {
-                    logger.error("Player(" + name + ") got answer with exception", answer.exception);
-                    // TODO: Wie macht man das
-                    //throw answer.exception;
-                    throw new MpjPlayerException("[[" + answer.exception.toString() + "]]");
-                } else {
-                    logger.trace("Player(" + name + ") got answer");
-                }
-                return answer;
+                return answerHandle;
             }
+        }
+
+        public MpjAnswer waitfor(MpjAnswerHandle answerHandle) throws InterruptedException, MpjPlayerException {
+            logger.trace("Player(" + name + ") waiting for answer");
+            MpjAnswer answer = answerHandle.answerQueue.take();
+            if (answer.exception != null) {
+                logger.error("Player(" + name + ") got answer with exception", answer.exception);
+                // TODO: Wie macht man das
+                //throw answer.exception;
+                throw new MpjPlayerException("[[" + answer.exception.toString() + "]]");
+            } else {
+                logger.trace("Player(" + name + ") got answer");
+            }
+            return answer;
         }
 
         public void dispatchCommand(int timeout) throws InterruptedException {
@@ -418,9 +439,9 @@ public interface MpjPlayer {
                     logger.trace("Player(" + name + ") command execution done");
                 } catch (MpjPlayerException e) {
                     answer.exception = e;
-                    logger.trace("Player(" + name + ") command execution exit with exception", e);
+                    logger.error("Player(" + name + ") command execution exit with exception", e);
                 }
-                answerQueue.put(answer);
+                func.answerQueue.put(answer);
             }
         }
     }
