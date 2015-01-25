@@ -31,6 +31,9 @@ function RunLocal {
     # für vlcj (wg. dem jni Problem auf meinem Kubuntu 14.04)
     jvmOpts+=" -Djna.nosys=true"
 
+    # vlcj Loglevel voreinstellen
+    #jvmOpts+=" -Dvlcj.log=DEBUG"
+
     # Kann man bei OSX mitgeben, damit nicht die Java Kaffetasse im Dock angezeigt wird
     # Hat aber auch den Nebeneffekt, dass unsere App dann nicht mehr in der App-Liste (via Meta-Tab) erscheint
     # -> http://stackoverflow.com/a/11140556/2880699
