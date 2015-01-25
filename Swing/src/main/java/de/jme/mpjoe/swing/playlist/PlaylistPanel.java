@@ -365,6 +365,8 @@ public class PlaylistPanel extends JPanel {
         addSampleTrack("http://streaming206.radionomy.com:80/countryradiousacom"        , "Radionomy.com - Country Radio USA");
         addSampleTrack("http://streaming304.radionomy.com:80/nowcountry"                , "Radionomy.com - Now Country Radio");
 
+        addSampleTrack("http://Broken.Link.com/blalba"                                  , "1ˢᵗ nonexistent Link");
+        addSampleTrack("http://example.com/blalba"                                      , "2ⁿᵈ nonexistent Link");
     }
 
     public void addAcceptEventListner(AcceptEventListner listener) {
