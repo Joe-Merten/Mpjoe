@@ -17,12 +17,8 @@ import java.util.Properties;
 
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
@@ -45,7 +41,6 @@ import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
-import de.jme.toolbox.logging.LogLevelHelper;
 
 /**
  * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client unter Verwendung von Vlc
@@ -207,6 +202,9 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
     private void addVlcListeners() {
 
+        // Die Events von vlcj kommen offensichtlich in einem eigenen Thread namens z.B. "pool-3-thread-1"
+        // Wäre zu überlegen, ob ich die auch noch über meinen Thread kanalisiere...
+        // Naja, erst mal nicht, ich schicke die Events vorerst mal direkt in diesem Threadkontext Richtung Applikation (bzw. zur Player Gui Komponente)
         final class MyMediaPlayerEventListener implements MediaPlayerEventListener {
             final Logger logger = LogManager.getLogger(MyMediaPlayerEventListener.class);
 
@@ -530,9 +528,10 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         try {
             Properties properties = new Properties();
             InputStream is = getClass().getResourceAsStream("/uk/co/caprica/vlcj/build.properties");
-            properties.load(is);
-            if (is != null)
+            if (is != null) {
+                properties.load(is);
                 vlcjVersion = properties.getProperty("build.version");
+            }
         } catch (Exception e) {
             vlcjVersion = e.toString();
         } // This can only happen if something went wrong with the build
