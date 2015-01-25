@@ -12,6 +12,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -189,7 +190,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         // mediaPlayer.setLogoOpacity(25);
         // mediaPlayer.setLogoLocation(10, 10);
         // mediaPlayer.enableLogo(true);
-        
+
         addVlcListeners();
         thread.start();
     }
@@ -355,6 +356,11 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             @Override public void endOfSubItems(MediaPlayer mediaPlayer) {
                 impLog(LOG_DEBUG, "Vlc event: endOfSubItems");
             }
+
+            // Neu ab vlcj 3.2.0
+            @Override public void mediaSubItemTreeAdded(MediaPlayer mediaPlayer, libvlc_media_t item) {
+                impLog(LOG_DEBUG, "Vlc event: mediaSubItemTreeAdded");
+            }
         });
 
     }
@@ -509,11 +515,13 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         libVlc = libVlcFactory.create();
 
 
-        String vlcjVersion;
+        String vlcjVersion = "<not available>";
         try {
             Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream("/uk/co/caprica/vlcj/build.properties"));
-            vlcjVersion = properties.getProperty("build.version");
+            InputStream is = getClass().getResourceAsStream("/uk/co/caprica/vlcj/build.properties");
+            properties.load(is);
+            if (is != null)
+                vlcjVersion = properties.getProperty("build.version");
         } catch (Exception e) {
             vlcjVersion = e.toString();
         } // This can only happen if something went wrong with the build
