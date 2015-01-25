@@ -211,15 +211,12 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             final Logger logger = LogManager.getLogger(MyMediaPlayerEventListener.class);
 
             public MyMediaPlayerEventListener() {
-                //// Loglevel für Vlcj Events ggf. von Trace auf Debug reduzieren
-                //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel());
-                //System.out.println("Root level = " + LogLevelHelper.getLoggerRootLevel());
-                //LogLevelHelper.setLoggerLevel(logger, Level.DEBUG);
-                //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel());
-                //System.out.println("Root level = " + LogLevelHelper.getLoggerRootLevel());
-                //LogLevelHelper.setLoggerRootLevel(Level.TRACE);
-                //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel());
-                //System.out.println("Root level = " + LogLevelHelper.getLoggerRootLevel());
+                // // Loglevel für Vlcj Events ggf. von Trace auf Debug reduzieren
+                // //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel() + ", Root level = " + LogLevelHelper.getLoggerRootLevel());
+                // //LogLevelHelper.setLoggerLevel(logger, Level.DEBUG);
+                // System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel() + ", Root level = " + LogLevelHelper.getLoggerRootLevel());
+                // LogLevelHelper.setLoggerRootLevel(Level.TRACE);
+                // System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel() + ", Root level = " + LogLevelHelper.getLoggerRootLevel());
             }
 
             @Override public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media, String mrl) {
