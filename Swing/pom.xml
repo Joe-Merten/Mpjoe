@@ -208,20 +208,20 @@
         </plugins>
 
         <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>log4j2.xml</include><!-- Logger-Konfiguration in's Ausgabeverzeichnis kopieren -->
-                </includes>
-                <targetPath>..</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+            <resource> <!-- Logger-Konfiguration in's Ausgabeverzeichnis kopieren -->
+                <directory>src/main/resources/de/jme/mpj</directory>
+                <includes> <include>log4j2.xml</include> </includes>
+                <targetPath>..</targetPath> <!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
             <resource>
-                <directory>src/main/resources/de/jme/mpj</directory> <!-- Buttons etc. sollen in's Jar -->
-                <targetPath>de/jme/mpj</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+                <!-- Buttons etc. sollen in's Jar -->
+                <!-- obiges log4j2.xml haben wir hierdurch zus. auch noch mal im .jar (auf Reserve), was vielleicht gar nicht mal so schlecht ist (TODO: via App automatisch anlegen falls nicht vorhanden) -->
+                <directory>src/main/resources/de/jme/mpj</directory>
+                <targetPath>de/jme/mpj</targetPath> <!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
             <resource>
                 <directory>src/main/resources/de/jme/mpjoe</directory> <!-- Hilfe etc. soll in's Jar -->
-                <targetPath>de/jme/mpjoe</targetPath><!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
+                <targetPath>de/jme/mpjoe</targetPath> <!-- relative to target/classes i.e. ${project.build.outputDirectory} -->
             </resource>
         </resources>
     </build>

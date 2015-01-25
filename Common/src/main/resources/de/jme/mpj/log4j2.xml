@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Properties>
+    <Property name="projectPrefix">Mpj</Property>
+    <Property name="rawPattern">%d %-5p [%t] %C{2} (%F:%L) - %m%n</Property>
+    <Property name="coloredPattern">%d %highlight{%-5p}{FATAL=bright red, ERROR=red, WARN=yellow, INFO=cyan, DEBUG=green, TRACE=bright blue} %style{[%t] %C{2} (%F:%L) -}{bright,black} %m%n</Property>
+    <Property name="coloredMediumPattern">%d %highlight{%-5p}{FATAL=bright red, ERROR=red, WARN=yellow, INFO=cyan, DEBUG=green, TRACE=bright blue} %style{[%t] (%F:%L) -}{bright,black} %m%n</Property>
+    <Property name="coloredShortPattern">%d %highlight{%-5p}{FATAL=bright red, ERROR=red, WARN=yellow, INFO=cyan, DEBUG=green, TRACE=bright blue} %style{[%t] -}{bright,black} %m%n</Property>
+    <Property name="fileName">Log/${projectPrefix}.log</Property>
+    <Property name="filePattern">Log/${projectPrefix}-%i.log</Property>
+  </Properties>
+  <Appenders>
+    <Console name="Stdout" target="SYSTEM_OUT">
+      <!--PatternLayout pattern="${coloredPattern}"      /-->        <!-- incl. Class & Filename               -->
+      <!--PatternLayout pattern="${coloredMediumPattern}"/-->        <!-- no Class but incl. Filename          -->
+         <PatternLayout pattern="${coloredShortPattern}"   />        <!-- no Class & Filename                  -->
+      <!--PatternLayout pattern="${rawPattern}"          /-->        <!-- incl. Class & Filename but no colors -->
+    </Console>
+    <RollingFile name="Logfile" fileName="${fileName}" filePattern="${filePattern}">
+      <PatternLayout pattern="${rawPattern}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="16 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy fileIndex="min" max="16"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="trace">
+      <AppenderRef ref="Stdout"/>
+      <AppenderRef ref="Logfile"/>
+    </Root>
+  </Loggers>
+</Configuration>

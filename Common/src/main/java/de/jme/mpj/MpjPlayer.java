@@ -6,6 +6,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /***********************************************************************************************************************
   Empfehlung für Status und Funktionen für Buttons von Player Gui's
   - Eigentlich reden wir hier gar nicht von Buttons, sondern von den Actions die mit den Buttons assoziiert sind
@@ -113,6 +116,8 @@ import java.util.concurrent.TimeUnit;
  */
 public interface MpjPlayer {
 
+    static final Logger logger = LogManager.getLogger(MpjPlayer.class);
+
     @SuppressWarnings("serial")
     class MpjPlayerException extends Exception {
         public MpjPlayerException(String message) {
@@ -217,6 +222,7 @@ public interface MpjPlayer {
         public Delegate(MpjPlayer player, String name) {
             this.player = player;
             this.name = name;
+            logger.trace("Player.Delegate created, name = " + name);
         }
 
         public String getName() {
@@ -303,17 +309,20 @@ public interface MpjPlayer {
                 try {
                     l.playerEvent(player, evt, newState, oldState);
                 } catch (Exception e) {
+                    logger.error("sendPlayerEvent (" + name + ")", e);
                     e.printStackTrace();
                 }
             }
         }
 
         public void setError(String msg) {
+            logger.error("Player (" + name + "): " + msg);
             errorMessage = msg;
             setPlayerStateWithEvent(PlayerState.ERROR, PlayerEvent.ERROR);
         }
 
         public void setError(Throwable e) {
+            logger.error("Player (" + name + ")", e);
             e.printStackTrace();
             setError(e.toString());
         }
@@ -378,12 +387,17 @@ public interface MpjPlayer {
 
         public MpjAnswer invokeCommand(final MpjRunnable func) throws InterruptedException, MpjPlayerException {
             synchronized (this) {
+                logger.trace("Player(" + name + ") invokeCommand");
                 commandQueue.put(func);
+                logger.trace("Player(" + name + ") waiting for answer");
                 MpjAnswer answer = answerQueue.take();
                 if (answer.exception != null) {
+                    logger.error("Player(" + name + ") got answer with exception", answer.exception);
                     // TODO: Wie macht man das
                     //throw answer.exception;
                     throw new MpjPlayerException("[[" + answer.exception.toString() + "]]");
+                } else {
+                    logger.trace("Player(" + name + ") got answer");
                 }
                 return answer;
             }
@@ -391,16 +405,20 @@ public interface MpjPlayer {
 
         public void dispatchCommand(int timeout) throws InterruptedException {
             MpjRunnable func = null;
-            if (timeout < 0)
+            if (timeout < 0) {
+                logger.trace("Player(" + name + ") waiting for command to dispatch");
                 func = commandQueue.take();
-            else
+            } else
                 func = commandQueue.poll(timeout, TimeUnit.MILLISECONDS);
             if (func != null) {
+                logger.trace("Player(" + name + ") got command and execute em");
                 MpjAnswer answer = new MpjAnswer();
                 try {
                     func.run(answer);
+                    logger.trace("Player(" + name + ") command execution done");
                 } catch (MpjPlayerException e) {
                     answer.exception = e;
+                    logger.trace("Player(" + name + ") command execution exit with exception", e);
                 }
                 answerQueue.put(answer);
             }

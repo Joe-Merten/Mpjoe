@@ -1,5 +1,8 @@
 # Maven output Directory
-target/
+target
+
+# Logfiles
+Log
 
 # Symlinks aus Mpjoe Common
 src/main/java/de/jme/toolbox

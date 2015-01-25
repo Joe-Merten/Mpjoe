@@ -17,6 +17,13 @@ import java.util.Properties;
 
 import javax.swing.JPanel;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
@@ -38,6 +45,7 @@ import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
 import de.jme.toolbox.SystemInfo.MachineType;
+import de.jme.toolbox.logging.LogLevelHelper;
 
 /**
  * Klasse zur Wiedergabe von Audiodateien im Mpjoe Java Swing Client unter Verwendung von Vlc
@@ -88,6 +96,8 @@ import de.jme.toolbox.SystemInfo.MachineType;
 
 
 public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
+
+    static final Logger logger = LogManager.getLogger(MpjPlayerVlc.class);
 
     static boolean initialized = false;
 
@@ -141,13 +151,13 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         mediaPlayerFactory = new MediaPlayerFactory();
 
         /*{
-            System.out.println("Detected audio outputs:");
+            logger.debug("Detected audio outputs:");
             final List<AudioOutput> audioOutputs = mediaPlayerFactory.getAudioOutputs();
             for (AudioOutput audioOutput : audioOutputs) {
-                System.out.println("  name = \"" + audioOutput.getName() + "\", description = \"" + audioOutput.getDescription() + "\"");
+                logger.debug("  name = \"" + audioOutput.getName() + "\", description = \"" + audioOutput.getDescription() + "\"");
                 final List<AudioDevice> devices = audioOutput.getDevices();
                 for (AudioDevice device : devices) {
-                    System.out.println("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
+                    logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
                 }
             }
         }*/
@@ -174,10 +184,10 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }
 
         /*{
-            System.out.println("Available audio devices for this player:");
+            logger.debug("Available audio devices for this player:");
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices(); // gibt's wohl noch nicht in vlcj 3.1.0
             for (AudioDevice device : devices)
-                System.out.println("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
+                logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
         }*/
 
 
@@ -195,37 +205,40 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         thread.start();
     }
 
-    // TODO: log4j in betrieb nehmen!
-    static int LOG_TRACE = 1;
-    static int LOG_DEBUG = 2;
-    static int LOG_INFO  = 3;
-    static int LOG_WARN  = 4;
-    static int LOG_ERROR = 5;
-    static int LOG_FATAL = 6;
-    private void impLog(int loglevel, String msg) {
-        if (loglevel >= LOG_DEBUG)
-            System.out.println(msg);
-    }
-
     private void addVlcListeners() {
-        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventListener() {
+
+        final class MyMediaPlayerEventListener implements MediaPlayerEventListener {
+            final Logger logger = LogManager.getLogger(MyMediaPlayerEventListener.class);
+
+            public MyMediaPlayerEventListener() {
+                //// Loglevel für Vlcj Events ggf. von Trace auf Debug reduzieren
+                //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel());
+                //System.out.println("Root level = " + LogLevelHelper.getLoggerRootLevel());
+                //LogLevelHelper.setLoggerLevel(logger, Level.DEBUG);
+                //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel());
+                //System.out.println("Root level = " + LogLevelHelper.getLoggerRootLevel());
+                //LogLevelHelper.setLoggerRootLevel(Level.TRACE);
+                //System.out.println("Vlc Event Logger = " + LogLevelHelper.getLoggerLevel(logger) + " " + LogLevelHelper.getLoggerLevel(logger).intLevel());
+                //System.out.println("Root level = " + LogLevelHelper.getLoggerRootLevel());
+            }
+
             @Override public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media, String mrl) {
-                impLog(LOG_DEBUG, "Vlc event: mediaChanged" + /*" media = " + media +*/ " mrl = \"" + mrl + "\"");
+                logger.debug("Vlc event: mediaChanged" + /*" media = " + media +*/ " mrl = \"" + mrl + "\"");
             }
 
             @Override public void opening(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: opening");
+                logger.debug("Vlc event: opening");
             }
 
             @Override public void buffering(MediaPlayer mediaPlayer, float newCache) {
                 if (newCache <= 0.01 || newCache >= 99.99)
-                    impLog(LOG_DEBUG, "Vlc event: buffering " + newCache);
+                    logger.debug("Vlc event: buffering " + newCache);
                 else
-                    impLog(LOG_TRACE, "Vlc event: buffering " + newCache);
+                    logger.trace("Vlc event: buffering " + newCache);
             }
 
             @Override public void playing(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: playing");
+                logger.debug("Vlc event: playing");
                 // Der Event kommt beim initialen Start des Track sowie auch bei Resume nach Pause
                 // TODO: bei den Callbacks Synchronize erforderlich?
                 if (getPlayerState() == PlayerState.PAUSE)
@@ -235,109 +248,109 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             }
 
             @Override public void paused(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: paused");
+                logger.debug("Vlc event: paused");
                 MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.PAUSE, PlayerEvent.TRACK_PAUSE);
             }
 
             @Override public void stopped(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: stopped");
+                logger.debug("Vlc event: stopped");
                 MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.STOP, PlayerEvent.TRACK_STOP);
             }
 
             @Override public void forward(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: forward");
+                logger.debug("Vlc event: forward");
             }
 
             @Override public void backward(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: backward");
+                logger.debug("Vlc event: backward");
             }
 
             @Override public void finished(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: finished");
+                logger.debug("Vlc event: finished");
                 MpjPlayerVlc.this.delegate.setPlayerStateWithEvent(PlayerState.END, PlayerEvent.TRACK_END);
             }
 
             @Override public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-                impLog(LOG_TRACE, "Vlc event: timeChanged " + newTime);
+                logger.trace("Vlc event: timeChanged " + newTime);
             }
 
             @Override public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
-                impLog(LOG_TRACE, "Vlc event: positionChanged " + newPosition);
+                logger.trace("Vlc event: positionChanged " + newPosition);
             }
 
             @Override public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
-                impLog(LOG_DEBUG, "Vlc event: seekableChanged " + newSeekable);
+                logger.debug("Vlc event: seekableChanged " + newSeekable);
             }
 
             @Override public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
-                impLog(LOG_DEBUG, "Vlc event: pausableChanged " + newPausable);
+                logger.debug("Vlc event: pausableChanged " + newPausable);
             }
 
             @Override public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
-                impLog(LOG_DEBUG, "Vlc event: titleChanged " + newTitle);
+                logger.debug("Vlc event: titleChanged " + newTitle);
             }
 
             @Override public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-                impLog(LOG_DEBUG, "Vlc event: snapshotTaken " + filename);
+                logger.debug("Vlc event: snapshotTaken " + filename);
             }
 
             @Override public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
                 // Hmm, ändert sich ständig, auch bei lokalen Files
-                impLog(LOG_TRACE, "Vlc event: lengthChanged " + newLength);
+                logger.trace("Vlc event: lengthChanged " + newLength);
             }
 
             @Override public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
-                impLog(LOG_DEBUG, "Vlc event: videoOutput " + newCount);
+                logger.debug("Vlc event: videoOutput " + newCount);
             }
 
             @Override public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
-                impLog(LOG_DEBUG, "Vlc event: scrambledChanged " + newScrambled);
+                logger.debug("Vlc event: scrambledChanged " + newScrambled);
             }
 
             @Override public void elementaryStreamAdded(MediaPlayer mediaPlayer, int type, int id) {
-                impLog(LOG_DEBUG, "Vlc event: elementaryStreamAdded " + type + " " + id);
+                logger.debug("Vlc event: elementaryStreamAdded " + type + " " + id);
             }
 
             @Override public void elementaryStreamDeleted(MediaPlayer mediaPlayer, int type, int id) {
-                impLog(LOG_DEBUG, "Vlc event: elementaryStreamDeleted " + type + " " + id);
+                logger.debug("Vlc event: elementaryStreamDeleted " + type + " " + id);
             }
 
             @Override public void elementaryStreamSelected(MediaPlayer mediaPlayer, int type, int id) {
-                impLog(LOG_DEBUG, "Vlc event: elementaryStreamSelected " + type + " " + id);
+                logger.debug("Vlc event: elementaryStreamSelected " + type + " " + id);
             }
 
             @Override public void error(MediaPlayer mediaPlayer) {
                 // Hmm, bei »file not found« liefert libvlc_errmsg() null :(
-                impLog(LOG_ERROR, "Vlc event: error, msg = " + libVlc.libvlc_errmsg());
+                logger.error("Vlc event: error, msg = " + libVlc.libvlc_errmsg());
             }
 
             @Override public void mediaMetaChanged(MediaPlayer mediaPlayer, int metaType) {
-                impLog(LOG_DEBUG, "Vlc event: mediaMetaChanged " + metaType);
+                logger.debug("Vlc event: mediaMetaChanged " + metaType);
             }
 
             @Override public void mediaSubItemAdded(MediaPlayer mediaPlayer, libvlc_media_t subItem) {
-                impLog(LOG_DEBUG, "Vlc event: mediaSubItemAdded");
+                logger.debug("Vlc event: mediaSubItemAdded");
             }
 
             @Override public void mediaDurationChanged(MediaPlayer mediaPlayer, long newDuration) {
                 // Hmm, ändert sich ständig, auch bei lokalen Files
-                impLog(LOG_TRACE, "Vlc event: mediaDurationChanged " + newDuration);
+                logger.trace("Vlc event: mediaDurationChanged " + newDuration);
             }
 
             @Override public void mediaParsedChanged(MediaPlayer mediaPlayer, int newStatus) {
-                impLog(LOG_DEBUG, "Vlc event: mediaParsedChanged " + newStatus);
+                logger.debug("Vlc event: mediaParsedChanged " + newStatus);
             }
 
             @Override public void mediaFreed(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: mediaFreed");
+                logger.debug("Vlc event: mediaFreed");
             }
 
             @Override public void mediaStateChanged(MediaPlayer mediaPlayer, int newState) {
-                impLog(LOG_DEBUG, "Vlc event: mediaStateChanged " + newState);
+                logger.debug("Vlc event: mediaStateChanged " + newState);
             }
 
             @Override public void newMedia(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: newMedia");
+                logger.debug("Vlc event: newMedia");
                 if (getTrack() != null) {
                     delegate.setPlayerState(PlayerState.STOP);
                 } else {
@@ -346,23 +359,24 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             }
 
             @Override public void subItemPlayed(MediaPlayer mediaPlayer, int subItemIndex) {
-                impLog(LOG_DEBUG, "Vlc event: subItemPlayed " + subItemIndex);
+                logger.debug("Vlc event: subItemPlayed " + subItemIndex);
             }
 
             @Override public void subItemFinished(MediaPlayer mediaPlayer, int subItemIndex) {
-                impLog(LOG_DEBUG, "Vlc event: subItemFinished" + subItemIndex);
+                logger.debug("Vlc event: subItemFinished" + subItemIndex);
             }
 
             @Override public void endOfSubItems(MediaPlayer mediaPlayer) {
-                impLog(LOG_DEBUG, "Vlc event: endOfSubItems");
+                logger.debug("Vlc event: endOfSubItems");
             }
 
             // Neu ab vlcj 3.2.0
             /*@Override public void mediaSubItemTreeAdded(MediaPlayer mediaPlayer, libvlc_media_t item) {
-                impLog(LOG_DEBUG, "Vlc event: mediaSubItemTreeAdded");
+                logger.debug("Vlc event: mediaSubItemTreeAdded");
             }*/
-        });
+        };
 
+        mediaPlayer.addMediaPlayerEventListener(new MyMediaPlayerEventListener());
     }
 
     private class MyThread extends Thread {
@@ -460,7 +474,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     private final class DirectBufferFormatCallback implements BufferFormatCallback {
         @Override public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
             //return new RV32BufferFormat(sourceWidth, sourceHeight);
-            System.out.println("sourceWidth=" + sourceWidth + ", sourceHeight=" + sourceHeight);
+            logger.debug("sourceWidth={}, sourceHeight={}" + sourceWidth, sourceHeight);
             return new RV32BufferFormat(maxWidth, maxHeight);
         }
     }
@@ -483,7 +497,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         //   java -Djna.boot.library.path=/usr/lib/jni -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
         // Auf BBB (ebenfalls Kubuntu 14.04) trat das Problem nicht auf
 
-        System.out.println("Initializing VlcJ");
+        logger.debug("Initializing VlcJ");
         MachineType machineType = SystemInfo.getMachineType();
 
         switch (machineType) {
@@ -493,7 +507,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             }
             case PcWindows: {
                 String progFolder = System.getenv("ProgramFiles");
-                //System.out.println("progFolder = \"" + progFolder + "\"");
+                logger.trace("progFolder = \"{}\"", progFolder);
                 com.sun.jna.NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), progFolder + "/VideoLAN/VLC");
             }
             case PcOsx: {
@@ -526,12 +540,12 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             vlcjVersion = e.toString();
         } // This can only happen if something went wrong with the build
 
-        System.out.println("vlcj:      " + vlcjVersion);
-        System.out.println("java:      " + System.getProperty("java.version") + " " + System.getProperty("java.vendor"));
-        System.out.println("java home: " + System.getProperty("java.home"));
-        System.out.println("os:        " + System.getProperty("os.name") + " " + System.getProperty("os.version") + "" + System.getProperty("os.arch"));
-        System.out.println("vlc:       " + libVlc.libvlc_get_version());
-        //System.out.println("libvlc:    " + libVlcFactory.getNativeLibraryPath(libVlc)); // ist leider private
+        logger.info("vlcj:      {}"      , vlcjVersion);
+        logger.info("java:      {} {}"   , System.getProperty("java.version"), System.getProperty("java.vendor"));
+        logger.info("java home: {}"      , System.getProperty("java.home"));
+        logger.info("os:        {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
+        logger.info("vlc:       {}"      , libVlc.libvlc_get_version());
+        //logger.info("libvlc:    " + libVlcFactory.getNativeLibraryPath(libVlc)); // ist leider private
     }
 
     @Override public void addListener(EventListner listener) {
@@ -623,7 +637,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             MpjTrack track = getTrack();
             if (track != null) {
-                //System.out.println("Start Playback");
+                //logger.debug("Start Playback");
                 String nam = track.getUri().toString();
                 if (nam.startsWith("file:")) {
                     // vlcj verträgt offenbar kein "file:/Blubber%20Bla.mp3"
@@ -637,7 +651,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
                     }
                 }
 
-                //System.out.println("Preparing (" + nam + ")");
+                logger.debug("Preparing (" + nam + ")");
                 if (!mediaPlayer.prepareMedia(nam)) {
                     String msg = "Failed to load " + track.getUri() + "\"";
                     delegate.setError(msg);
@@ -650,8 +664,10 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
                 // Vlcj MediaPlayer: play() startet die Wiedergabe asynchron, start() hingegen blockiert bis wirklich gestartet wurde
                 //mediaPlayer.play();
+                logger.debug("start");
                 if (!mediaPlayer.start()) {
                     String msg = "Failed to start " + track.getUri() + "\"";
+                    logger.error("msg");
                     delegate.setError(msg);
                     delegate.setPlayerStateWithEvent(PlayerState.ERROR, PlayerEvent.STATE_CHANGED);
                     throw new MpjPlayerException(msg);
