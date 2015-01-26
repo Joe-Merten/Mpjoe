@@ -701,6 +701,34 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }});
     }
 
+    @Override public MpjPlayer.MpjAnswerHandle togglePauseTrack() throws InterruptedException, MpjPlayerException {
+        return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
+            if (getTrack() != null) {
+                // TODO: evtl. getPlayerState()? Fading etc. müsste ich hier auch abfangen
+                mediaPlayer.pause();
+                // TODO: Auf Vlc Event warten
+            }
+        }});
+    }
+
+    @Override public MpjPlayer.MpjAnswerHandle doPlayPauseTrack() throws InterruptedException, MpjPlayerException {
+        return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
+            if (getTrack() != null) {
+                switch (delegate.getPlayerState()) {
+                    case STOP      : mediaPlayer.start(); break; // TODO: Das wird hier nicht ausreichen
+                    case PLAYING   : mediaPlayer.pause(); break;
+                    case PAUSE     : mediaPlayer.pause(); break;
+                    case END       : mediaPlayer.start(); break; // TODO: Das wird hier nicht ausreichen
+                    case FADING_IN : break; // TODO
+                    case FADING_OUT: break; // TODO
+                    default: break;
+                }
+                //mediaPlayer.start();
+                // TODO: Auf Vlc Event warten
+            }
+        }});
+    }
+
 }
 
 /*

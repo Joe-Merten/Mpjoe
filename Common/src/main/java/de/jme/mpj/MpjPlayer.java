@@ -219,6 +219,8 @@ public interface MpjPlayer {
     public MpjAnswerHandle playTrack() throws InterruptedException, MpjPlayerException;
     public MpjAnswerHandle pauseTrack() throws InterruptedException, MpjPlayerException;
     public MpjAnswerHandle resumeTrack() throws InterruptedException, MpjPlayerException;
+    public MpjAnswerHandle togglePauseTrack() throws InterruptedException, MpjPlayerException;
+    public MpjAnswerHandle doPlayPauseTrack() throws InterruptedException, MpjPlayerException;
 
     static abstract public class MpjRunnable {
         public BlockingQueue<MpjAnswer> answerQueue = null;

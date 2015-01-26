@@ -98,7 +98,7 @@ public class MpjPlayerSwing extends JPanel {
         }
         public void actionPerformed(ActionEvent ae) {
             try {
-                mpjPlayer.pauseTrack();
+                mpjPlayer.togglePauseTrack();
             } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
@@ -117,7 +117,7 @@ public class MpjPlayerSwing extends JPanel {
         }
         public void actionPerformed(ActionEvent ae) {
             try {
-                mpjPlayer.playTrack();
+                mpjPlayer.doPlayPauseTrack();
             } catch (InterruptedException | MpjPlayerException e) {
                 e.printStackTrace();
             }
