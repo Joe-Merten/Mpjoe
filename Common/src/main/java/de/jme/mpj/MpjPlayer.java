@@ -456,8 +456,12 @@ public interface MpjPlayer {
                 logger.trace("Player(" + name + ") invokeCommand");
                 MpjAnswerHandle answerHandle = new MpjAnswerHandle(player);
                 func.answerQueue = answerHandle.answerQueue;
-                commandQueue.put(func);
-                return answerHandle;
+                try {
+                    commandQueue.add(func);
+                    return answerHandle;
+                } catch (IllegalStateException e) {
+                    throw new MpjPlayerException("Command queue overflow");
+                }
             }
         }
 
