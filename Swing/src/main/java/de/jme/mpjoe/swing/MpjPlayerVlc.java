@@ -35,8 +35,6 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import de.jme.mpj.MpjPlayer;
-import de.jme.mpj.MpjPlayer.Delegate.MpjAnswer;
-import de.jme.mpj.MpjPlayer.Delegate.MpjRunnable;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
@@ -573,20 +571,16 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         return delegate.getGuiComponent();
     }
 
-    @Override public Delegate.MpjAnswer waitfor(Delegate.MpjAnswerHandle answerHandle) throws InterruptedException, MpjPlayerException {
-        return delegate.waitfor(answerHandle);
-    }
-
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle setTrack(MpjTrack newTrack, MpjPlaylistEntry newPle) throws InterruptedException, MpjPlayerException {
         return delegate.setTrack(newTrack, newPle);
     }
 
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle setTrack(MpjTrack newTrack) throws InterruptedException, MpjPlayerException {
         return delegate.setTrack(newTrack);
     }
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle setTrack(MpjPlaylistEntry ple) throws InterruptedException, MpjPlayerException {
         return delegate.setTrack(ple);
     }
 
@@ -599,7 +593,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     }
 
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle ejectTrack() throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle ejectTrack() throws InterruptedException, MpjPlayerException {
         return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             // Wenn ich dem Vlc hier ein mediaPlayer.stop() schicke obwohl kein Track geladen ist, dann bekomme ich von dem ein »stopped« Event Callback.
             // Wäre eigentlich nicht weiter schlimm, nervt mich nur ein klein wenig - deshalb fange ich das hier ab.
@@ -627,7 +621,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }});
     }
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle stopTrack() throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle stopTrack() throws InterruptedException, MpjPlayerException {
         return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             if (getTrack() != null && getPlayerState() != PlayerState.STOP) {
                 mediaPlayer.stop();
@@ -636,7 +630,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }});
     }
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle playTrack() throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle playTrack() throws InterruptedException, MpjPlayerException {
         return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             MpjTrack track = getTrack();
             if (track != null) {
@@ -685,7 +679,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }});
     }
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle pauseTrack() throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle pauseTrack() throws InterruptedException, MpjPlayerException {
         return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             if (getTrack() != null) {
                 // TODO: evtl. getPlayerState()? Fading etc. müsste ich hier auch abfangen
@@ -695,7 +689,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }});
     }
 
-    @Override public MpjPlayer.Delegate.MpjAnswerHandle resumeTrack() throws InterruptedException, MpjPlayerException {
+    @Override public MpjPlayer.MpjAnswerHandle resumeTrack() throws InterruptedException, MpjPlayerException {
         return delegate.invokeCommand(new MpjRunnable() { @Override public void run(MpjAnswer answer) throws MpjPlayerException {
             if (getTrack() != null) {
                 // TODO: evtl. getPlayerState()? Fading etc. müsste ich hier auch abfangen
