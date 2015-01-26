@@ -285,6 +285,7 @@ public class MpjPlayerSwing extends JPanel {
         pauseAction.setSelected(trackLoaded && state == PlayerState.PAUSE);
         playPauseAction.setSelected(trackLoaded && state == PlayerState.PLAYING);
         playPauseAction.setThirdstate(trackLoaded && state == PlayerState.PAUSE);
+        playPauseAction.setBlinking(trackLoaded && state == PlayerState.PAUSE);
         muteAction.setSelected(false);
         fadeAction.setSelected(trackLoaded && (state == PlayerState.FADING_IN || state == PlayerState.FADING_OUT));
         headphoneAction.setSelected(false);

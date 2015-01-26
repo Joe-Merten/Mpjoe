@@ -23,7 +23,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import de.jme.jsi.Jsi;
 import de.jme.jsi.MoniStd;
 import de.jme.jsi.Monitor;

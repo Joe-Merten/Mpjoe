@@ -5,10 +5,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -45,6 +48,7 @@ public class MpjButton extends JComponent implements MouseListener {
     private AbstractAction action;
     private boolean        mouseInside;
     private boolean        mouseDown;
+    private static List<MpjButton> buttonList = new ArrayList<MpjButton>(100);
 
     public MpjButton(AbstractAction action) {
         this.action = action;
@@ -59,8 +63,14 @@ public class MpjButton extends JComponent implements MouseListener {
                 @Override public void propertyChange(PropertyChangeEvent evt) {
                     // TODO: evtl. optimieren, also repaint nur bei für mich relevanten Änderungen
                     repaint();
+                    startBlinkTimer();
                 }
             });
+        }
+
+        synchronized (buttonList) {
+            buttonList.add(this);
+            // TOOD: mpjButton mit AutoClose und dann wieder von der Listen entfernen?
         }
     }
 
@@ -98,6 +108,7 @@ public class MpjButton extends JComponent implements MouseListener {
                 prefIcon = mpjAction.getSelectedIcon();
             if (mpjAction.isThirdstate())
                 prefIcon = mpjAction.getThirdstateIcon();
+            if (mpjAction.isBlinking() && blinkOn) prefIcon = null;
             if (!mpjAction.isEnabled()) {
                 prefIcon = mpjAction.getDisabledIcon();
                 if (prefIcon != null) {
@@ -157,5 +168,41 @@ public class MpjButton extends JComponent implements MouseListener {
     @Override public void mouseClicked(MouseEvent evt) {
         //logger.trace("mouseClicked " + evt);
     }
+
+    /**
+     * Timer to realize the blinking buttons
+     * All blinking buttons are in sync
+     */
+    private static javax.swing.Timer blinkTimer;
+    private static ButtonBlinker buttonBlinker;
+    private static boolean blinkOn = false;
+    private static void startBlinkTimer() {
+        synchronized (buttonList) {
+            if (blinkTimer == null) {
+                buttonBlinker = new ButtonBlinker();
+                blinkTimer = new javax.swing.Timer(500, buttonBlinker);
+            }
+            blinkTimer.start();
+        }
+    }
+    private static class ButtonBlinker implements ActionListener {
+        @Override public void actionPerformed(ActionEvent evt) {
+            synchronized (buttonList) {
+                if (buttonList != null) {
+                    blinkOn = !blinkOn;
+                    boolean isAnyBlinking = false;
+                    for (MpjButton btn : buttonList) {
+                        if (btn.action != null && btn.action instanceof MpjAction && ((MpjAction)btn.action).isBlinking()) {
+                            btn.repaint();
+                            isAnyBlinking = true;
+                        }
+                    }
+                    if (!isAnyBlinking)
+                        // Aktuell blinkt nichts, also kann ich den Timer anhalten
+                        blinkTimer.stop();
+                }
+            }
+        }
+    };
 
 }

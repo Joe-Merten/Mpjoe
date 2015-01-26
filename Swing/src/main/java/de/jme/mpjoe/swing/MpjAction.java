@@ -17,6 +17,7 @@ public abstract class MpjAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
     public static final String THIRDSTATE_KEY  = "MpjThirdstateKey";
+    public static final String BLINKING_KEY    = "MpjBlinkingKey";
 
     private Icon selectedIcon;
     private Icon thirdstateIcon;
@@ -280,14 +281,40 @@ public abstract class MpjAction extends AbstractAction {
         return (value != null) && (boolean)value;
     }
 
+    /**
+     * The "thirdstate" is a special state for e.g. the combined Play/Pause Button.
+     * It's something like "selected in a different way"
+     */
     public void setThirdstate(boolean b) {
         Object value = getValue(THIRDSTATE_KEY);
         if (value == null || (boolean)value != b)
             putValue(THIRDSTATE_KEY, b);
     }
 
+    /**
+     * Determine if the action is set to thirdstate or not
+     */
     public boolean isThirdstate() {
         Object value = getValue(THIRDSTATE_KEY);
+        return (value != null) && (boolean)value;
+    }
+
+    /**
+     * Blinking lets the appearence of the button toggeling between it's normal state
+     * and its selected or thirdstate icon - whether is currently set
+     * If the associated action isn't either selected or thirdstate, then the button won't be displayed blinking
+     */
+    public void setBlinking(boolean b) {
+        Object value = getValue(BLINKING_KEY);
+        if (value == null || (boolean)value != b)
+            putValue(BLINKING_KEY, b);
+    }
+
+    /**
+     * Determine if the action is set to blinking appearence or not
+     */
+    public boolean isBlinking() {
+        Object value = getValue(BLINKING_KEY);
         return (value != null) && (boolean)value;
     }
 
