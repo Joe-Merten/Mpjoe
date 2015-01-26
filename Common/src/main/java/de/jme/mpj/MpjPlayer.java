@@ -67,13 +67,20 @@ import org.apache.logging.log4j.Logger;
   - Blinkend: Playerstate = PAUSE
   - Klick toggelt zwischen Pause an/aus:
     - PAUSE -> PLAY
-    - PLAY  -> PAUSE
+    - PLAY  -> PAUSE (Resume)
     - FADING_IN, FADING_OUT -> PAUSE
     - TODO bzgl. LOADING, siehe "Play"
 ------------------------------------------------------------------------------------------------------------------------
   PlayPause
   - Dieser Button ist eine Kombination aus Play und Pause (platzsparend, statt der 2 Buttons wird also nur einer benötigt)
   - Highlight: Playerstate = PLAY
+  - Blinkendes Pause: Playerstate = PAUSE
+  - Klick:
+    - STOP, END  -> Wiedergabe ab Anfang starten
+    - PLAYING    -> PAUSE
+    - PAUSE      -> PLAY (Resume)
+    - FADING_IN  -> PLAY (also zurück auf Normallautstärke)
+    - FADING_OUT -> PLAY (also zurück auf Normallautstärke)
 ------------------------------------------------------------------------------------------------------------------------
   Mute
   - "Highlight": Mute aktiviert

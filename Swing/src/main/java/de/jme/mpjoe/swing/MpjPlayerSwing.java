@@ -2,7 +2,6 @@ package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
@@ -225,8 +224,9 @@ public class MpjPlayerSwing extends JPanel {
         // preferredSize bei z.B. 10 Butons
         // - für Linux und Osx sind 210 Pixel ausreichend
         // - Windows braucht hingegen 220 Pixel
-        setPreferredSize(new Dimension(220, 200));
-        setMinimumSize(new Dimension(0, 0));
+        //int prefWidth = btnEject
+        //setPreferredSize(new Dimension(220, 200));
+        //setMinimumSize(new Dimension(0, 0));
 
         Object guiComponent = mpjPlayer.getGuiComponent();
         if (guiComponent instanceof Component)
@@ -284,6 +284,7 @@ public class MpjPlayerSwing extends JPanel {
         playAction.setSelected(trackLoaded && state == PlayerState.PLAYING);
         pauseAction.setSelected(trackLoaded && state == PlayerState.PAUSE);
         playPauseAction.setSelected(trackLoaded && state == PlayerState.PLAYING);
+        playPauseAction.setThirdstate(trackLoaded && state == PlayerState.PAUSE);
         muteAction.setSelected(false);
         fadeAction.setSelected(trackLoaded && (state == PlayerState.FADING_IN || state == PlayerState.FADING_OUT));
         headphoneAction.setSelected(false);

@@ -1,7 +1,5 @@
 package de.jme.mpjoe.swing;
 
-import java.awt.event.KeyEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -18,6 +16,7 @@ import javax.swing.KeyStroke;
 public abstract class MpjAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
+    public static final String THIRDSTATE_KEY  = "MpjThirdstateKey";
 
     private Icon selectedIcon;
     private Icon thirdstateIcon;
@@ -278,6 +277,17 @@ public abstract class MpjAction extends AbstractAction {
      */
     public boolean isSelected() {
         Object value = getValue(SELECTED_KEY);
+        return (value != null) && (boolean)value;
+    }
+
+    public void setThirdstate(boolean b) {
+        Object value = getValue(THIRDSTATE_KEY);
+        if (value == null || (boolean)value != b)
+            putValue(THIRDSTATE_KEY, b);
+    }
+
+    public boolean isThirdstate() {
+        Object value = getValue(THIRDSTATE_KEY);
         return (value != null) && (boolean)value;
     }
 
