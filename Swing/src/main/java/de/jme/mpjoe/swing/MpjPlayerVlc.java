@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -24,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
-import uk.co.caprica.vlcj.player.AudioDevice;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -178,12 +176,12 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             embeddedMediaPlayer.setVideoSurface(videoSurface);
         }
 
-        {
+        /*{
             logger.debug("Available audio devices for this player:");
-            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices(); // gibt's wohl noch nicht in vlcj 3.1.0
+            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices(); // gibt's erst ab vlcj 3.2.0
             for (AudioDevice device : devices)
                 logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
-        }
+        }*/
 
 
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
@@ -366,9 +364,9 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             }
 
             // Neu ab vlcj 3.2.0
-            @Override public void mediaSubItemTreeAdded(MediaPlayer mediaPlayer, libvlc_media_t item) {
+            /*@Override public void mediaSubItemTreeAdded(MediaPlayer mediaPlayer, libvlc_media_t item) {
                 logger.debug("Vlc event: mediaSubItemTreeAdded");
-            }
+            }*/
         };
 
         mediaPlayer.addMediaPlayerEventListener(new MyMediaPlayerEventListener());
