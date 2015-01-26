@@ -51,8 +51,12 @@ public class MpjButton extends JComponent implements MouseListener {
     private static List<MpjButton> buttonList = new ArrayList<MpjButton>(100);
 
     public MpjButton(AbstractAction action) {
+        this(action, new Dimension(24,24));
+    }
+
+    public MpjButton(AbstractAction action, Dimension size) {
         this.action = action;
-        size = new Dimension(24, 24);
+        this.size = size;
         setBorder(BorderFactory.createEmptyBorder());
         setFocusable(false);
         enableInputMethods(true);

@@ -2,6 +2,7 @@ package de.jme.mpjoe.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
@@ -21,6 +22,15 @@ import de.jme.mpj.MpjPlayer.PlayerState;
 public class MpjPlayerSwing extends JPanel {
     private static final long serialVersionUID = 1L;
 
+    static final String    buttonStyle = "Mpj-16";
+    //static final String    buttonStyle = "Vlcj-32";
+    //static final String    buttonStyle = "Kde-16";
+    //static final String    buttonStyle = "Kde-22";
+    //static final String    buttonStyle = "Kde-32";
+    //static final String    buttonStyle = "Kde-48";
+    static final boolean   mpj1buttons = buttonStyle.equals("Mpj-16");
+    static final String    buttonPath = "/de/jme/mpj/Player/Buttons-" + buttonStyle + "/";
+
     private MpjPlayer mpjPlayer;
     private JPanel    buttonPanel;
     private MpjButton btnEject;
@@ -38,8 +48,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public EjectAction() {
             super("Eject");
-            setIconFromResource        ("/de/jme/mpj/Player/Eject-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/Eject-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "Eject.png");
+                setSelectedIconFromResource(buttonPath + "Eject-Light.png");
+            } else {
+                setIconFromResource        (buttonPath + "Eject.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             try {
@@ -57,8 +71,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public StopAction() {
             super("Stop");
-            setIconFromResource        ("/de/jme/mpj/Player/Stop-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/Stop-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "Stop.png");
+                setSelectedIconFromResource(buttonPath + "Stop-Light.png");
+            } else {
+                setIconFromResource        (buttonPath + "Stop.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             try {
@@ -75,8 +93,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public PlayAction() {
             super("Play");
-            setIconFromResource        ("/de/jme/mpj/Player/Play-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/Play-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "Play.png");
+                setSelectedIconFromResource(buttonPath + "Play-Light.png");
+            } else {
+                setIconFromResource        (buttonPath + "Play.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             try {
@@ -93,8 +115,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public PauseAction() {
             super("Pause");
-            setIconFromResource        ("/de/jme/mpj/Player/Pause-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/Pause-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "Pause.png");
+                setSelectedIconFromResource(buttonPath + "Pause-Light.png");
+            } else {
+                setIconFromResource        (buttonPath + "Pause.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             try {
@@ -111,9 +137,14 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public PlayPauseAction() {
             super("Play / Pause");
-            setIconFromResource          ("/de/jme/mpj/Player/Play-Pause-16.png");
-            setSelectedIconFromResource  ("/de/jme/mpj/Player/Play-Pause-16-LightPlay.png");
-            setThirdstateIconFromResource("/de/jme/mpj/Player/Play-Pause-16-LightPause.png");
+            if (mpj1buttons) {
+                setIconFromResource          (buttonPath + "Play-Pause.png");
+                setSelectedIconFromResource  (buttonPath + "Play-Pause-LightPlay.png");
+                setThirdstateIconFromResource(buttonPath + "Play-Pause-LightPause.png");
+            } else {
+                setIconFromResource          (buttonPath + "Play.png");
+                setThirdstateIconFromResource(buttonPath + "Pause.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             try {
@@ -130,10 +161,17 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public MuteAction() {
             super("Mute");
-            setIconFromResource        ("/de/jme/mpj/Player/Mute-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/Mute-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "Nomute.png");
+                setSelectedIconFromResource(buttonPath + "Mute.png");
+            } else {
+                setIconFromResource        (buttonPath + "Nomute.png");
+                setSelectedIconFromResource(buttonPath + "Mute.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
+            // TODO
+            setSelected(!isSelected());
             //try {
             //    mpjPlayer.toggleMute();
             //} catch (InterruptedException e) {
@@ -148,8 +186,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public FadeAction() {
             super("Fade");
-            setIconFromResource        ("/de/jme/mpj/Player/FadeOut-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/FadeOut-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "FadeOut.png");
+                setSelectedIconFromResource(buttonPath + "FadeOut-Light.png");
+            } else {
+                //setIconFromResource        (buttonPath + "....png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             //try {
@@ -166,8 +208,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public HeadphoneAction() {
             super("Headphone");
-            setIconFromResource        ("/de/jme/mpj/Player/Headphone-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/Headphone-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "Headphone.png");
+                setSelectedIconFromResource(buttonPath + "Headphone-Light.png");
+            } else {
+                //setIconFromResource        (buttonPath + "....png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             //try {
@@ -184,8 +230,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public PrevTrackAction() {
             super("PrevTrack");
-            setIconFromResource        ("/de/jme/mpj/Player/PrevTrack-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/PrevTrack-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "PrevTrack.png");
+                setSelectedIconFromResource(buttonPath + "PrevTrack-Light.png");
+            } else {
+                setIconFromResource        (buttonPath + "PrevTrack.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             //try {
@@ -202,8 +252,12 @@ public class MpjPlayerSwing extends JPanel {
         private static final long serialVersionUID = 1L;
         public NextTrackAction() {
             super("NextTrack");
-            setIconFromResource        ("/de/jme/mpj/Player/NextTrack-16.png");
-            setSelectedIconFromResource("/de/jme/mpj/Player/NextTrack-16-Light.png");
+            if (mpj1buttons) {
+                setIconFromResource        (buttonPath + "NextTrack.png");
+                setSelectedIconFromResource(buttonPath + "NextTrack-Light.png");
+            } else {
+                setIconFromResource        (buttonPath + "NextTrack.png");
+            }
         }
         public void actionPerformed(ActionEvent ae) {
             //try {
@@ -235,34 +289,40 @@ public class MpjPlayerSwing extends JPanel {
         buttonPanel = new JPanel();
         // buttonPanel.setBackground(Color.GREEN); // nur Testweise um die Layoutgrenzen kenntlich zu machen
 
-        btnEject = new MpjButton(ejectAction);
+
+        int imageSize = ejectAction.getIcon().getIconWidth();
+        int btn = imageSize + 6;
+        if (btn < 24) btn = 24;
+        Dimension buttonSize = new Dimension(btn, btn);
+
+        btnEject = new MpjButton(ejectAction, buttonSize);
         buttonPanel.add(btnEject);
 
-        btnStop = new MpjButton(stopAction);
+        btnStop = new MpjButton(stopAction, buttonSize);
         buttonPanel.add(btnStop);
 
-        btnPlay = new MpjButton(playAction);
+        btnPlay = new MpjButton(playAction, buttonSize);
         buttonPanel.add(btnPlay);
 
-        btnPause = new MpjButton(pauseAction);
+        btnPause = new MpjButton(pauseAction, buttonSize);
         buttonPanel.add(btnPause);
 
-        btnPlayPause = new MpjButton(playPauseAction);
+        btnPlayPause = new MpjButton(playPauseAction, buttonSize);
         buttonPanel.add(btnPlayPause);
 
-        btnMute = new MpjButton(muteAction);
+        btnMute = new MpjButton(muteAction, buttonSize);
         buttonPanel.add(btnMute);
 
-        btnFade = new MpjButton(fadeAction);
+        btnFade = new MpjButton(fadeAction, buttonSize);
         buttonPanel.add(btnFade);
 
-        btnHeadphone = new MpjButton(headphoneAction);
+        btnHeadphone = new MpjButton(headphoneAction, buttonSize);
         buttonPanel.add(btnHeadphone);
 
-        btnPrevTrack = new MpjButton(prevTrackAction);
+        btnPrevTrack = new MpjButton(prevTrackAction, buttonSize);
         buttonPanel.add(btnPrevTrack);
 
-        btnNextTrack = new MpjButton(nextTrackAction);
+        btnNextTrack = new MpjButton(nextTrackAction, buttonSize);
         buttonPanel.add(btnNextTrack);
 
         add(buttonPanel, BorderLayout.SOUTH);
