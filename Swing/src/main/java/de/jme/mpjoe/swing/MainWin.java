@@ -105,7 +105,7 @@ public class MainWin {
         private static final long serialVersionUID = 1L;
         public ChooseFileAndPlayAction() {
             super("Play...");
-            setIconFromResource("/de/jme/mpj/Player/Buttons-16/Play.png");
+            setIconFromResource("/de/jme/mpj/Player/Buttons-Mpj-16/Play.png");
             setShortDescription("Choose file and play");
             setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
         }
