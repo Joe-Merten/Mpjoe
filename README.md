@@ -1,3 +1,3 @@
-Joe’s media player & DJ’ing app
+Joe’s Media Player & DJ’ing App
 ===============================
 
