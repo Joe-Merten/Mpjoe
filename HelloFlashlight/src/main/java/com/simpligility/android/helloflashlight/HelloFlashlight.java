@@ -15,12 +15,12 @@ import android.widget.TableLayout;
  */
 public class HelloFlashlight extends Activity {
 
-	TableLayout table;
-	Button redButton;
-	Button greenButton;
-	Button blueButton;
-	Button blackButton;
-	Button whiteButton;
+    TableLayout table;
+    Button redButton;
+    Button greenButton;
+    Button blueButton;
+    Button blackButton;
+    Button whiteButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

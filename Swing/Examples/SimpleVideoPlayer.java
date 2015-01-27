@@ -69,7 +69,7 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
     private int jumpLength=1000;
     private int  loopLength=6000;
     private static Set<VideoObserver> observers = new HashSet<VideoObserver>(); //we have to implement our own Observer pattern
-    
+
     public SimpleVideoPlayer() {
         super();
         /*TODO new EnvironmentCheckerFactory().newEnvironmentChecker().checkEnvironment();
@@ -81,8 +81,8 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
         {
             //we don't need any options
             String[] libvlcArgs = {""};
-            String[] standardMediaOptions = {""}; 
-            
+            String[] standardMediaOptions = {""};
+
             //System.out.println("libvlc version: " + LibVlc.INSTANCE.libvlc_get_version());
             //setup Media Player
             //TODO we have to deal with unloading things....
@@ -106,16 +106,16 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
             //create updater
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
             executorService.scheduleAtFixedRate(new Runnable() {
-				//We have to do syncing in the main thread
-				public void run() {
-					SwingUtilities.invokeLater(new Runnable() {
-				          //here we update
-				        public void run() {
-				            if (isPlaying()) updateTime(); //if the video is seeking we get a mess
-				        }
-				      });
-				}
-			}, 0L, 1000L, TimeUnit.MILLISECONDS);
+                //We have to do syncing in the main thread
+                public void run() {
+                    SwingUtilities.invokeLater(new Runnable() {
+                          //here we update
+                        public void run() {
+                            if (isPlaying()) updateTime(); //if the video is seeking we get a mess
+                        }
+                      });
+                }
+            }, 0L, 1000L, TimeUnit.MILLISECONDS);
             //setDefaultCloseOperation(EXIT_ON_CLOSE);
             addWindowListener(this);
         }
@@ -127,7 +127,7 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
         {
             System.err.println(tr("Unable to find native libvlc library!"));
         }
-        
+
     }
 
     private void createUI() {
@@ -146,7 +146,7 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
         mute= new JToggleButton(tr("mute"));
         speed = new JSlider(-200,200,0);
         speed.setMajorTickSpacing(100);
-        speed.setPaintTicks(true);          
+        speed.setPaintTicks(true);
         speed.setOrientation(Adjustable.VERTICAL);
         Hashtable labelTable = new Hashtable ();
         labelTable.put( new Integer( 0 ), new JLabel("1x") );
@@ -155,7 +155,7 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
         speed.setLabelTable( labelTable );
         speed.setPaintLabels(true);
     }
-    
+
     //creates a layout like the most mediaplayers are...
     private void setLayout() {
         this.setLayout(new BorderLayout());
@@ -188,48 +188,48 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
                     {
                         //recalc to 0.x percent value
                         mp.setPosition((float)timeline.getValue()/100.0f);
-                    }                   
+                    }
                 }
             }
             });
-        
+
         play.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent arg0) {
-                if(mp.isPlaying()) mp.pause(); else mp.play();              
+                if(mp.isPlaying()) mp.pause(); else mp.play();
             }
         });
-        
+
         back.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent arg0) {
                 backward();
             }
         });
-        
+
         forward.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent arg0) {
                 forward();
             }
         });
-        
+
         loop.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
                 loop();
             }
         });
-        
+
         mute.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
                 mute();
             }
         });
-        
+
         speed.addChangeListener(new ChangeListener() {
-            
+
             public void stateChanged(ChangeEvent arg0) {
                 if(!speed.getValueIsAdjusting()&&(mp.isPlaying()))
                 {
@@ -238,14 +238,14 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
                     ratio=ratio+(9/8);
                     mp.setRate(ratio);
                 }
-                
+
             }
         });
-        
-    }   
+
+    }
 
     public void finished(MediaPlayer arg0) {
-            
+
     }
 
     public void lengthChanged(MediaPlayer arg0, long arg1) {
@@ -272,17 +272,17 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
     }
 
     public void positionChanged(MediaPlayer arg0, float arg1) {
-        
+
     }
 
     public void stopped(MediaPlayer arg0) {
-                
+
     }
 
     public void timeChanged(MediaPlayer arg0, long arg1) {
 
     }
-    
+
 
     public void windowActivated(WindowEvent arg0) { }
 
@@ -302,62 +302,62 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
 
     public void windowIconified(WindowEvent arg0) { }
 
-    public void windowOpened(WindowEvent arg0) {    }   
-    
+    public void windowOpened(WindowEvent arg0) {    }
+
     public void setFile(File f)
     {
         String mediaPath = f.getAbsoluteFile().toString();
         mp.playMedia(mediaPath, mediaOptions);
-        pack(); 
+        pack();
     }
-    
+
     public void play()
     {
         mp.play();
     }
-    
+
     public void jump(long time)
     {
         /*float pos = (float)mp.getLength()/(float)time;
         mp.setPosition(pos);*/
         mp.setTime(time);
     }
-    
+
     public long getTime()
     {
         return mp.getTime();
     }
-    
+
     public float getPosition()
     {
         return mp.getPosition();
     }
-    
+
     public boolean isPlaying()
     {
         return mp.isPlaying();
     }
-    
+
     //gets called by the Syncer thread to update all observers
     public void updateTime ()
     {
         if(mp.isPlaying())
         {
-        	long millis=mp.getTime();
-        	String s = String.format("%02d:%02d:%02d", //dont know why normal Java date utils doesn't format the time right
-		      TimeUnit.MILLISECONDS.toHours(millis),
-		      TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), 
-		      TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
-		    );
+            long millis=mp.getTime();
+            String s = String.format("%02d:%02d:%02d", //dont know why normal Java date utils doesn't format the time right
+              TimeUnit.MILLISECONDS.toHours(millis),
+              TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+              TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+            );
             //setTitle(ms.format(new Time(sec)));
-        	setTitle(s);
+            setTitle(s);
             syncTimeline=true;
             timeline.setValue(Math.round(mp.getPosition()*100));
             syncTimeline=false;
             notifyObservers(mp.getTime());
         }
     }
-    
+
     //allow externals to extend the ui
     public void addComponent(JComponent c)
     {
@@ -365,23 +365,23 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
         pack();
     }
 
-    public long getLength() {       
+    public long getLength() {
         return mp.getLength();
     }
 
     public void setDeinterlacer(String string) {
         mp.setDeinterlace(string);
-        
+
     }
 
     public void setJumpLength(Integer integer) {
         jumpLength=integer;
-        
+
     }
 
     public void setLoopLength(Integer integer) {
         loopLength = integer;
-        
+
     }
 
     public void loop() {
@@ -390,11 +390,11 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
             t.cancel();
             looping=false;
         }
-        else            
+        else
         {
             final long resetpoint=(long) mp.getTime()-loopLength/2;
             TimerTask ani=new TimerTask() {
-                
+
                 @Override
                 public void run() {
                     mp.setTime(resetpoint);
@@ -404,12 +404,12 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
             t.schedule(ani,loopLength/2,loopLength); //first run a half looptime till reset
             looping=true;
             }
-        
+
     }
-    
+
     protected void mute() {
         mp.mute();
-        
+
     }
 
     public void forward() {
@@ -418,15 +418,15 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
 
     public void backward() {
         mp.setTime((long) (mp.getTime()-jumpLength));
-        
+
     }
 
     public void removeVideo() {
         if (mp.isPlaying()) mp.stop();
         mp.release();
-        
+
     }
-    
+
     public void toggleSubs()
     {
         //vlc manages it's subtitles in a own list so we have to cycle trough
@@ -449,7 +449,7 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
 
         }
 
-     
+
 
         public static void removeObserver(VideoObserver observer) {
 
@@ -471,17 +471,17 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
 
         public void faster() {
             speed.setValue(speed.getValue()+100);
-            
+
         }
 
         public void slower() {
             speed.setValue(speed.getValue()-100);
-            
+
         }
 
         public void pause() {
             if (mp.isPlaying()) mp.pause();
-            
+
         }
 
         public boolean playing() {
@@ -490,18 +490,18 @@ public class SimpleVideoPlayer extends JFrame implements MediaPlayerEventListene
 
         public void error(MediaPlayer arg0) {
             // TODO Auto-generated method stub
-            
+
         }
 
         public void mediaChanged(MediaPlayer arg0) {
             // TODO Auto-generated method stub
-            
+
         }
 
         public boolean hasSubtitles() {
             if (mp.getSpuCount()==0) return false; else   return true;
         }
 
-    
+
 
 }

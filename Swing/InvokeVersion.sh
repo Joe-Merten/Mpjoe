@@ -38,6 +38,6 @@ fi
 if [ "$VER_STRING" != "" ]; then
     echo "$VER_STRING"
 else
-	echo "$0: Unknown or missing option" 2>&1
-	exit 1
+    echo "$0: Unknown or missing option" 2>&1
+    exit 1
 fi

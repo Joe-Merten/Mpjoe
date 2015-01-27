@@ -2,7 +2,7 @@ Frage für Stackoverflow vorbereitet ...
 
 Whats seems to be the best Java audio library for a media player application?
 
-Some years ago, I'd developed a media player (similar to DJ Maze's [mp3tunes](http://www.in.com/downloads/softwares--mp3-tunes-46853.html)) using Borland Delphi 7 and 
+Some years ago, I'd developed a media player (similar to DJ Maze's [mp3tunes](http://www.in.com/downloads/softwares--mp3-tunes-46853.html)) using Borland Delphi 7 and
 [FMOD](http://www.fmod.com) for audio mixing and output (after leaving [Xaudio](http://www.xaudio.com) because of license issues).
 
 Now I'm going to start a new project from the scratch which shoud support at least:
