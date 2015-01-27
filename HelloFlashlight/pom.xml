@@ -25,14 +25,40 @@
     <build>
         <pluginManagement>
             <plugins>
+
+                <!-- Der Abschnitt pluginManagement ist lediglich zum Unterdrücken einer falschen Fehlermeldung des Eclipse m2e Plugins   -->
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.simpligility.maven.plugins</groupId>
+                                        <artifactId>android-maven-plugin</artifactId>
+                                        <versionRange>[4.0.0,)</versionRange>
+                                        <goals><goal>generate-sources</goal></goals>
+                                    </pluginExecutionFilter>
+                                    <action><ignore/></action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+
                 <plugin>
                     <groupId>com.simpligility.maven.plugins</groupId>
                     <artifactId>android-maven-plugin</artifactId>
                     <version>${it-plugin.version}</version>
                     <extensions>true</extensions>
                 </plugin>
+
             </plugins>
         </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>com.simpligility.maven.plugins</groupId>
