@@ -11,6 +11,7 @@
     <properties>
         <!-- at test time this will be overridden with snapshot version -->
         <it-plugin.version>4.0.0</it-plugin.version>
+        <android.sdk.path>/opt/android/sdk</android.sdk.path>
     </properties>
     <dependencies>
         <dependency>
