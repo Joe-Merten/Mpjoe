@@ -59,6 +59,7 @@ Mit folgendem Hack ist es mir letztlich doch gelungen, das Projekt via Eclipse z
 
         ln -s src/main/AndroidManifest.xml
         ln -s src/main/res
+        ln -s r/de target/generated-sources/
         ln -sT target bin
         ln -sT target/generated-sources gen
         ln -sT Mpjoe-Android-0.0.1-SNAPSHOT.apk target/Mpjoe-Android.apk
