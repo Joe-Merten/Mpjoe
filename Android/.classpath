@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
-  <classpathentry kind="src" path="target/generated-sources/r" including="**/*.java"/>
-  <classpathentry kind="src" path="target/generated-sources/aidl" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java" />
+  <classpathentry kind="src" path="target/generated-sources/r" including="**/*.java" />
+  <classpathentry kind="src" path="target/generated-sources/aidl" including="**/*.java" />
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+  <classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES" exported="true"/>
+  <classpathentry kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES" exported="true"/>
   <classpathentry kind="var" path="M2_REPO/com/google/android/android/4.1.1.4/android-4.1.1.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.0.1/httpclient-4.0.1.jar"/>
