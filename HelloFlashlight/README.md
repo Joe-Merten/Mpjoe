@@ -10,7 +10,7 @@ Prerequisites
 - Android Sdk
   - default installiert unter /opt/android/sdk
   - falls anderswo installiert, dann:
-    - als Property mitgeben (z.B.: ` mvn -Dandroid.sdk.path=/home/user/android/sdk install`)
+    - als Property mitgeben (z.B.: `mvn -Dandroid.sdk.path=/home/user/android/sdk install`)
     - oder Symlink anlegen
     - evtl. geht's auch via `mavenrc`?
 
