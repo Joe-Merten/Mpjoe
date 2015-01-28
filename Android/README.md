@@ -51,6 +51,26 @@ Eclipse Integration
   * allerdings liessen sich diese Projekte nicht auf Kommansozeile bauen (div. komische Fehlermeldungen) und Debug via Eclipse habe ich dann gar nicht mehr ausprobiert.
 
 
+Hack für Debugging mit Eclipse
+==============================
+Mit folgendem Hack ist es mir letztlich doch gelungen, das Projekt via Eclipse zu debuggen:
+
+* zunächst gaukeln wir dem Eclipse ein non-Maven Projekt vor:
+
+        ln -s src/main/AndroidManifest.xml
+        ln -s src/main/res
+        ln -sT target bin
+        ln -sT target/generated-sources gen
+        ln -sT Mpjoe-Android-0.0.1-SNAPSHOT.apk target/Mpjoe-Android.apk
+
+* dann Rechtsklick auf das Projekt → Refresh
+* ggf. noch die Meldungen der Problems View löschen (Manifest nicht gefunden ...)
+* dann Rechtsklick auf das Projekt → Debug as → Android Application
+* Soll das Projekt neu gebaut werden, müssen die Links erst mal wieder entfernt werden - Maven nörgelt sonst: »Found files or folders in non-standard locations in the project!«
+
+        rm -f AndroidManifest.xml bin gen res
+
+
 Weitere Todos
 -------------
 * Versionsinfo generieren (siehe Mpjoe-Swing)
