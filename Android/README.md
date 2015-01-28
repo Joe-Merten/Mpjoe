@@ -77,3 +77,5 @@ Weitere Todos
 * Versionsinfo generieren (siehe Mpjoe-Swing)
 * Log4j zufügen (siehe Mpjoe-Swing), aber mit Logcat Appender
 * Junit & Hamcrest zufügen (siehe Mpjoe-Swing)
+  * Achtung: Nicht alle Tests dürfen in `src/test` liegen, sondern nur die, die beim Build von Maven direkt auf dem Hostsystem ausgeführt werden können
+  * Tests die auf dem Android Target ausgeführt werden sollen, muss man wohl nach src/main tun ...
