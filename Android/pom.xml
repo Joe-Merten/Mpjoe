@@ -45,6 +45,7 @@
                                         <goals>
                                             <goal>generate-sources</goal>
                                             <goal>emma</goal>
+                                            <goal>proguard</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action><ignore/></action>
