@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.simpligility.android</groupId>
@@ -8,11 +7,14 @@
     <packaging>apk</packaging>
 
     <name>HelloFlashLight</name>
+
     <properties>
         <!-- at test time this will be overridden with snapshot version -->
         <it-plugin.version>4.1.0</it-plugin.version>
         <android.sdk.path>/opt/android/sdk</android.sdk.path>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>
@@ -40,7 +42,10 @@
                                         <groupId>com.simpligility.maven.plugins</groupId>
                                         <artifactId>android-maven-plugin</artifactId>
                                         <versionRange>[4.0.0,)</versionRange>
-                                        <goals><goal>generate-sources</goal></goals>
+                                        <goals>
+                                            <goal>generate-sources</goal>
+                                            <goal>emma</goal>
+                                        </goals>
                                     </pluginExecutionFilter>
                                     <action><ignore/></action>
                                 </pluginExecution>
