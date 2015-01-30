@@ -14,7 +14,7 @@
 # existance of this file indicates that all dependencies were previously installed, and any changes to this file will use a different filename.
 INITIALIZATION_FILE="$ANDROID_HOME/.initialized-dependencies-$(git log -n 1 --format=%h -- $0)"
 
-if [ ! -e ${INITIALIZATION_FILE} ]; then
+#if [ ! -e ${INITIALIZATION_FILE} ]; then
   # fetch and initialize $ANDROID_HOME
   download-android
   # Use the latest android sdk tools
@@ -38,6 +38,6 @@ if [ ! -e ${INITIALIZATION_FILE} ]; then
   echo y | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-19 --all > /dev/null
 
   touch ${INITIALIZATION_FILE}
-fi
+#fi
 
 echo "ANDROID_HOME = $ANDROID_HOME"
