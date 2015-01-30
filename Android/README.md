@@ -27,7 +27,6 @@ Eclipse Integration
 * Maven Build mittels Run Config `Mpjoe-Android Maven.launch` funktioniert immerhin
   * ja, eine Run Config und keine External Tools Config (wie aktuell bei Mpjoe-Swing); weil das irgendwo so empfohlen wurde
 * bzgl. der momentan angelegten `.project`, `.classpath` und der beiden Launch-Configs in `.settings` bin ich mir nicht sicher ob das so alles stimmt; z.T. habe ich das selbst gemacht, z.T. wurde es aber auch von diversen Plugins generiert → am besten noch mal alles neu machen
-* evtl. fehlt auch noch ein `project.properties`
 * Rechtsklick auf's Projekt → Maven → Update Maven Project (Alt+F5) bringt Fehlermeldungen:
 
       Errors occurred during the build.
@@ -50,9 +49,17 @@ Eclipse Integration
   * Mit dem Plugin bekommt man u.a. eine Ergänzung zum m2e New Project Wizard, mit dem man neue Android Projekte anlegen und bestehende Projakte nach Maven konvertieren kann (allerdings basierend auf jayway und nicht simpligility)
   * allerdings liessen sich diese Projekte nicht auf Kommansozeile bauen (div. komische Fehlermeldungen) und Debug via Eclipse habe ich dann gar nicht mehr ausprobiert.
 
+[Hier](http://www.tikalk.com/devops/android-eclipse-maven/) hat einer was bzgl. Android+Maven+Eclipse geschrieben - muss ich noch ausprobieren.
+
 
 Hack für Debugging mit Eclipse
 ==============================
+
+Statt (wie unten beschrieben) via Symlink habe ich nun entsprechende Eclipse Links angelegt. Damit kann man jetzt Debuggen ohne ständig Symlinks anlegen und löschen zu müssen.
+
+Alter Stand
+-----------
+
 Mit folgendem Hack ist es mir letztlich doch gelungen, das Projekt via Eclipse zu debuggen:
 
 * zunächst gaukeln wir dem Eclipse ein non-Maven Projekt vor:
