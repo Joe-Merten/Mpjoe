@@ -11,5 +11,6 @@
 
 mvn --version
 ./snap-setup-android
+ls -l /var/go/android
 ./snap-build
 ./snap-test
