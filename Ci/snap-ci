@@ -10,7 +10,16 @@
 ########################################################################################################################
 
 mvn --version
+
+echo "===== davor"
+
 ./snap-setup-android
+
+echo "===== dazwischen"
+
 ls -l /var/go/android
+
+echo "===== danach"
+
 ./snap-build
 ./snap-test
