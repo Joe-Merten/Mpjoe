@@ -15,6 +15,7 @@
 # - Maven 3.0.4
 echo "===== git rev ====="
 echo "git rev = $(../Common/make/gitversion)"
+git status
 echo "===== linux version ====="
 uname -a
 echo "===== java version ====="
