@@ -15,7 +15,11 @@
 #Error: Ignoring unknown package filter 'tools'
 #Error: Ignoring unknown package filter 'android-19'
 
-declare ANDROID_BUILDTOOLS_VERSION="20.0.0"
+# Auf meinem Kubuntu 14.04 habe ich ende Januar das Android Sdk Version 24.0.2 installiert
+# Bei snap-ci sehe ich bei der Sdk Installation: "Downloading android sdk from http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz"
+# Im snap-ci Beispielskript war 20.0.0 voreingestellt
+
+declare ANDROID_BUILDTOOLS_VERSION="24.0.2"
 declare ANDROID_API_LEVEL="19"
 
 # existance of this file indicates that all dependencies were previously installed, and any changes to this file will use a different filename.
