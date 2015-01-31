@@ -13,6 +13,6 @@ cd ../Swing
 mvn -q install
 
 cd ../Android
-mvn -q -Dandroid.sdk.path=/var/go/android install
+mvn -q -Dandroid.sdk.path=$ANDROID_HOME install
 
 cd ../Ci
