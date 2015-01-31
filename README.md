@@ -14,4 +14,4 @@ Allgemeines zur Entwicklung
 - durch Verwendung von Maven können aber alle Projekte auch von Kommandozeile kompiliert werden
 - Java 1.7
 - Android Api Level 19 (wg. Java 1.7, also mind. Android 4.4 erforderlich)
-- CI Anbindung siehe Ci/README.md
+- CI Anbindung siehe [Ci/README.md](Ci/README.md)
