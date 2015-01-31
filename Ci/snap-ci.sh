@@ -34,3 +34,5 @@ echo "========================="
 
 ./snap-build.sh
 ./snap-test.sh
+
+exit 1
