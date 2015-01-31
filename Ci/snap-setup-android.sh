@@ -3,7 +3,7 @@
 # CI Server Buildskript
 #-----------------------------------------------------------------------------------------------------------------------
 # \project    Mpjoe
-# \file       snap-setup-android
+# \file       snap-setup-android.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
 # Installation des Android Sdk, siehe auch:

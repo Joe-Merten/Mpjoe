@@ -3,10 +3,23 @@
 # CI Server Buildskript
 #-----------------------------------------------------------------------------------------------------------------------
 # \project    Mpjoe
-# \file       snap-test
+# \file       snap-ci.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-#
+# Dieses Buildskript wird via snap-ci.com angeworfen
 ########################################################################################################################
 
-echo "TODO ..."
+mvn --version
+
+echo "===== davor ====="
+
+./snap-setup-android.sh
+
+echo "===== dazwischen ====="
+
+ls -l /var/go/android
+
+echo "===== danach ====="
+
+./snap-build.sh
+./snap-test.sh
