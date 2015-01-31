@@ -13,6 +13,8 @@
 # - Linux box337 3.14.28-031428-generic #201501081937 SMP Thu Jan 8 19:39:13 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 # - Java 1.7.0_55 (Oracle, 64 Bit)
 # - Maven 3.2.5
+echo "===== git rev ====="
+echo "git rev = $(../Common/make/gitversion)"
 echo "===== linux version ====="
 uname -a
 echo "===== java version ====="

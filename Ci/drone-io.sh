@@ -13,6 +13,8 @@
 # - Linux drone-dce685b379 3.2.0-23-virtual #36-Ubuntu SMP Tue Apr 10 22:29:03 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
 # - Java 1.7.0_25 (OpenJdk 64 Bit)
 # - Maven 3.0.4
+echo "===== git rev ====="
+echo "git rev = $(../Common/make/gitversion)"
 echo "===== linux version ====="
 uname -a
 echo "===== java version ====="
