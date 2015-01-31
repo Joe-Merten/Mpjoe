@@ -9,4 +9,24 @@
 #
 ########################################################################################################################
 
+
+
+# travis-ci am 31.01.2015:
+# - TODO
+# - TODO
+# - TODO
+echo "===== git rev ====="
+echo "git rev = $(../Common/make/gitversion)"
+git status
+echo "===== linux version ====="
+uname -a
+echo "===== java version ====="
+java -version
+echo "===== maven version ====="
+mvn --version
+echo "===== android sdk ====="
+echo "ANDROID_HOME = $ANDROID_HOME"
+echo "========================="
+
+
 echo "TODO ..."
