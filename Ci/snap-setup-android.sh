@@ -21,15 +21,15 @@
 # Folgende Ergebnisse mit snap-ci:
 # - 20.0.0 -> Baut durch
 # - 23.0.2 ->
-# - 24.0.2 ->
+# - 24.0.2 -> "Error: Ignoring unknown package filter 'build-tools-24.0.2'" -> build-tools werden nicht installiert, obwohl "Android SDK Tools, revision 24.0.2" und "Downloading Android SDK Tools, revision 24.0.2" und "Installed Android SDK Tools, revision 24.0.2"
 
-declare ANDROID_BUILDTOOLS_VERSION="24.0.2"
+declare ANDROID_BUILDTOOLS_VERSION="23.0.2"
 declare ANDROID_API_LEVEL="19"
 
 # existance of this file indicates that all dependencies were previously installed, and any changes to this file will use a different filename.
 INITIALIZATION_FILE="$ANDROID_HOME/.initialized-dependencies-$(git log -n 1 --format=%h -- $0)"
 
-echo "Android setup"
+echo "Android Sdk Setup:"
 echo "    ANDROID_HOME = $ANDROID_HOME"
 echo "    BUILDTOOLS   = $ANDROID_BUILDTOOLS_VERSION"
 echo "    API_LEVEL    = $ANDROID_API_LEVEL"
