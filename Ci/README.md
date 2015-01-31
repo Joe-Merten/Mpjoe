@@ -35,6 +35,7 @@ Allgemeines
 -----------
 - Status Badge
   - Sowas wie "Running" oder "Pending" zeigt offenbar keiner an
+  - Übersicht über diverse Notification Clients [hier](http://docs.travis-ci.com/user/apps)
 
 
 Snap-ci
