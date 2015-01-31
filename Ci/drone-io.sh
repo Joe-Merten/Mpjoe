@@ -11,10 +11,12 @@
 
 # drone.io am 31.01.2015:
 # - Ubuntu TODO
-# - java TODO
-# - maven 3.0.4
+# - OpenJdk 1.7.0_25
+# - Maven 3.0.4
 echo "===== linux version ====="
 uname -a
+echo "===== java version ====="
+java -version
 echo "===== maven version ====="
 mvn --version
 echo "========================="

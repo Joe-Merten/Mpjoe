@@ -6,7 +6,20 @@
 # \file       circle-build.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-#
+# Dieses Buildskript wird via circleci.com angeworfen
 ########################################################################################################################
+
+# circleci am 31.01.2015:
+# - Ubuntu TODO
+# - OpenJdk TODO
+# - Maven TODO
+echo "===== linux version ====="
+uname -a
+echo "===== java version ====="
+java -version
+echo "===== maven version ====="
+mvn --version
+echo "========================="
+
 
 echo "TODO ..."
