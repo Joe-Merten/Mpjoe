@@ -10,8 +10,8 @@
 ########################################################################################################################
 
 # drone.io am 31.01.2015:
-# - Ubuntu TODO
-# - OpenJdk 1.7.0_25
+# - Linux drone-dce685b379 3.2.0-23-virtual #36-Ubuntu SMP Tue Apr 10 22:29:03 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+# - Java 1.7.0_25 (OpenJdk 64 Bit)
 # - Maven 3.0.4
 echo "===== linux version ====="
 uname -a

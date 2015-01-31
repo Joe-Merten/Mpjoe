@@ -11,7 +11,7 @@
 
 # snap-ci am 31.01.2015:
 # - Linux ct-10-0-130-14 2.6.32-042stab102.9 #1 SMP Fri Dec 19 20:34:40 MSK 2014 x86_64 x86_64 x86_64 GNU/Linux
-# - Java 1.8.0_31
+# - Java 1.7.0_75 (Oracle, 64 Bit)
 # - Maven 3.2.3
 echo "===== linux version ====="
 uname -a
