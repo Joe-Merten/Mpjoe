@@ -9,9 +9,9 @@ Joe’s Media Player & DJ’ing App
 
 Allgemeines zur Entwicklung
 ===========================
-- Zum bauen verwende ich Maven für alle Unterprojekte
-- Bevorzugte IDE ist Eclipse
-- Durch Verwendung von Maven können aber alle Projekte auch von Kommandozeile kompiliert werden
+- zum bauen verwende ich Maven (für alle Unterprojekte)
+- bevorzugte IDE ist Eclipse
+- durch Verwendung von Maven können aber alle Projekte auch von Kommandozeile kompiliert werden
 - Java 1.7
 - Android Api Level 19 (wg. Java 1.7, also mind. Android 4.4 erforderlich)
 
@@ -38,7 +38,8 @@ Snap-ci
 - Status Badge
 - Android
   - Baut mit Android Sdk Build Tools 20.0.0
-  - Kann Android Tests mit (habe ich jedoch noch nicht getestet)
+  - Kann auch Android im Emuator und somit Tests gegen die Android Builds [siehe hier](https://docs.snap-ci.com/the-ci-environment/languages/android/)
+    (habe ich jedoch noch nicht getestet)
 
 
 Drone.io
@@ -58,4 +59,4 @@ Travis-ci
 
 Circleci
 --------
-- TODO
+- TODO: Gucken ob / wie man mit circleci für Android bauen kann, siehe Ci/circle-build.sh

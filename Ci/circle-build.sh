@@ -31,7 +31,8 @@ cd ../Swing
 mvn install -q -DskipTests=true
 #mvn test
 
-cd ../Android
-mvn install -q -DskipTests=true
-#mvn test
-cd ..
+# kein ANDROID_HOME gesetzt; TODO: Gucken ob / wie man mit circleci für Android bauen kann
+# cd ../Android
+# mvn install -q -DskipTests=true
+# #mvn test
+# cd ..
