@@ -10,9 +10,9 @@
 ########################################################################################################################
 
 # circleci am 31.01.2015:
-# - Ubuntu TODO
-# - OpenJdk TODO
-# - Maven TODO
+# - Linux box337 3.14.28-031428-generic #201501081937 SMP Thu Jan 8 19:39:13 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+# - Java 1.7.0_55 (Oracle, 64 Bit)
+# - Maven 3.2.5
 echo "===== linux version ====="
 uname -a
 echo "===== java version ====="
@@ -22,4 +22,11 @@ mvn --version
 echo "========================="
 
 
-echo "TODO ..."
+cd ../Swing
+mvn install -q -DskipTests=true
+#mvn test
+
+cd ../Android
+mvn install -q -DskipTests=true
+#mvn test
+cd ..
