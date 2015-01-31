@@ -22,7 +22,7 @@ INITIALIZATION_FILE="$ANDROID_HOME/.initialized-dependencies-$(git log -n 1 --fo
   echo y | android update sdk --no-ui --filter tools                     >/dev/null
 
   # The BuildTools version used by your project
-  echo y | android update sdk --no-ui --filter build-tools-24.0.2 --all  >/dev/null
+  echo y | android update sdk --no-ui --filter build-tools-20.0.0 --all  >/dev/null
 
   # The SDK version used to compile your project
   echo y | android update sdk --no-ui --filter android-19 > /dev/null
