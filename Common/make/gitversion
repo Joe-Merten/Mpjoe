@@ -121,17 +121,32 @@
 # Sonstiges:
 #    git status --porcelain  → Gibt leider nur Auskunft über uncommited Changes, sagt aber nichts über unpushed Commits
 #-----------------------------------------------------------------------------------------------------------------------
+# Obiges war alles nur getestet auf meinem Kubuntu, auf Osx sieht es aber offenbar ähnlich aus.
+# Bei CI Service drone.io sieht ein sauberer Stand jedoch wie folgt aus:
+#     # On branch master
+#     nothing to commit (working directory clean)
+#-----------------------------------------------------------------------------------------------------------------------
 
 function MakeGitRevString {
     local gitRevHash="$(LANG= git rev-list HEAD -n 1)"
     local gitRevCount="$(LANG= git rev-list HEAD --full-history --all --count)"
 
     local gitStatus="$(LANG= git status)"
+
+    # Statt "grep -q" mache ich hier lieber ">/dev/null", da ich bei "grep -q" Fehler "broken pipe" bekomme
+    local cleanC=""
+    local cleanP=""
+    echo "$gitStatus" | grep "nothing to commit, working directory clean"     >/dev/null && cleanC="true"
+    echo "$gitStatus" | grep "Your branch is up-to-date with 'origin/master'" >/dev/null && cleanP="true"
+
+    # für anderes git, z.B. drone.io
+    echo "$gitStatus" | grep "nothing to commit (working directory clean)"    >/dev/null && cleanC="true"
+    echo "$gitStatus" | grep "# On branch master"                             >/dev/null && cleanP="true"
+
     local gitUncommited=""
     local gitUnpushed=""
-    # Statt "grep -q" mache ich hier lieber ">/dev/null", da ich bei "grep -q" Fehler "broken pipe" bekomme
-    echo "$gitStatus" | grep "nothing to commit, working directory clean" >/dev/null || gitUncommited="c"
-    echo "$gitStatus" | grep "Your branch is up-to-date with 'origin/master'" >/dev/null  || gitUnpushed="p"
+    [ "$cleanC" != "true" ] && gitUncommited="c"
+    [ "$cleanP" != "true" ] && gitUnpushed="p"
 
     echo "${gitRevCount}${gitUncommited}${gitUnpushed}:${gitRevHash}"
 }
