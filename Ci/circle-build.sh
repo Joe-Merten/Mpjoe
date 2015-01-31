@@ -19,6 +19,8 @@ echo "===== java version ====="
 java -version
 echo "===== maven version ====="
 mvn --version
+echo "===== android sdk ====="
+echo "ANDROID_HOME = $ANDROID_HOME"
 echo "========================="
 
 

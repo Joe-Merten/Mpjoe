@@ -23,7 +23,7 @@ Um zu sehen was am besten funktioniert, lasse ich zunächst erst mal 4 unterschi
 
 - [Snap-ci](https://snap-ci.com/Joe-Merten/Mpjoe)
 - [Drone.io](https://drone.io/github.com/Joe-Merten/Mpjoe)
-- [Travis.ci](https://travis-ci.org/Joe-Merten/Mpjoe)
+- [Travis-ci](https://travis-ci.org/Joe-Merten/Mpjoe)
 - [Circleci](https://circleci.com/gh/Joe-Merten/Mpjoe)
 
 
