@@ -9,8 +9,6 @@
 #
 ########################################################################################################################
 
-
-
 # travis-ci am 31.01.2015:
 # - TODO
 # - TODO
@@ -29,4 +27,6 @@ echo "ANDROID_HOME = $ANDROID_HOME"
 echo "========================="
 
 
-echo "TODO ..."
+cd ../Swing
+mvn install -q -DskipTests=true
+#mvn test

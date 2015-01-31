@@ -30,8 +30,6 @@ before_install:
   - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
   - echo yes | android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
 install:
-  - cd Ci
-  - ./travis_build.sh
+  - cd Ci && ./travis-build.sh
 test:
-  - cd Ci
-  - ./travis_test.sh
+  - cd Ci && ./travis-test.sh
