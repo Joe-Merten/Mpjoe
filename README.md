@@ -45,6 +45,9 @@ Drone.io
 --------
 - hat nur Maven 3.0.4, aber für das simpligility android-maven-plugin wird mind. Maven 3.0.5 benötigt
   - deshalb baue ich via drone.io vorerst nur die Java Swing Applikation
+- Status Badge
+  - zeigte mir mitunter "failing" obwohl der letzte Build erfolgreich war
+    - manuelles anzeigen von https://drone.io/github.com/Joe-Merten/Mpjoe/status.png im Browser zeigte hingegen "passing" -> Problem mit Bitmap caching?!
 
 
 Travis-ci
