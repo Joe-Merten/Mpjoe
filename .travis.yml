@@ -12,10 +12,10 @@ env:
   matrix:
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
 before_install:
-  - cd Ci; ./travis-setup-android.sh; cd ..
+  - cd Ci && ./travis-setup-android.sh && cd ..
 install:
-  - cd Ci; ./travis-build.sh; cd ..
+  - cd Ci && ./travis-build.sh && cd ..
 before_test:
   - echo "Nichts zu tun für before_test"
 script:
-  - cd Ci; ./travis-test.sh; cd ..
+  - cd Ci && ./travis-test.sh && cd ..
