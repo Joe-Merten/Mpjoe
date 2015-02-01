@@ -87,9 +87,9 @@ Android Mantis CI
 - [Website](http://floydpink.github.io/Mantis-CI)
 - [Playstore](https://play.google.com/store/apps/details?id=com.floydpink.android.travisci)
 - [Sourcecode](https://github.com/floydpink/Mantis-CI)
-- Erster Test
-  - Arbeitet offenbar nur mit travis-ci
-  - Zeigte mir eine Liste irgendwelcher Repositories / Builds an, aber meins konnte ich nicht finden
+- erster Test
+  - arbeitet offenbar nur mit travis-ci
+  - zeigte mir eine Liste irgendwelcher Repositories / Builds an, aber meins konnte ich nicht finden
 
 
 Android Travis Jr.
@@ -98,10 +98,10 @@ Android Travis Jr.
 - [Playstore](https://play.google.com/store/apps/details?id=com.lonepulse.travisjr)
 - [Sourcecode](https://github.com/sahan/Travis-Jr)
   - Interessant: Projektsetup ist ebenfalls Android + Maven + Eclipse
-- Erster Test
-  - Arbeitet offenbar nur mit travis-ci
-  - Schlicht und einfach, tut aber halbwegs was es soll
-  - Listet alle Travis Builds auf und zeigt mir auch die Logs
+- erster Test
+  - arbeitet offenbar nur mit travis-ci
+  - schlicht und einfach, tut aber halbwegs was es soll
+  - listet alle Travis Builds auf und zeigt mir auch die Logs
     - jedoch nicht mit dem Folding das der Travis Webclient bietet
     - Farben werden nicht dargestellt (statt dessen `[21;1m` et cetera)
   - kein Status Badge in der Display Headline
@@ -110,12 +110,10 @@ Android Travis Jr.
 Android Comrade Travis
 ----------------------
 - [Playstore](https://play.google.com/store/apps/details?id=com.perone.comradetravis)
-- Erster Test
-  - Arbeitet offenbar nur mit travis-ci
-  - Bei `Search Repository` gibt man `Mpjoe` oder `Joe-Merten` ein
-- Erster Test
-  - Arbeitet offenbar nur mit travis-ci
-  - Noch schlichter als Travis Jr.
+- erster Test
+  - arbeitet offenbar nur mit travis-ci
+  - bei `Search Repository` gibt man `Mpjoe` oder `Joe-Merten` ein
+  - noch schlichter als Travis Jr.
   - View Build → Crash auf meinem Samsung SM-P605
 
 
@@ -123,9 +121,9 @@ Android Siren of Shame
 ----------------------
 - [Website](http://sirenofshame.com)
 - [Playstore](https://play.google.com/store/apps/details?id=com.automatedarchitecture.sirenofshame)
-- Erster Test
-  - Unterstützt 8 verschiedene Buildserver ([siehe hier](http://sirenofshame.com/BuildMonitor)])
-  - Aber … funktioniert offenbar nur, wenn man eine Desktop App installiert und damit ein `SoS` Account einrichtet
+- erster Test
+  - unterstützt 8 verschiedene Buildserver ([siehe hier](http://sirenofshame.com/BuildMonitor)])
+  - aber … funktioniert offenbar nur, wenn man eine Desktop App installiert und damit ein `SoS` Account einrichtet
     - die Desktop App gibt's aber nur für Windoof
     - [Sourcecode der Desktop App](https://github.com/automatedarchitecture/sirenofshame)
     - 😎 immerhin kann man dort dann via Usb eine [Sirene](http://sirenofshame.com/Products) anschliessen
@@ -137,12 +135,13 @@ Linux BuildNotify
 - [Website](https://bitbucket.org/Anay/buildnotify/wiki/Home)
 - [Sourcecode](https://bitbucket.org/Anay/buildnotify/src)
 - [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
-- Erster Test
+- erster Test
   - getestet mit Kubuntu 14.04 32 Bit
-  - Ab Ubuntu 14.10 in den offiziellen Repositories enthalten
-  - Vor 14.10 wird via ppa installiert
-  - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
-  - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
+  - ab Ubuntu 14.10 in den offiziellen Repositories enthalten
+  - vor 14.10 wird via ppa installiert
+  - zur Anbindung an snap-ci wird als Server Url `https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml` angegeben
+  - zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+  - zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
   - Trayicon schaltet während des Build auf grau, somit ist der letzte Buildstatus nicht sichtbar
   - kleinstes Polling Intervall ist 60s
 
@@ -152,28 +151,29 @@ Osx CCMenu
 - [Website](http://ccmenu.org)
 - [Appstore](https://itunes.apple.com/us/app/ccmenu/id603117688?mt=12&ign-mpt=uo%3D4)
 - [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
-- Erster Test
-  - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
-  - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
-  - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
-  - Zeigt auch eine geschätzte Restzeit an
+- erster Test
+  - zur Anbindung an snap-ci wird als Server Url `https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml` angegeben
+  - zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+  - zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
+  - endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
+  - zeigt auch eine geschätzte Restzeit an
 
 
 Windows CCTray
 --------------
 - [Website](http://www.cruisecontrolnet.org/projects/cctray)
 - [Setup.exe (Version 1.8.5)](http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/CruiseControl.NET%201.8.5/)
-- Erster Test
+- erster Test
   - getestet mit CCTray Version 1.8.5 auf Windows XP 32 Bit
   - 😎 viele Einstellungsmöglichkeiten
   - Erstkonfiguration hat einen kleinen Fallstrick:
     - nach Installation & Start erscheint im System Tray das Icon
     - dort Rechtsklick → »Settings…« → Tab »Build Projects« → »Add…«
     - »Add Server« → »Supply a curtom Http Url« → dann Serveradresse (siehe unten) eingegeben und »Ok«
+      - zur Anbindung an snap-ci wird als Server Url `https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml` angegeben
       - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
       - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
     - jetzt im zweigeteilten Fenster links den neu hinzugefügten »Buildserver« anklicken und (Wichtig!) in der rechten Liste »Joe-Merten/Mpjoe« anklicken, dann »Ok«
     - im Settings Dialog sollte nun das Projekt stehen → »Ok«
-  - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
-  - Zeigt auch eine geschätzte Restzeit an
-  - Zeigt mir aber auch ständig »Recent checkins have broken the build«, obwohl ich nur in einer Readme geändert habe (wenn der Build dann fertig ist, zeigt er »Recent checkins have fixed the build«)
+  - zeigt auch eine geschätzte Restzeit an
+  - zeigt mir aber auch ständig »Recent checkins have broken the build«, obwohl ich nur in einer Readme geändert habe (wenn der Build dann fertig ist, zeigt er »Recent checkins have fixed the build«)
