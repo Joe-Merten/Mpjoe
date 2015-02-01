@@ -27,7 +27,7 @@ echo "ANDROID_HOME = $ANDROID_HOME"
 echo "========================="
 
 # Testweise mal Build Fail ...
-exit 1
+#exit 1
 
 cd ../Swing
 mvn clean install -q -DskipTests=true
