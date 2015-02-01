@@ -142,7 +142,7 @@ Linux BuildNotify
   - Ab Ubuntu 14.10 in den offiziellen Repositories enthalten
   - Vor 14.10 wird via ppa installiert
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
-  - Trayicon schaltet während des Build auf grau
+  - Trayicon schaltet während des Build auf grau, somit ist der letzte Buildstatus nicht sichtbar
   - kleinstes Polling Intervall ist 60s
 
 
