@@ -143,6 +143,7 @@ Linux BuildNotify
   - Vor 14.10 wird via ppa installiert
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
   - Trayicon schaltet während des Build auf grau
+  - kleinstes Polling Intervall ist 60s
 
 
 Osx CCMenu
