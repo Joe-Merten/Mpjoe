@@ -26,8 +26,8 @@ echo "===== android sdk ====="
 echo "ANDROID_HOME = $ANDROID_HOME"
 echo "========================="
 
-# Testweise mal Build Fail ... mit nem einfachen `exit 1` funktioniert das bei travis nicht
-#exit 1
+# Testweise mal Build Fail ...
+exit 1
 
 cd ../Swing
 mvn clean install -q -DskipTests=true

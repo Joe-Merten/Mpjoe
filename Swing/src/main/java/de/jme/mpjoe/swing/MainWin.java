@@ -1,7 +1,5 @@
 package de.jme.mpjoe.swing;
 
-hier mal ein Fehler
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
