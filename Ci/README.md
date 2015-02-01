@@ -35,7 +35,6 @@ Allgemeines
 -----------
 - Status Badge
   - Sowas wie "Running" oder "Pending" zeigt offenbar keiner an
-  - Übersicht über diverse Notification Clients [hier](http://docs.travis-ci.com/user/apps)
 
 
 Snap-ci
@@ -75,3 +74,79 @@ Circleci
   - TODO: Gucken ob / wie man mit circleci für Android bauen kann, siehe Ci/circle-build.sh
 - Sonstige Anmerkungen:
   - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch
+
+
+Notification Clients
+====================
+
+- Eine Übersicht über diverse Notification Clients gibt es z.B. [hier](http://docs.travis-ci.com/user/apps)
+
+
+Android Mantis CI
+-----------------
+- [Website](http://floydpink.github.io/Mantis-CI)
+- [Playstore](https://play.google.com/store/apps/details?id=com.floydpink.android.travisci)
+- [Sourcecode](https://github.com/floydpink/Mantis-CI)
+- Erster Test
+  - Arbeitet offenbar nur mit travis-ci
+  - Zeigte mir eine Liste irgendwelcher Repositories / Builds an, aber meins konnte ich nicht finden
+
+
+Android Travis Jr.
+------------------
+- [Website](http://sahan.me/Travis-Jr)
+- [Playstore](https://play.google.com/store/apps/details?id=com.lonepulse.travisjr)
+- [Sourcecode](https://github.com/sahan/Travis-Jr)
+  - Interessant: Projektsetup ist ebenfalls Android + Maven + Eclipse
+- Erster Test
+  - Arbeitet offenbar nur mit travis-ci
+  - Schlicht und einfach, tut aber halbwegs was es soll
+  - Listet alle Travis Builds auf und zeigt mir auch die Logs
+    - jedoch nicht mit dem Folding das der Travis Webclient bietet
+    - Farben werden nicht dargestellt (statt dessen `[21;1m` et cetera
+  - kein Status Badge in der Display Headline
+
+
+Android Comrade Travis
+----------------------
+- [Playstore](https://play.google.com/store/apps/details?id=com.perone.comradetravis)
+- Erster Test
+  - Arbeitet offenbar nur mit travis-ci
+  - Bei `Search Repository` gibt man `Mpjoe' oder `Joe-Merten` ein
+- Erster Test
+  - Arbeitet offenbar nur mit travis-ci
+  - Noch schlichter als Travis Jr.
+  - View Build → Crash auf meinem Samsung SM-P605
+
+
+Android Siren of Shame
+----------------------
+- [Website](http://sirenofshame.com)
+- [Playstore](https://play.google.com/store/apps/details?id=com.automatedarchitecture.sirenofshame)
+- Erster Test
+  - Unterstützt 8 verschiedene Buildserver ([siehe hier](http://sirenofshame.com/BuildMonitor)])
+  - Aber … funktioniert offenbar nur, wenn man eine Desktop App installiert und damit ein `SoS` Account einrichtet
+    - die Desktop App gibt's aber nur für Windoof
+    - [Sourcecode der Desktop App](https://github.com/automatedarchitecture/sirenofshame)
+    - 😎 immerhin kann man dort dann via Usb eine [Sirene](http://sirenofshame.com/Products) anschliessen
+
+
+Linux BuildNotify
+-----------------
+- [Website](https://bitbucket.org/Anay/buildnotify/wiki/Home)
+- [Sourcecode](https://bitbucket.org/Anay/buildnotify/src)
+- [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
+- Erster Test
+  - Ab Ubuntu 14.10 in den offiziellen Repositories enthalten
+  - Vor 14.10 wird via ppa installiert
+  - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+
+
+Osx CCMenu
+----------
+- TODO
+
+
+Windows CCTray
+--------------
+- TODO
