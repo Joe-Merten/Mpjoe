@@ -1,0 +1,3 @@
+# Temporäres Verzeichnis zulassen
+# Darin wird z.B. beim Build via travis-ci das Android Sdk installiert
+tmp
