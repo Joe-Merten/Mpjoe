@@ -28,5 +28,5 @@ echo "========================="
 
 
 cd ../Swing
-mvn install -q -DskipTests=true
+mvn clean install -q -DskipTests=true
 #mvn test

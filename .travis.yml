@@ -14,7 +14,7 @@ env:
 before_install:
   # Install base Android SDK
   - sudo apt-get update -qq
-  - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
+  - if [ "$(uname -m)" = "x86_64" ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch >/dev/null; fi
   - wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
   - tar xzf android-sdk_r23.0.2-linux.tgz
   - export ANDROID_HOME=$PWD/android-sdk-linux
@@ -22,16 +22,15 @@ before_install:
 
   # Install required components.
   # For a full list, run `android list sdk -a --extended`
-  # Note that sysimg-19 downloads only ARM, because only the first license query is accepted.
-  - echo yes | android update sdk --filter platform-tools --no-ui --force > /dev/null
-  - echo yes | android update sdk --all --filter build-tools-21.1.1 --no-ui --force > /dev/null
-  - echo yes | android update sdk --filter android-21 --no-ui --force > /dev/null
-#  - echo yes | android update sdk --filter sysimg-19 --no-ui --force > /dev/null
-  - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
-  - echo yes | android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
+  - echo yes | android update sdk --filter platform-tools               --no-ui --force  >/dev/null
+  - echo yes | android update sdk --all --filter build-tools-21.1.1     --no-ui --force  >/dev/null
+  - echo yes | android update sdk --filter android-21                   --no-ui --force  >/dev/null
+# - echo yes | android update sdk --filter sysimg-19                    --no-ui --force  >/dev/null
+  - echo yes | android update sdk --filter extra-android-support        --no-ui --force  >/dev/null
+  - echo yes | android update sdk --filter extra-android-m2repository   --no-ui --force  >/dev/null
 install:
   - cd Ci && ./travis-build.sh
 before_test:
   - echo "Nichts zu tun für before_test"
-test:
+script:
   - cd Ci && ./travis-test.sh

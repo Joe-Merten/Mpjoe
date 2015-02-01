@@ -103,7 +103,7 @@ Android Travis Jr.
   - Schlicht und einfach, tut aber halbwegs was es soll
   - Listet alle Travis Builds auf und zeigt mir auch die Logs
     - jedoch nicht mit dem Folding das der Travis Webclient bietet
-    - Farben werden nicht dargestellt (statt dessen `[21;1m` et cetera
+    - Farben werden nicht dargestellt (statt dessen `[21;1m` et cetera)
   - kein Status Badge in der Display Headline
 
 
@@ -129,6 +129,7 @@ Android Siren of Shame
     - die Desktop App gibt's aber nur für Windoof
     - [Sourcecode der Desktop App](https://github.com/automatedarchitecture/sirenofshame)
     - 😎 immerhin kann man dort dann via Usb eine [Sirene](http://sirenofshame.com/Products) anschliessen
+- [hier](http://sirenofshame.blogspot.de) hat jemand die Sirene an einen Raspberry Pi angesteckert
 
 
 Linux BuildNotify
