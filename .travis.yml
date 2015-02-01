@@ -36,5 +36,5 @@ before_test:
   - echo "Nichts zu tun für before_test"
 script:
   - cd Ci
-  - cd ./travis-test.sh
+  - ./travis-test.sh
   - cd ..
