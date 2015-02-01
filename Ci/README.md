@@ -141,8 +141,8 @@ Linux BuildNotify
   - getestet mit Kubuntu 14.04 32 Bit
   - Ab Ubuntu 14.10 in den offiziellen Repositories enthalten
   - Vor 14.10 wird via ppa installiert
-  - Zur Anbindung an snap-ci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+  - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
   - Trayicon schaltet während des Build auf grau, somit ist der letzte Buildstatus nicht sichtbar
   - kleinstes Polling Intervall ist 60s
 
@@ -153,8 +153,8 @@ Osx CCMenu
 - [Appstore](https://itunes.apple.com/us/app/ccmenu/id603117688?mt=12&ign-mpt=uo%3D4)
 - [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
 - Erster Test
-  - Zur Anbindung an snap-ci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+  - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
   - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
   - Zeigt auch eine geschätzte Restzeit an
 
@@ -170,8 +170,8 @@ Windows CCTray
     - nach Installation & Start erscheint im System Tray das Icon
     - dort Rechtsklick → »Settings…« → Tab »Build Projects« → »Add…«
     - »Add Server« → »Supply a curtom Http Url« → dann Serveradresse (siehe unten) eingegeben und »Ok«
-       - Zur Anbindung an snap-ci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
       - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+      - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
     - jetzt im zweigeteilten Fenster links den neu hinzugefügten »Buildserver« anklicken und (Wichtig!) in der rechten Liste »Joe-Merten/Mpjoe« anklicken, dann »Ok«
     - im Settings Dialog sollte nun das Projekt stehen → »Ok«
   - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
