@@ -67,7 +67,7 @@ cd tmp
 echo "===================================================================================================="
 echo "PWD = $PWD"
 echo "ANDROID_HOME = $ANDROID_HOME"
-echo "git rev = $(Common/make/gitversion)"
+echo "git rev = $(../Common/make/gitversion)"
 git status
 ls -l
 echo "===================================================================================================="
