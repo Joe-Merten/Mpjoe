@@ -112,7 +112,7 @@ Android Comrade Travis
 - [Playstore](https://play.google.com/store/apps/details?id=com.perone.comradetravis)
 - Erster Test
   - Arbeitet offenbar nur mit travis-ci
-  - Bei `Search Repository` gibt man `Mpjoe' oder `Joe-Merten` ein
+  - Bei `Search Repository` gibt man `Mpjoe` oder `Joe-Merten` ein
 - Erster Test
   - Arbeitet offenbar nur mit travis-ci
   - Noch schlichter als Travis Jr.
@@ -138,9 +138,11 @@ Linux BuildNotify
 - [Sourcecode](https://bitbucket.org/Anay/buildnotify/src)
 - [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
 - Erster Test
+  - getestet mit Kubuntu 14.04 32 Bit
   - Ab Ubuntu 14.10 in den offiziellen Repositories enthalten
   - Vor 14.10 wird via ppa installiert
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+  - Trayicon schaltet während des Build auf grau
 
 
 Osx CCMenu
@@ -150,8 +152,19 @@ Osx CCMenu
 - [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
 - Erster Test
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
+  - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
 
 
 Windows CCTray
 --------------
-- TODO
+- [Website](http://www.cruisecontrolnet.org/projects/cctray)
+- [Setup.exe (Version 1.8.5)](http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/CruiseControl.NET%201.8.5/)
+- Erster Test
+  - getestet mit CCTray Version 1.8.5 auf Windows XP 32 Bit
+  - 😎 viele Einstellungsmöglichkeiten
+  - Erstkonfiguration hat einen kleinen Fallstrick:
+    - nach Installation & Start erscheint im System Tray das Icon
+    - dort Rechtsklick → »Settings…« → Tab »Build Projects« → »Add…«
+    - »Add Server« → »Supply a curtom Http Url« → dann `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` eingegeben und »Ok«
+    - jetzt im zweigeteilten Fenster links den neu hinzugefügten »Buildserver« anklicken und (Wichtig!) in der rechten Liste »Joe-Merten/Mpjoe« anklicken, dann »Ok«
+    - im Settings Dialog sollte nun das Projekt stehen → »Ok«
