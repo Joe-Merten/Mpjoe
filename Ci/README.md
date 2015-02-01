@@ -153,6 +153,7 @@ Osx CCMenu
 - Erster Test
   - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
   - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
+  - Zeigt auch eine geschätzte Restzeit an
 
 
 Windows CCTray
@@ -168,3 +169,6 @@ Windows CCTray
     - »Add Server« → »Supply a curtom Http Url« → dann `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` eingegeben und »Ok«
     - jetzt im zweigeteilten Fenster links den neu hinzugefügten »Buildserver« anklicken und (Wichtig!) in der rechten Liste »Joe-Merten/Mpjoe« anklicken, dann »Ok«
     - im Settings Dialog sollte nun das Projekt stehen → »Ok«
+  - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
+  - Zeigt auch eine geschätzte Restzeit an
+    
