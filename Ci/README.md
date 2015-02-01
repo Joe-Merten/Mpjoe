@@ -7,6 +7,7 @@ Um zu sehen was am besten funktioniert, lasse ich zunächst erst mal 4 unterschi
 - [Drone.io](https://drone.io/github.com/Joe-Merten/Mpjoe)
 - [Travis-ci](https://travis-ci.org/Joe-Merten/Mpjoe)
 - [Circleci](https://circleci.com/gh/Joe-Merten/Mpjoe)
+- [hier](en.wikipedia.org/wiki/Comparison_of_continuous_integration_software) gibt's noch reichlich mehr
 
 Meine Vorstellungen, was CI tun sollte und welche Informationen möglichst schnell und kompakt zur Verfügung gestellt werden sollten.
 
@@ -128,6 +129,18 @@ Android Siren of Shame
     - [Sourcecode der Desktop App](https://github.com/automatedarchitecture/sirenofshame)
     - 😎 immerhin kann man dort dann via Usb eine [Sirene](http://sirenofshame.com/Products) anschliessen
 - [hier](http://sirenofshame.blogspot.de) hat jemand die Sirene an einen Raspberry Pi angesteckert
+
+
+Android Cruise Control Mobile
+-----------------------------
+- [Playstore](https://play.google.com/store/apps/details?id=com.artech.ccsd.ccmobile)
+- erster Test → hat auf meinem Samsung SM-P605 schlichtweg garnicht funktioniert
+
+
+iOS Cruise Control Mobile
+-------------------------
+- [Appstore](https://itunes.apple.com/us/app/cruise-control-mobile/id528029176)
+- erster Test → TODO
 
 
 Linux BuildNotify
