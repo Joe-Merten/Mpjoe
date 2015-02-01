@@ -145,7 +145,11 @@ Linux BuildNotify
 
 Osx CCMenu
 ----------
-- TODO
+- [Website](http://ccmenu.org)
+- [Appstore](https://itunes.apple.com/us/app/ccmenu/id603117688?mt=12&ign-mpt=uo%3D4)
+- [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
+- Erster Test
+  - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
 
 
 Windows CCTray
