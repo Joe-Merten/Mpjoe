@@ -171,4 +171,4 @@ Windows CCTray
     - im Settings Dialog sollte nun das Projekt stehen → »Ok«
   - Endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
   - Zeigt auch eine geschätzte Restzeit an
-    
+  - Zeigt mir aber auch ständig »Recent checkins have broken the build«, obwohl ich nur in einer Readme geändert habe (wenn der Build dann fertig ist, zeigt er »Recent checkins have fixed the build«)
