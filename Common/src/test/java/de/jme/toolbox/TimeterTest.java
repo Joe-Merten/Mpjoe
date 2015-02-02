@@ -76,7 +76,7 @@ public class TimeterTest {
         assertThat(Timeter.toStringWithDots(        0), is(          "0"));
         assertThat(Timeter.toStringWithDots(        1), is(          "1"));
         assertThat(Timeter.toStringWithDots(       12), is(         "12"));
-        assertThat(Timeter.toStringWithDots(      123), is(        "123"));
+        assertThat(Timeter.toStringWithDots(      123), is(        "123a"));
         assertThat(Timeter.toStringWithDots(     1234), is(      "1.234"));
         assertThat(Timeter.toStringWithDots(    12345), is(     "12.345"));
         assertThat(Timeter.toStringWithDots(   123456), is(    "123.456"));
