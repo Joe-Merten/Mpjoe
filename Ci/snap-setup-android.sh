@@ -19,7 +19,7 @@
 # - 23.0.2 -> "Error: Ignoring unknown package filter 'build-tools-24.0.2'" -> build-tools werden nicht installiert, obwohl "Downloading android sdk from http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz"
 # - 24.0.2 -> "Error: Ignoring unknown package filter 'build-tools-24.0.2'" -> build-tools werden nicht installiert, obwohl "Android SDK Tools, revision 24.0.2" und "Downloading Android SDK Tools, revision 24.0.2" und "Installed Android SDK Tools, revision 24.0.2"
 
-declare ANDROID_BUILDTOOLS_VERSION="20.0.0"
+declare ANDROID_BUILDTOOLS_VERSION="21.1.2"
 declare ANDROID_API_LEVEL="19"
 
 # existance of this file indicates that all dependencies were previously installed, and any changes to this file will use a different filename.
