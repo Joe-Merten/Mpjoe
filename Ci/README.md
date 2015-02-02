@@ -35,23 +35,27 @@ Notification:
 Allgemeines
 -----------
 - Status Badge
-  - Sowas wie "Running" oder "Pending" zeigt offenbar keiner an
+  - sowas wie "Running" oder "Pending" zeigt offenbar keiner an
 
 
 Snap-ci
 -------
 - Status:
-  - Baut die Swing und auch die Android App
+  - baut die Swing und auch die Android App
 - Sonstige Anmerkungen:
-  - Baut mit Android Sdk Build Tools 20.0.0
-  - Kann auch Android im Emuator und somit Tests gegen die Android Builds [siehe hier](https://docs.snap-ci.com/the-ci-environment/languages/android/)
+  - baut mit Android Sdk Build Tools 20.0.0
+  - kann auch Android im Emuator und somit Tests gegen die Android Builds [siehe hier](https://docs.snap-ci.com/the-ci-environment/languages/android/)
     (habe ich jedoch noch nicht getestet)
   - vorerst mein Favorit
+- Notification
+  - cc.xml funktioniert von allen getesteten Hostern hier am besten
+  - wenn ich mehrere Stages konfiguriert habe (z.B. Build und Test) dann bekomme ich dafür via cc.xml separate Einträge
+
 
 Drone.io
 --------
 - Status:
-  - Baut die Swing Applikation, aber (noch) nicht das Android Projekt
+  - baut die Swing Applikation, aber (noch) nicht das Android Projekt
 - Probleme:
   - hat nur Maven 3.0.4, aber für das simpligility android-maven-plugin wird mind. Maven 3.0.5 benötigt
     - deshalb baue ich via drone.io vorerst nur die Java Swing Applikation
@@ -68,7 +72,7 @@ Drone.io
 Travis-ci
 ---------
 - Status:
-  - Baut schon mal die Swing Applikation aber noch nicht Android
+  - baut schon mal die Swing Applikation aber noch nicht Android
 - Sonstige Anmerkungen:
   - benötigt zur Konfiguration ein .travis.yml im Root meines Repository
   - macht checkout mittels `git clone --depth=50`, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei )
@@ -86,8 +90,10 @@ Travis-ci
 Circleci
 --------
 - Status:
-  - Baut die Swing Applikation, aber noch nicht das Android Projekt
+  - baut die Swing Applikation, aber noch nicht das Android Projekt
   - TODO: Gucken ob / wie man mit circleci für Android bauen kann, siehe Ci/circle-build.sh
+- Notification
+  - liefert via cc.xml keine `lastBuildTime`
 - Sonstige Anmerkungen:
   - kann optional auch via `circle.yml` konfiguriert werden, [siehe hier](https://circleci.com/docs/configuration)
   - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch
