@@ -34,8 +34,8 @@ echo "========================="
 
 cd ../Swing
 mvn -q -DskipTests=true clean install
-cd ..
+cd ../Ci
 
 cd ../Android
 mvn -q -DskipTests=true -Dandroid.sdk.path=$ANDROID_HOME clean install
-cd ..
+cd ../Ci
