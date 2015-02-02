@@ -36,7 +36,6 @@ cd ../Swing
 mvn -q -DskipTests=true clean install
 cd ..
 
-# kein ANDROID_HOME gesetzt; TODO: Gucken ob / wie man mit circleci für Android bauen kann
-# cd ../Android
-# mvn -q -DskipTests=true clean install
-# cd ..
+cd ../Android
+mvn -q -DskipTests=true -Dandroid.sdk.path=$ANDROID_HOME clean install
+cd ..
