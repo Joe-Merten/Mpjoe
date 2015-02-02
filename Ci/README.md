@@ -77,10 +77,10 @@ Drone.io
 Travis-ci
 ---------
 - Status:
-  - baut schon mal die Swing Applikation aber noch nicht Android
+  - baut die Swing und auch die Android App
 - Sonstige Anmerkungen:
   - benötigt zur Konfiguration ein .travis.yml im Root meines Repository
-  - macht checkout mittels `git clone --depth=50`, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei )
+  - macht checkout mittels `git clone --depth=50`, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei circleci)
 - Notification
   - hat auf der Website eine [schöne Übersicht](http://docs.travis-ci.com/user/apps) über diverse Notification Clients
   - beim Start eines neuen Build wird leider via cc.xml der letzte Buildstatus nicht mehr geliefert (und lastBuildLabel steht schon auf dem neuen Build)
@@ -101,7 +101,7 @@ Circleci
   - liefert via cc.xml keine `lastBuildTime`
 - Sonstige Anmerkungen:
   - kann optional auch via `circle.yml` konfiguriert werden, [siehe hier](https://circleci.com/docs/configuration)
-  - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch
+  - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei travis-ci)
 
 
 Notification Clients

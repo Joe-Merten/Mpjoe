@@ -36,7 +36,4 @@ cd ../Ci
 
 cd ../Android
 mvn -q -DskipTests=true -Dandroid.sdk.path=$ANDROID_HOME clean install
-echo "================================================================================"
-ls -l target
-echo "================================================================================"
 cd ../Ci
