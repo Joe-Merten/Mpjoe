@@ -13,7 +13,8 @@
 # - http://blog.circleci.com/announcing-ios-and-android-support
 ########################################################################################################################
 
-source circle-env-sh
+# Env nicht noch mal setzen, wird ja schon in circle-build.sh erledigt
+# source circle-env.sh
 
 if [ "$ANDROID_HOME" == "" ]; then
     echo "ANDROID_HOME is not set!" 1>&2
