@@ -26,6 +26,7 @@ echo "    ANDROID_SDK  = $ANDROID_SDK_VERSION"
 echo "    BUILDTOOLS   = $ANDROID_BUILDTOOLS_VERSION"
 echo "    API_LEVEL    = $ANDROID_API_LEVEL"
 echo "    ANDROID_HOME = $ANDROID_HOME"
+echo "    PATH         = $PATH"
 
 rm -rf ../tmp
 mkdir -p ../tmp
