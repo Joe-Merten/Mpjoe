@@ -60,47 +60,48 @@
 #        touch ${INITIALIZATION_FILE}
 #    fi
 
-
 # Install base Android SDK
+# - bei travis ist noch kein ANDROID_HOME gesetzt und offenbar ist es üblich (siehe dreamDroid Projekt), das Android Sdk immer wieder neu im Projekt Root zu installieren
+# - ich installiere es in Mpjoe/tmp (da hab' ich auch ein .gitignore drauf)
+
+#declare ANDROID_SDK_VERSION="23.0.2"
+declare ANDROID_SDK_VERSION="24.0.2"
+declare ANDROID_BUILDTOOLS_VERSION="21.1.2"
+declare ANDROID_API_LEVEL="19"
+
+echo "===================================================================================================="
+echo "Android Sdk Setup:"
+echo "    ANDROID_SDK  = $ANDROID_SDK_VERSION"
+echo "    BUILDTOOLS   = $ANDROID_BUILDTOOLS_VERSION"
+echo "    API_LEVEL    = $ANDROID_API_LEVEL"
+
+rm -rf ../tmp
 mkdir -p ../tmp
 cd ../tmp
 
-echo "===================================================================================================="
-echo "PWD = $PWD"
-echo "ANDROID_HOME = $ANDROID_HOME"
-echo "git rev = $(../Common/make/gitversion)"
-git status
-echo "----------------------------------------------------------------------------------------------------"
-ls -l
-echo "----------------------------------------------------------------------------------------------------"
-ls -l ..
-echo "===================================================================================================="
-
 sudo apt-get update -qq
-if [ "$(uname -m)" = "x86_64" ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch >/dev/null; fi
-wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
-tar xzf android-sdk_r23.0.2-linux.tgz
+if [ "$(uname -m)" == "x86_64" ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch >/dev/null; fi
+wget http://dl.google.com/android/android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
+tar xzf android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
 export ANDROID_HOME=$PWD/android-sdk-linux
 export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+echo "    ANDROID_HOME = $ANDROID_HOME"
 
 # Install required components.
 # For a full list, run `android list sdk -a --extended`
-echo yes | android update sdk --filter platform-tools               --no-ui --force  >/dev/null
-echo yes | android update sdk --all --filter build-tools-21.1.1     --no-ui --force  >/dev/null
-echo yes | android update sdk --filter android-21                   --no-ui --force  >/dev/null
-# echo yes | android update sdk --filter sysimg-19                    --no-ui --force  >/dev/null
-echo yes | android update sdk --filter extra-android-support        --no-ui --force  >/dev/null
-echo yes | android update sdk --filter extra-android-m2repository   --no-ui --force  >/dev/null
+echo yes | android update sdk --no-ui --filter platform-tools                                       --force  >/dev/null
+#echo yes | android update sdk --no-ui --filter tools                                                --force  >/dev/null
+echo yes | android update sdk --no-ui --filter build-tools-$ANDROID_BUILDTOOLS_VERSION        --all --force  >/dev/null
+echo yes | android update sdk --no-ui --filter android-$ANDROID_API_LEVEL                           --force  >/dev/null
+
+#echo yes | android update sdk --no-ui --filter extra-android-support                          --all --force  >/dev/null
+#echo yes | android update sdk --no-ui --filter extra-android-m2repository                     --all --force  >/dev/null
+
+echo yes | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL --all --force  >/dev/null
 
 echo "===================================================================================================="
-echo "PWD = $PWD"
-echo "ANDROID_HOME = $ANDROID_HOME"
-echo "git rev = $(../Common/make/gitversion)"
-git status
-echo "----------------------------------------------------------------------------------------------------"
-ls -l
-echo "----------------------------------------------------------------------------------------------------"
-ls -l ..
+echo "--- ANDROID_HOME -----------------------------------------------------------------------------------"
+ls -l $ANDROID_HOME
 echo "===================================================================================================="
 
 cd ../Ci
