@@ -58,6 +58,11 @@ Drone.io
   - Status Badge
     - zeigte mir mitunter "failing" obwohl der letzte Build erfolgreich war
       - manuelles anzeigen von https://drone.io/github.com/Joe-Merten/Mpjoe/status.png im Browser zeigte hingegen "passing" -> Problem mit Bitmap caching?!
+- Notification
+  - kein cc.xml Interface (im Gegensatz zu Snap, Travis und Circle)
+- Sonstige Anmerkungen:
+  - Unterscheidet nicht zwischen Build und Test
+  - zählt folglich nicht zu meinen Favoriten
 
 
 Travis-ci
