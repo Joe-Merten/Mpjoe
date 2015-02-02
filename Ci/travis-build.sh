@@ -13,7 +13,7 @@
 # - Linux testing-worker-linux-ac3bc85a-1-13783-linux-7-49015226 2.6.32-042stab090.5 #1 SMP Sat Jun 21 00:15:09 MSK 2014 x86_64 x86_64 x86_64 GNU/Linux
 # - Java 1.7.0_72 (Oracle, 64 Bit)
 # - Maven 3.2.3
-# - ANDROID_HOME = /home/travis/build/Joe-Merten/Mpjoe/tmp/android-sdk-linux
+# - ANDROID_HOME = /home/travis/build/Joe-Merten/Mpjoe/tmp/android-sdk-linux (wird in meinem .travis.yml gesetzt)
 
 echo "===== git rev ====="
 echo "git rev = $(../Common/make/gitversion)"
