@@ -74,6 +74,7 @@ echo "Android Sdk Setup:"
 echo "    ANDROID_SDK  = $ANDROID_SDK_VERSION"
 echo "    BUILDTOOLS   = $ANDROID_BUILDTOOLS_VERSION"
 echo "    API_LEVEL    = $ANDROID_API_LEVEL"
+echo "    ANDROID_HOME = $ANDROID_HOME"
 
 rm -rf ../tmp
 mkdir -p ../tmp

@@ -10,7 +10,9 @@ language: java
 jdk: oraclejdk7
 env:
   matrix:
-    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    - export ANDROID_HOME=$PWD/tmp/android-sdk-linux
+#    - export ANDROID_TARGET=android-19
+#    - export ANDROID_ABI=armeabi-v7a
 before_install:
   - cd Ci && ./travis-setup-android.sh && cd ..
 install:
