@@ -66,6 +66,13 @@ Travis-ci
   - TODO
 - Sonstige Anmerkungen:
   - benötigt zur Konfiguration ein .travis.yml im Root meines Repository
+- Notification
+  - hat auf der Website eine [schöne Übersicht](http://docs.travis-ci.com/user/apps) über diverse Notification Clients
+  - beim Start eines neuen Build wird leider via cc.xml der letzte Buildstatus nicht mehr geliefert (und lastBuildLabel steht schon auf dem neuen Build)
+    - `activity="Sleeping" lastBuildStatus="Unknown" lastBuildLabel="46" lastBuildTime=""`
+    - etwas später schaltet er dann auf Building, aber immernoch mit `lastBuildStatus="Unknown"`
+    - `activity="Building" lastBuildStatus="Unknown" lastBuildLabel="46" lastBuildTime=""`
+    - snap-ci und circleci machen das besser
 
 
 Circleci
@@ -140,7 +147,8 @@ Android Cruise Control Mobile
 iOS Cruise Control Mobile
 -------------------------
 - [Appstore](https://itunes.apple.com/us/app/cruise-control-mobile/id528029176)
-- erster Test → TODO
+- erster Test → ähnlich wie die Android App, meine Buildserver lassen sich nicht in die App hineinkonfigurieren
+- Vermutung: Möglicherweise läuft Cruise Control Mobile nur mit echten Cruise Control im Lan.
 
 
 Linux BuildNotify
@@ -190,3 +198,4 @@ Windows CCTray
     - im Settings Dialog sollte nun das Projekt stehen → »Ok«
   - zeigt auch eine geschätzte Restzeit an
   - zeigt mir aber auch ständig »Recent checkins have broken the build«, obwohl ich nur in einer Readme geändert habe (wenn der Build dann fertig ist, zeigt er »Recent checkins have fixed the build«)
+    -> vermutlich liegt das auch am fehlerhaften cc.xml von travis-ci
