@@ -9,4 +9,8 @@
 # Dieses Buildskript wird via circleci.com angeworfen
 ########################################################################################################################
 
-echo "TODO ..."
+cd ../Swing
+mvn -q surefire:test
+cd ..
+
+# TODO: Android Tests
