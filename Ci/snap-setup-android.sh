@@ -32,8 +32,8 @@ echo "    API_LEVEL    = $ANDROID_API_LEVEL"
 echo "    INIT_FILE    = $INITIALIZATION_FILE"
 
 # Neuinstallation des Android Sdk forcieren
-echo "Removing $ANDROID_HOME to force reinstallation of Android Sdk"
-rm -rf "$ANDROID_HOME"
+#echo "Removing $ANDROID_HOME to force reinstallation of Android Sdk"
+#rm -rf "$ANDROID_HOME"
 
 if [ ! -e ${INITIALIZATION_FILE} ]; then
     # fetch and initialize $ANDROID_HOME
