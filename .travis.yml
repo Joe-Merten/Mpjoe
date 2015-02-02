@@ -10,8 +10,7 @@ language: java
 jdk: oraclejdk7
 env:
   # Achtung ANDROID_HOME muss zu travis-setup-android.sh passen!
-  - ANDROID_HOME=$PWD/tmp/android-sdk-linux
-  - PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+  - ANDROID_HOME=$PWD/tmp/android-sdk-linux PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 #    - ANDROID_TARGET=android-19
 #    - ANDROID_ABI=armeabi-v7a
 before_install:
