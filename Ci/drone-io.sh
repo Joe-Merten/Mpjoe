@@ -28,12 +28,12 @@ echo "========================="
 
 
 cd ../Swing
-mvn -q -DskipTests=true install
+mvn -q -DskipTests=true clean install
 mvn -q surefire:test
 cd ../Ci
 
 # Android bauen geht mit drone.io noch nicht, weil wg. dem simpligility android-maven-plugin mind. Maven 3.0.5 benötigt wird
 # cd ../Android
-# mvn -q -DskipTests=true install
+# mvn -q -DskipTests=true clean install
 # mvn -q surefire:test
 # cd ../Ci
