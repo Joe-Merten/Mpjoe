@@ -13,7 +13,9 @@
 # - Linux box337 3.14.28-031428-generic #201501081937 SMP Thu Jan 8 19:39:13 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 # - Java 1.7.0_55 (Oracle, 64 Bit)
 # - Maven 3.2.5
-# - ANDROID_HOME =
+# - ANDROID_HOME = nicht gesetzt
+
+source circle-env.sh
 
 echo "===== git rev ====="
 echo "git rev = $(../Common/make/gitversion)"
@@ -28,6 +30,7 @@ echo "===== android sdk ====="
 echo "ANDROID_HOME = $ANDROID_HOME"
 echo "========================="
 
+./circle-setup-android.sh
 
 cd ../Swing
 mvn -q -DskipTests=true clean install

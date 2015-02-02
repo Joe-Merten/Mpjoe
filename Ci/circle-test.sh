@@ -9,6 +9,8 @@
 # Testdurchführung aller Subprojekte via circleci.com
 ########################################################################################################################
 
+source circle-env.sh
+
 cd ../Swing
 mvn -q surefire:test
 java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --version
