@@ -51,15 +51,21 @@ function CompileAndRun {
     local mvnOpts=""
 
     # Tests überspringen
-    #mvnOpts+="-Dmaven.test.skip=true"
+    # Achtung: Via »maven.test.skip=true« werden die Tests nicht mitkompiliert
+    # Dagegen bei »skipTests=true« werden sie mitkompiliert, aber vorerst nicht ausgeführt
+    # Anschliessende Ausführung erreicht man dann z.B. mit »mvn -q surefire:test«
+    # Testergebnisse befinden sich dann im Verzeichnis target/surefire-reports
+    #mvnOpts+=" -Dmaven.test.skip=true"
+    mvnOpts+=" -DskipTests=true"
 
     # Outputreduktion
-    mvnOpts+="-quiet"
+    mvnOpts+=" -quiet"
 
     if mvn $mvnOpts clean install; then
         CopyToBBB
         RunLocal
         #RunRemote
+        #mvn -q surefire:test
         return 0
     else
         return 1
