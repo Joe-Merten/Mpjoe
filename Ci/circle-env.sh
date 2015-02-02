@@ -10,7 +10,10 @@
 ########################################################################################################################
 
 # Wir gehen davon aus, dass wir uns im Verzeichnis Ci befinden
+# Bei circleci befindet sich bereits
 # Das Android Sdk wird später in ../tmp installiert
+
+echo "    ANDROID_HOME vorher = $ANDROID_HOME"
 
 export ANDROID_SDK_VERSION="24.0.2"
 export ANDROID_BUILDTOOLS_VERSION="21.1.2"
