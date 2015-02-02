@@ -95,8 +95,7 @@ Travis-ci
 Circleci
 --------
 - Status:
-  - baut die Swing Applikation, aber noch nicht das Android Projekt
-  - TODO: Gucken ob / wie man mit circleci für Android bauen kann, siehe Ci/circle-build.sh
+  - baut die Swing und auch die Android App
 - Notification
   - liefert via cc.xml keine `lastBuildTime`
 - Sonstige Anmerkungen:

@@ -21,10 +21,12 @@ if [ "$ANDROID_HOME" == "" ]; then
     exit 1
 fi
 
-# TODO: Hier nur Nachinstallieren bei Erfordernis.
 # Hmm, lt. https://circleci.com/docs/android soll man das Zeug aus /usr/local/android-sdk-linux nach /home/ubuntu/android kopieren und dort dann nachinstallieren
 # Aber warum setzen die dann den PATH auf /usr/local/android-sdk-linux ?
 # Ich installiere jetzt erst man frech direkt in /usr/local/android-sdk-linux hinein
+
+# TODO: Hier nur Nachinstallieren bei Erfordernis.
+# - da ich das noch nicht tue, bekomme im im Buildlog Meldungen wie »Error: Ignoring unknown package filter 'platform-tools'«, die aber immerhin nicht zum Abbruch des Build führen
 
 # Install required components. For a full list, run `android list sdk -a --extended`
 echo yes | android update sdk --no-ui --filter platform-tools                                       --force  >/dev/null
