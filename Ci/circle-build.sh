@@ -6,13 +6,15 @@
 # \file       circle-build.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Dieses Buildskript wird via circleci.com angeworfen
+# Kompilieren aller Subprojekte via circleci.com
 ########################################################################################################################
 
 # circleci am 31.01.2015:
 # - Linux box337 3.14.28-031428-generic #201501081937 SMP Thu Jan 8 19:39:13 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 # - Java 1.7.0_55 (Oracle, 64 Bit)
 # - Maven 3.2.5
+# - ANDROID_HOME =
+
 echo "===== git rev ====="
 echo "git rev = $(../Common/make/gitversion)"
 git status
@@ -28,11 +30,10 @@ echo "========================="
 
 
 cd ../Swing
-mvn install -q -DskipTests=true
-#mvn test
+mvn -q -DskipTests=true clean install
+cd ..
 
 # kein ANDROID_HOME gesetzt; TODO: Gucken ob / wie man mit circleci für Android bauen kann
 # cd ../Android
-# mvn install -q -DskipTests=true
-# #mvn test
+# mvn -q -DskipTests=true clean install
 # cd ..

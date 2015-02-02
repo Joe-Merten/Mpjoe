@@ -46,7 +46,7 @@ Snap-ci
   - Baut mit Android Sdk Build Tools 20.0.0
   - Kann auch Android im Emuator und somit Tests gegen die Android Builds [siehe hier](https://docs.snap-ci.com/the-ci-environment/languages/android/)
     (habe ich jedoch noch nicht getestet)
-
+  - vorerst mein Favorit
 
 Drone.io
 --------
@@ -68,9 +68,10 @@ Drone.io
 Travis-ci
 ---------
 - Status:
-  - TODO
+  - Baut schon mal die Swing Applikation aber noch nicht Android
 - Sonstige Anmerkungen:
   - benötigt zur Konfiguration ein .travis.yml im Root meines Repository
+  - macht checkout mittels `git clone --depth=50`, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei )
 - Notification
   - hat auf der Website eine [schöne Übersicht](http://docs.travis-ci.com/user/apps) über diverse Notification Clients
   - beim Start eines neuen Build wird leider via cc.xml der letzte Buildstatus nicht mehr geliefert (und lastBuildLabel steht schon auf dem neuen Build)
@@ -78,6 +79,8 @@ Travis-ci
     - etwas später schaltet er dann auf Building, aber immernoch mit `lastBuildStatus="Unknown"`
     - `activity="Building" lastBuildStatus="Unknown" lastBuildLabel="46" lastBuildTime=""`
     - snap-ci und circleci machen das besser
+    - Windows cctray bringt dies etwas durcheinander (falsche "Build Failed" Meldungen, siehe unten)
+    - Linux BuildNotify Osx Ccmenu färben ihre Icons für Travis in diesem Fall grau
 
 
 Circleci
@@ -86,6 +89,7 @@ Circleci
   - Baut die Swing Applikation, aber noch nicht das Android Projekt
   - TODO: Gucken ob / wie man mit circleci für Android bauen kann, siehe Ci/circle-build.sh
 - Sonstige Anmerkungen:
+  - kann optional auch via `circle.yml` konfiguriert werden, [siehe hier](https://circleci.com/docs/configuration)
   - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch
 
 

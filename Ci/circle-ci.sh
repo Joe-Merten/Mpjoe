@@ -6,7 +6,7 @@
 # \file       circle-ci.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Vorerst nicht genutzt, ich lasse die Skripte circle-build.sh und circle-test.sh separat aufrufen
+# Nicht genutzt, ich lasse die Skripte circle-build.sh und circle-test.sh separat aufrufen
 ########################################################################################################################
 
-echo "TODO ..."
+exit 1
