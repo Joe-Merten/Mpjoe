@@ -11,11 +11,6 @@
 
 cd ../Swing
 mvn -q surefire:test
-echo "----------"
-ls -l
-echo "----------"
-ls -l target/
-echo "----------"
 java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --version
 java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --help
 cd ..

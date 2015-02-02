@@ -49,7 +49,12 @@ Snap-ci
   - vorerst mein Favorit
 - Notification
   - cc.xml funktioniert von allen getesteten Hostern hier am besten
-  - wenn ich mehrere Stages konfiguriert habe (z.B. Build und Test) dann bekomme ich dafür via cc.xml separate Einträge
+- Sonstige Anmerkungen:
+  - bei snap-ci kann man mehrere Stages konfigurieren, z.B. für »Build« und »Test« (dachte ich zumindest)
+    - allerdings wird bei jeder neuen Stage neu ausgecheckt und damit ist mein Buildoutput weg, somit kann ich das nicht in dieser Art und Weise benutzen
+    - fernen, wenn ich mehrere Stages konfiguriert habe (z.B. Build und Test) dann bekomme ich dafür via cc.xml separate Einträge
+      - Vorteil: Der Buildstatus kann dadurch feingranunarer visualisiert werden
+      - Nachteil: Osx CCMenu & Windows CCTray müssen bei Änderung der Stages umkonfiguriert werden (Linux BuildNotify erkennt das hingegen selbst)
 
 
 Drone.io
@@ -193,6 +198,11 @@ Osx CCMenu
   - zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
   - endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
   - zeigt auch eine geschätzte Restzeit an
+Probleme:
+- Trayicon bleibt grün, obgleich eines Failure (snap-ci Test failed)
+  - zumindest solange, wie noch andere Buildprozesse laufen
+  - erst beim Aufklappen sieht man, dass einer der Buildprozesse rot ist
+  - wenn alle Buildprozesse auf »Sleeping« stehen, dann wird das Trayicon rot
 
 
 Windows CCTray
