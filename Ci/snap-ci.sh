@@ -6,7 +6,8 @@
 # \file       snap-ci.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Nicht genutzt, ich lasse die Skripte snap-build.sh und snap-test.sh separat aufrufen
+# Wird von snap-ci.com aufgerufen
 ########################################################################################################################
 
-exit 1
+./snap-build.sh
+./snap-test.sh
