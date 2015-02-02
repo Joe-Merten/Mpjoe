@@ -6,7 +6,7 @@
 # \file       travis-test.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Dieses Buildskript wird via travis-ci.org angeworfen
+# Testdurchführung aller Subprojekte via travis-ci.org
 ########################################################################################################################
 
 cd ../Swing

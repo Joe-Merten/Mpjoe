@@ -6,7 +6,7 @@
 # \file       snap-test.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Dieses Buildskript wird via snap-ci.com angeworfen
+# Testdurchführung aller Subprojekte via snap-ci.com
 ########################################################################################################################
 
 cd ../Swing

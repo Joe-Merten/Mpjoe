@@ -6,7 +6,7 @@
 # \file       circle-test.sh
 # \creation   2015-01-30, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Dieses Buildskript wird via circleci.com angeworfen
+# Testdurchführung aller Subprojekte via circleci.com
 ########################################################################################################################
 
 cd ../Swing
