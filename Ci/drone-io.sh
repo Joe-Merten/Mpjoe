@@ -30,6 +30,8 @@ echo "========================="
 cd ../Swing
 mvn -q -DskipTests=true clean install
 mvn -q surefire:test
+java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --version
+java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --help
 cd ../Ci
 
 # Android bauen geht mit drone.io noch nicht, weil wg. dem simpligility android-maven-plugin mind. Maven 3.0.5 benötigt wird
