@@ -14,6 +14,7 @@ declare MPJOE_COMMON_DIR="../Common"
 declare FILES=()
 
 FILES+=("src/main/java/de/jme/toolbox")
+FILES+=("src/test/java/de/jme/toolbox")
 FILES+=("src/main/java/de/jme/jsi")
 FILES+=("src/main/java/de/jme/thrift")
 FILES+=("src/main/java/de/jme/mpj")
