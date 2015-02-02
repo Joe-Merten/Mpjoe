@@ -21,17 +21,12 @@ if [ "$ANDROID_HOME" == "" ]; then
     exit 1
 fi
 
-rm -rf "$ANDROID_HOME"
-mkdir -p "$ANDROID_HOME"
-cd ../tmp
+# TODO: Hier nur Nachinstallieren bei Erfordernis.
+# Hmm, lt. https://circleci.com/docs/android soll man das Zeug aus /usr/local/android-sdk-linux nach /home/ubuntu/android kopieren und dort dann nachinstallieren
+# Aber warum setzen die dann den PATH auf /usr/local/android-sdk-linux ?
+# Ich installiere jetzt erst man frech direkt in /usr/local/android-sdk-linux hinein
 
-sudo apt-get update -qq
-if [ "$(uname -m)" == "x86_64" ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch >/dev/null; fi
-wget http://dl.google.com/android/android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
-tar xzf android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
-
-# Install required components.
-# For a full list, run `android list sdk -a --extended`
+# Install required components. For a full list, run `android list sdk -a --extended`
 echo yes | android update sdk --no-ui --filter platform-tools                                       --force  >/dev/null
 #echo yes | android update sdk --no-ui --filter tools                                                --force  >/dev/null
 echo yes | android update sdk --no-ui --filter build-tools-$ANDROID_BUILDTOOLS_VERSION        --all --force  >/dev/null
@@ -41,10 +36,3 @@ echo yes | android update sdk --no-ui --filter android-$ANDROID_API_LEVEL       
 #echo yes | android update sdk --no-ui --filter extra-android-m2repository                     --all --force  >/dev/null
 
 echo yes | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL --all --force  >/dev/null
-
-echo "===================================================================================================="
-echo "--- ANDROID_HOME -----------------------------------------------------------------------------------"
-ls -l $ANDROID_HOME
-echo "===================================================================================================="
-
-cd ../Ci
