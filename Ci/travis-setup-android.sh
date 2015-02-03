@@ -35,7 +35,7 @@ cd ../tmp
 sudo apt-get update -qq
 if [ "$(uname -m)" == "x86_64" ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch >/dev/null; fi
 wget http://dl.google.com/android/android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
-tar xzf android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
+tar -xzf android-sdk_r$ANDROID_SDK_VERSION-linux.tgz
 
 # Install required components.
 # For a full list, run `android list sdk -a --extended`
