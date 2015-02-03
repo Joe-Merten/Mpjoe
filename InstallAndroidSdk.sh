@@ -77,7 +77,7 @@ if [ -d "$ANDROID_HOME" ]; then
 fi
 
 # Basisverzeichnis anlegen, falls noch nicht existent (also z.B. /opt/android)
-if ! mkdir -p "$ANDROID_DIR"; then
+if ! mkdir -p "$ANDROID_DIR" 2>/dev/null; then
     # Ok, we might to need sudo access
     echo "Need root permission to create directory $ANDROID_DIR"
     sudo mkdir -p "$ANDROID_DIR"
@@ -103,7 +103,7 @@ rmdir "$TMP_DIR"
 mv "$ANDROID_DIR/$ARCHIVEDIR" "$ANDROID_HOME"
 
 # Benötigte Komponenten nachinstallieren
-echo "Installing additional Sdk components"
+echo "Installing additional Sdk components, please stand by ..."
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter platform-tools                                         >/dev/null
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter build-tools-$ANDROID_BUILDTOOLS_VERSION --all          >/dev/null
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter android-$ANDROID_API_LEVEL                             >/dev/null
@@ -112,6 +112,6 @@ echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter sys-i
 
 echo "Android Sdk installation complete."
 echo "You might also want to set ANDROID_HOME and PATH entvironment variables for your convinience, like:"
-echo "    export ANDROID_HOME="$ANDROID_HOME"
-echo "    export PATH="\$PATH:\${ANDROID_HOME}/tools:\${ANDROID_HOME}/platform-tools"
+echo "    export ANDROID_HOME=\"$ANDROID_HOME\""
+echo "    export PATH=\"\$PATH:\${ANDROID_HOME}/tools:\${ANDROID_HOME}/platform-tools\""
 echo "→ TODO: Doku wie man das global einstellt"
