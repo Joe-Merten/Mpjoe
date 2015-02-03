@@ -4,8 +4,54 @@ Joe’s Media Player & DJ’ing App
 Android application, very very early alpha version!
 
 
+Prerequisites
+=============
+
+TODO
+----
+- Prerequisites / Setup für Swing und Android zusammenfassen
+- Eclipse Setup auch beschreiben
+
+
+All platforms
+-------------
+- java jdk 1.7 (or later)
+- maven 3.0.5 (or later)
+- android sdk 24.0.2 with build-tools 21.1.2 and api level 19
+
+Linux
+-----
+
+        sudo apt-get install git openjdk-7-jdk maven
+        [ "$(uname -m)" == "x86_64" ] && sudo apt-get install lib32stdc++6 lib32z1 lib32z1-dev
+        git clone https://github.com/Joe-Merten/Mpjoe.git
+        cd Mpjoe
+        ./InstallAndroidSdk.sh
+
+- tested using Kubuntu 14.04 (32 Bit and 64 Bit), OpenJdk 1.7.0_65
+- the 32 bit libs were needed for using the android sdk on 64 bit hosts
+- there might be some different ways how and where to install android sdk; I'd described one in the script mentioned above
+
+
+OS X
+----
+- TODO
+
+Windows
+-------
+- TODO
+
+
+Build & run
+===========
+
+    git clone https://github.com/Joe-Merten/Mpjoe.git
+    cd Mpjoe/Android
+    mvn clean install android:deploy android:run
+
+
 Status
-------
+======
 * zunächst nur ein Projectsetup, basierend auf dem HelloFlashlight Beispielcode von [android-maven-plugin Repository](https://github.com/simpligility/android-maven-plugin)
 * build & run von Kommandozeile geht:  `mvn clean install android:deploy android:run`
 * Siehe auch:
