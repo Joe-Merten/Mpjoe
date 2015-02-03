@@ -10,10 +10,10 @@
 ########################################################################################################################
 
 # semaphoreapp am 03.02.2015:
-# - Linux TODO
-# - Java 1.7.0_55 (Oracle, 64 Bit)
-# - Maven TODO
-# - ANDROID_HOME = TODO
+# - Linux aaf617fb-1e28-4e9c-8f31-0623bf3c7d34 3.13.0-29-generic #53-Ubuntu SMP Wed Jun 4 21:00:20 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+# - Java 1.7.0_65 (OpenJdk, 64 Bit)
+# - Maven 3.0.5
+# - ANDROID_HOME = nicht gesetzt
 
 #source semaphore-env.sh
 

@@ -7,6 +7,7 @@ Um zu sehen was am besten funktioniert, lasse ich zunächst erst mal 4 unterschi
 - [Drone.io](https://drone.io/github.com/Joe-Merten/Mpjoe)
 - [Travis-ci](https://travis-ci.org/Joe-Merten/Mpjoe)
 - [Circleci](https://circleci.com/gh/Joe-Merten/Mpjoe)
+- [Semaphoreapp](https://semaphoreapp.com/joe-merten/mpjoe)
 - [hier](en.wikipedia.org/wiki/Comparison_of_continuous_integration_software) gibt's noch reichlich mehr
 
 Meine Vorstellungen, was CI tun sollte und welche Informationen möglichst schnell und kompakt zur Verfügung gestellt werden sollten.
@@ -35,7 +36,7 @@ Notification:
 Allgemeines
 -----------
 - Status Badge
-  - sowas wie "Running" oder "Pending" zeigt offenbar keiner an
+  - sowas wie "Running" oder "Pending" zeigt offenbar keiner an (doch, semaphoreapp tut das)
 
 
 Snap-ci
@@ -103,6 +104,14 @@ Circleci
   - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei travis-ci)
 
 
+Semaphoreapp
+------------
+- Status:
+  - baut die Swing App aber noch nicht für Android
+- Notification
+  - liefert im Status Badge auch »Pending«
+
+
 Notification Clients
 ====================
 
@@ -116,14 +125,12 @@ Der CI Server `Cruise Control` definierte einst ein simples Api zur Abfrage des 
 
 ### cc.xml Url's für Mpjoe
 
-
 | Server       | Url                                                                                                                                |
 |--------------|------------------------------------------------------------------------------------------------------------------------------------|
 | snap-ci      | https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml                                                                      |
 | travis-ci    | https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml                                                                            |
 | circleci     | https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml                                                                                    |
 | semaphoreapp | https://semaphoreapp.com/api/v1/projects/ed34e48b-8b31-4d78-a3cd-0730d586feaa/cc.xml?auth_token=hrY18iHUrtHtSyXC5Z3K&ccmenu=cc.xml |
-
 
 
 ### Linux BuildNotify
