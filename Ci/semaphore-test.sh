@@ -3,11 +3,18 @@
 # CI Server Buildskript
 #-----------------------------------------------------------------------------------------------------------------------
 # \project    Mpjoe
-# \file       semaphore-ci.sh
+# \file       semaphore-test.sh
 # \creation   2015-02-03, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
-# Wird von semaphoreapp.com aufgerufen
+# Testdurchführung aller Subprojekte via semaphoreapp.com
 ########################################################################################################################
 
-./semaphore-build.sh
-./semaphore-test.sh
+#source semaphore-env.sh
+
+cd ../Swing
+mvn -q surefire:test
+java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --version
+java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar --help
+cd ..
+
+# TODO: Android Tests
