@@ -116,14 +116,14 @@ Der CI Server `Cruise Control` definierte einst ein simples Api zur Abfrage des 
 
 ### cc.xml Url's für Mpjoe
 
-|--------------|------------------------------------------------------------------------------------------------------------------------------------|
+
 | Server       | Url                                                                                                                                |
 |--------------|------------------------------------------------------------------------------------------------------------------------------------|
 | snap-ci      | https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml                                                                      |
 | travis-ci    | https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml                                                                            |
 | circleci     | https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml                                                                                    |
 | semaphoreapp | https://semaphoreapp.com/api/v1/projects/ed34e48b-8b31-4d78-a3cd-0730d586feaa/cc.xml?auth_token=hrY18iHUrtHtSyXC5Z3K&ccmenu=cc.xml |
-|--------------|------------------------------------------------------------------------------------------------------------------------------------|
+
 
 
 ### Linux BuildNotify
