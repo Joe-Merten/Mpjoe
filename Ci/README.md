@@ -230,8 +230,9 @@ Weitere Clients
 - [Playstore](https://play.google.com/store/apps/details?id=com.automatedarchitecture.sirenofshame)
 - erster Test
   - unterstützt 8 verschiedene Buildserver ([siehe hier](http://sirenofshame.com/BuildMonitor)])
-  - aber … funktioniert offenbar nur, wenn man eine Desktop App installiert und damit ein `SoS` Account einrichtet
-    - die Desktop App gibt's aber nur für Windoof
+  - aber … vieles funktioniert offenbar nur, wenn man eine Desktop App installiert und damit ein `SoS` Account einrichtet
+    - die Desktop App gibt's aber nur für Windoof (erfordert .net 4.5)
     - [Sourcecode der Desktop App](https://github.com/automatedarchitecture/sirenofshame)
     - 😎 immerhin kann man dort dann via Usb eine [Sirene](http://sirenofshame.com/Products) anschliessen
+  - Account kann man aber auch ohne Installation des Windows App einrichten und zumindest ein travis-ci anbinden, dessen Status das in der Android App sichtbar ist
 - [hier](http://sirenofshame.blogspot.de) hat jemand die Sirene an einen Raspberry Pi angesteckert
