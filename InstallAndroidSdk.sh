@@ -81,7 +81,7 @@ if ! mkdir -p "$ANDROID_DIR"; then
     # Ok, we might to need sudo access
     echo "Need root permission to create directory $ANDROID_DIR"
     sudo mkdir -p "$ANDROID_DIR"
-    sudo chown $USER:$USER "$ANDROID_DIR"
+    sudo chown $USER:$(id -gn) "$ANDROID_DIR"
 fi
 
 # Schreibberechtigung im Basisverzeichnis prüfen
