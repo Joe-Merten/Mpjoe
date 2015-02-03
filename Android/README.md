@@ -7,7 +7,7 @@ Android application, very very early alpha version!
 Build & run
 ===========
 
-Prerequisites see [../README.md], then:
+Prerequisites see [../README.md](../README.md), then:
 
     cd Mpjoe/Android
     mvn clean install android:deploy android:run

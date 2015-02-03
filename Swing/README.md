@@ -7,7 +7,7 @@ Java Swing application, very early alpha version!
 Build & run
 ===========
 
-Prerequisites see [../README.md], then:
+Prerequisites see [../README.md](../README.md), then:
 
     cd Mpjoe/Swing
     mvn clean install
