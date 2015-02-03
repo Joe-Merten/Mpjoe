@@ -109,8 +109,80 @@ Notification Clients
 - Eine Übersicht über diverse Notification Clients gibt es z.B. [hier](http://docs.travis-ci.com/user/apps)
 
 
-Android Mantis CI
------------------
+Cruise Control Api (cc.xml)
+---------------------------
+Der CI Server `Cruise Control` definierte einst ein simples Api zur Abfrage des Buildstatus. Hierbei wird vom Buildserver eine Xml Datei mit den nötigen Informationen gezogen und ausgewertet. Der Informationsgehalt ist zwar sehr dürftig, aber das Api hat sich als defacto Standard etabliert und wird mittlerweile von diversen CI Servern und Notification Clients unterstützt.
+
+
+### cc.xml Url's für Mpjoe
+--------------------------
+| snap-ci      | https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml                                                                      |
+| travis-ci    | https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml                                                                            |
+| circleci     | https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml                                                                                    |
+| semaphoreapp | https://semaphoreapp.com/api/v1/projects/ed34e48b-8b31-4d78-a3cd-0730d586feaa/cc.xml?auth_token=hrY18iHUrtHtSyXC5Z3K&ccmenu=cc.xml |
+
+
+### Linux BuildNotify
+- [Website](https://bitbucket.org/Anay/buildnotify/wiki/Home)
+- [Sourcecode](https://bitbucket.org/Anay/buildnotify/src)
+- [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
+- erster Test
+  - getestet mit Kubuntu 14.04 32 Bit
+  - ab Ubuntu 14.10 in den offiziellen Repositories enthalten
+  - vor 14.10 wird via ppa installiert
+  - Trayicon schaltet während des Build auf grau, somit ist der letzte Buildstatus nicht sichtbar
+    - aber nur bei travis-ci, da dieser ein fehlerhaftes cc.xml liefert
+  - kleinstes Polling Intervall ist 60s
+
+
+### Osx CCMenu
+--------------
+- [Website](http://ccmenu.org)
+- [Appstore](https://itunes.apple.com/us/app/ccmenu/id603117688?mt=12&ign-mpt=uo%3D4)
+- [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
+- erster Test
+  - endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
+  - zeigt auch eine geschätzte Restzeit an
+Probleme:
+- Trayicon bleibt grün, obgleich eines Failure (snap-ci Test failed)
+  - zumindest solange, wie noch andere Buildprozesse laufen
+  - erst beim Aufklappen sieht man, dass einer der Buildprozesse rot ist
+  - wenn alle Buildprozesse auf »Sleeping« stehen, dann wird das Trayicon rot
+
+
+### Windows CCTray
+------------------
+- [Website](http://www.cruisecontrolnet.org/projects/cctray)
+- [Setup.exe (Version 1.8.5)](http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/CruiseControl.NET%201.8.5/)
+- erster Test
+  - getestet mit CCTray Version 1.8.5 auf Windows XP 32 Bit
+  - 😎 viele Einstellungsmöglichkeiten
+  - Erstkonfiguration hat einen kleinen Fallstrick:
+    - nach Installation & Start erscheint im System Tray das Icon
+    - dort Rechtsklick → »Settings…« → Tab »Build Projects« → »Add…«
+    - »Add Server« → »Supply a curtom Http Url« → dann Url (siehe oben) eingegeben und »Ok«
+    - jetzt im zweigeteilten Fenster links den neu hinzugefügten »Buildserver« anklicken und (Wichtig!) in der rechten Liste das Projekt (z.B. »Joe-Merten/Mpjoe«) anklicken, dann »Ok«
+    - im Settings Dialog sollte nun das Projekt stehen → »Ok«
+  - zeigt auch eine geschätzte Restzeit an
+  - wg. des fehlerhaften cc.xml von travis-ci wird hier ständig ein false negative »Recent checkins have broken the build« angezeigt
+
+
+### Android Cruise Control Mobile
+- [Playstore](https://play.google.com/store/apps/details?id=com.artech.ccsd.ccmobile)
+- erster Test → hat auf meinem Samsung SM-P605 schlichtweg garnicht funktioniert
+
+
+### iOS Cruise Control Mobile
+- [Appstore](https://itunes.apple.com/us/app/cruise-control-mobile/id528029176)
+- erster Test → ähnlich wie die Android App, meine Buildserver lassen sich nicht in die App hineinkonfigurieren
+- Vermutung: Möglicherweise läuft Cruise Control Mobile nur mit echten Cruise Control im Lan.
+
+
+Spezielle Clients für travis-ci
+-------------------------------
+
+### Android Mantis CI
+---------------------
 - [Website](http://floydpink.github.io/Mantis-CI)
 - [Playstore](https://play.google.com/store/apps/details?id=com.floydpink.android.travisci)
 - [Sourcecode](https://github.com/floydpink/Mantis-CI)
@@ -119,8 +191,8 @@ Android Mantis CI
   - zeigte mir eine Liste irgendwelcher Repositories / Builds an, aber meins konnte ich nicht finden
 
 
-Android Travis Jr.
-------------------
+### Android Travis Jr.
+----------------------
 - [Website](http://sahan.me/Travis-Jr)
 - [Playstore](https://play.google.com/store/apps/details?id=com.lonepulse.travisjr)
 - [Sourcecode](https://github.com/sahan/Travis-Jr)
@@ -134,8 +206,8 @@ Android Travis Jr.
   - kein Status Badge in der Display Headline
 
 
-Android Comrade Travis
-----------------------
+### Android Comrade Travis
+--------------------------
 - [Playstore](https://play.google.com/store/apps/details?id=com.perone.comradetravis)
 - erster Test
   - arbeitet offenbar nur mit travis-ci
@@ -144,8 +216,10 @@ Android Comrade Travis
   - View Build → Crash auf meinem Samsung SM-P605
 
 
-Android Siren of Shame
-----------------------
+Weitere Clients
+---------------
+
+### Android Siren of Shame
 - [Website](http://sirenofshame.com)
 - [Playstore](https://play.google.com/store/apps/details?id=com.automatedarchitecture.sirenofshame)
 - erster Test
@@ -155,71 +229,3 @@ Android Siren of Shame
     - [Sourcecode der Desktop App](https://github.com/automatedarchitecture/sirenofshame)
     - 😎 immerhin kann man dort dann via Usb eine [Sirene](http://sirenofshame.com/Products) anschliessen
 - [hier](http://sirenofshame.blogspot.de) hat jemand die Sirene an einen Raspberry Pi angesteckert
-
-
-Android Cruise Control Mobile
------------------------------
-- [Playstore](https://play.google.com/store/apps/details?id=com.artech.ccsd.ccmobile)
-- erster Test → hat auf meinem Samsung SM-P605 schlichtweg garnicht funktioniert
-
-
-iOS Cruise Control Mobile
--------------------------
-- [Appstore](https://itunes.apple.com/us/app/cruise-control-mobile/id528029176)
-- erster Test → ähnlich wie die Android App, meine Buildserver lassen sich nicht in die App hineinkonfigurieren
-- Vermutung: Möglicherweise läuft Cruise Control Mobile nur mit echten Cruise Control im Lan.
-
-
-Linux BuildNotify
------------------
-- [Website](https://bitbucket.org/Anay/buildnotify/wiki/Home)
-- [Sourcecode](https://bitbucket.org/Anay/buildnotify/src)
-- [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
-- erster Test
-  - getestet mit Kubuntu 14.04 32 Bit
-  - ab Ubuntu 14.10 in den offiziellen Repositories enthalten
-  - vor 14.10 wird via ppa installiert
-  - zur Anbindung an snap-ci wird als Server Url `https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml` angegeben
-  - zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
-  - zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
-  - Trayicon schaltet während des Build auf grau, somit ist der letzte Buildstatus nicht sichtbar
-  - kleinstes Polling Intervall ist 60s
-
-
-Osx CCMenu
-----------
-- [Website](http://ccmenu.org)
-- [Appstore](https://itunes.apple.com/us/app/ccmenu/id603117688?mt=12&ign-mpt=uo%3D4)
-- [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
-- erster Test
-  - zur Anbindung an snap-ci wird als Server Url `https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml` angegeben
-  - zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
-  - zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
-  - endlich mal ein Tool, dass auch als Status »Build in progress« (in Kombination mit dem letzten Buildergebnis) anzeigt
-  - zeigt auch eine geschätzte Restzeit an
-Probleme:
-- Trayicon bleibt grün, obgleich eines Failure (snap-ci Test failed)
-  - zumindest solange, wie noch andere Buildprozesse laufen
-  - erst beim Aufklappen sieht man, dass einer der Buildprozesse rot ist
-  - wenn alle Buildprozesse auf »Sleeping« stehen, dann wird das Trayicon rot
-
-
-Windows CCTray
---------------
-- [Website](http://www.cruisecontrolnet.org/projects/cctray)
-- [Setup.exe (Version 1.8.5)](http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/CruiseControl.NET%201.8.5/)
-- erster Test
-  - getestet mit CCTray Version 1.8.5 auf Windows XP 32 Bit
-  - 😎 viele Einstellungsmöglichkeiten
-  - Erstkonfiguration hat einen kleinen Fallstrick:
-    - nach Installation & Start erscheint im System Tray das Icon
-    - dort Rechtsklick → »Settings…« → Tab »Build Projects« → »Add…«
-    - »Add Server« → »Supply a curtom Http Url« → dann Serveradresse (siehe unten) eingegeben und »Ok«
-      - zur Anbindung an snap-ci wird als Server Url `https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml` angegeben
-      - Zur Anbindung an travis-ci wird als Server Url `https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml` angegeben
-      - Zur Anbindung an circleci wird als Server Url `https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml` angegeben
-    - jetzt im zweigeteilten Fenster links den neu hinzugefügten »Buildserver« anklicken und (Wichtig!) in der rechten Liste »Joe-Merten/Mpjoe« anklicken, dann »Ok«
-    - im Settings Dialog sollte nun das Projekt stehen → »Ok«
-  - zeigt auch eine geschätzte Restzeit an
-  - zeigt mir aber auch ständig »Recent checkins have broken the build«, obwohl ich nur in einer Readme geändert habe (wenn der Build dann fertig ist, zeigt er »Recent checkins have fixed the build«)
-    -> vermutlich liegt das auch am fehlerhaften cc.xml von travis-ci

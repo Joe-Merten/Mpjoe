@@ -56,6 +56,7 @@ function pollServers() {
     pollServer "https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml"
     pollServer "https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml"
     pollServer "https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml"
+    pollServer "https://semaphoreapp.com/api/v1/projects/ed34e48b-8b31-4d78-a3cd-0730d586feaa/cc.xml?auth_token=hrY18iHUrtHtSyXC5Z3K&ccmenu=cc.xml"
 }
 
 
