@@ -4,45 +4,11 @@ Joe’s Media Player & DJ’ing App
 Java Swing application, very early alpha version!
 
 
-Prerequisites
-=============
-
-All platforms
--------------
-- java jdk 1.7 (or later)
-- maven 3.0.5 (or later)
-- vlc 2.1.5 (or later)
-
-Linux
------
-- tested using Kubuntu 14.04 (32 Bit and 64 Bit), OpenJdk 1.7.0_65
-- sudo apt-get install git openjdk-7-jdk maven vlc
-- vlc must be at least 2.1.5
-  - it's because of GnuTls issues in vlc 2.1.4
-  - I succeed by adding [this ppa](https://launchpad.net/~djcj/+archive/ubuntu/vlc-stable) which updates my vlc to 2.2.0-rc2
-
-OS X
-----
-- tested using Yosemite 10.10 (64 Bit), Sun Jdk 1.8.0_31
-- install [Homebrew](http://brew.sh)
-- brew update
-- brew install maven
-- sudo echo "JAVA_HOME=$(/usr/libexec/java_home)" >>/etc/mavenrc
-  - because of an maven issue, [see here](http://blog.tompawlak.org/maven-default-java-version-mac-osx) or [here](http://www.jayway.com/2013/03/08/configuring-maven-to-use-java-7-on-mac-os-x/)
-  - of course, there are some different approched to fix this issue, e.g.
-    - export JAVA_HOME=$(/usr/libexec/java_home) within your .bash_profile et cetera
-- download & install vlc from https://www.videolan.org
-- download & install java from https://www.java.com (e.g. jdk 8 from [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
-
-Windows
--------
-- TODO
-
-
 Build & run
 ===========
 
-    git clone https://github.com/Joe-Merten/Mpjoe.git
+Prerequisites see [../README.md], then:
+
     cd Mpjoe/Swing
     mvn clean install
     java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
