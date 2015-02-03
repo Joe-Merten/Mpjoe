@@ -115,7 +115,7 @@ Der CI Server `Cruise Control` definierte einst ein simples Api zur Abfrage des 
 
 
 ### cc.xml Url's für Mpjoe
---------------------------
+
 | snap-ci      | https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml                                                                      |
 | travis-ci    | https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml                                                                            |
 | circleci     | https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml                                                                                    |
@@ -136,7 +136,6 @@ Der CI Server `Cruise Control` definierte einst ein simples Api zur Abfrage des 
 
 
 ### Osx CCMenu
---------------
 - [Website](http://ccmenu.org)
 - [Appstore](https://itunes.apple.com/us/app/ccmenu/id603117688?mt=12&ign-mpt=uo%3D4)
 - [Tutorial auf travis-ci.com](http://docs.travis-ci.com/user/cc-menu)
@@ -151,7 +150,6 @@ Probleme:
 
 
 ### Windows CCTray
-------------------
 - [Website](http://www.cruisecontrolnet.org/projects/cctray)
 - [Setup.exe (Version 1.8.5)](http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/CruiseControl.NET%201.8.5/)
 - erster Test
@@ -182,7 +180,6 @@ Spezielle Clients für travis-ci
 -------------------------------
 
 ### Android Mantis CI
----------------------
 - [Website](http://floydpink.github.io/Mantis-CI)
 - [Playstore](https://play.google.com/store/apps/details?id=com.floydpink.android.travisci)
 - [Sourcecode](https://github.com/floydpink/Mantis-CI)
@@ -192,7 +189,6 @@ Spezielle Clients für travis-ci
 
 
 ### Android Travis Jr.
-----------------------
 - [Website](http://sahan.me/Travis-Jr)
 - [Playstore](https://play.google.com/store/apps/details?id=com.lonepulse.travisjr)
 - [Sourcecode](https://github.com/sahan/Travis-Jr)
@@ -207,7 +203,6 @@ Spezielle Clients für travis-ci
 
 
 ### Android Comrade Travis
---------------------------
 - [Playstore](https://play.google.com/store/apps/details?id=com.perone.comradetravis)
 - erster Test
   - arbeitet offenbar nur mit travis-ci
