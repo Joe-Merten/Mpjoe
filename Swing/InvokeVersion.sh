@@ -24,7 +24,7 @@ declare VER_DEVELOPER=""
 # Ermilltung der Versionsinformationen zur Kompilierzeit (packen des jar Archivs)
 if [ "$1" == "--make-version-string" ]; then
     # Git Informationen einholen.
-    VER_SOURCE=", git rev $(../Common/make/gitversion)"
+    VER_SOURCE=", git rev $(../Tools/gitversion)"
 
     # Build Datum "YYYY-MM-DD" und Uhrzeit "HH:MM:SS" (UTC)
     VER_DATETIME="$(date -u +"%Y-%m-%d %H:%M:%S")"
