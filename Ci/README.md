@@ -31,6 +31,7 @@ Notification:
   - App für Desktop Rechner (Linux, Mac, Windows) mit kleinem farbigen Indikator im System Tray
   - App für Mobile Devices (Android, iOS) mit kleinem farbigen Indikator im der Display Headline
   - und das alles möglichst auch für jedes einzelne Subprojekt (mein kleiner Mcp Buildserver konnte all dies (außer Android & Apple Apps))
+  - TODO: [hier](https://github.com/badges/shields) beschäftigt sich jemand noch intensiver mit diesem Thema
 
 
 Allgemeines
@@ -47,6 +48,7 @@ Snap-ci
   - baut mit Android Sdk Build Tools 20.0.0
   - kann auch Android im Emuator und somit Tests gegen die Android Builds [siehe hier](https://docs.snap-ci.com/the-ci-environment/languages/android/)
     (habe ich jedoch noch nicht getestet)
+  - kann offenbar auch für iOS bauen [siehe hier](https://circleci.com/docs/ios)
   - vorerst mein Favorit
 - Notification
   - cc.xml funktioniert von allen getesteten Hostern hier am besten
@@ -82,6 +84,7 @@ Travis-ci
 - Sonstige Anmerkungen:
   - benötigt zur Konfiguration ein .travis.yml im Root meines Repository
   - macht checkout mittels `git clone --depth=50`, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei circleci)
+  - baut wohl auch für iOS [siehe hier](http://docs.travis-ci.com/user/languages/objective-c)
 - Notification
   - hat auf der Website eine [schöne Übersicht](http://docs.travis-ci.com/user/apps) über diverse Notification Clients
   - beim Start eines neuen Build wird leider via cc.xml der letzte Buildstatus nicht mehr geliefert (und lastBuildLabel steht schon auf dem neuen Build)
@@ -91,6 +94,7 @@ Travis-ci
     - snap-ci und circleci machen das besser
     - Windows cctray bringt dies etwas durcheinander (falsche "Build Failed" Meldungen, siehe unten)
     - Linux BuildNotify Osx Ccmenu färben ihre Icons für Travis in diesem Fall grau
+    - hab ich als Bug reported: https://github.com/travis-ci/travis-ci/issues/3177 und http://www.cruisecontrolnet.org/issues/352
 
 
 Circleci
@@ -102,6 +106,7 @@ Circleci
 - Sonstige Anmerkungen:
   - kann optional auch via `circle.yml` konfiguriert werden, [siehe hier](https://circleci.com/docs/configuration)
   - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei travis-ci)
+  - kann offenbar auch für iOS bauen & testen [siehe hier](https://circleci.com/docs/ios)
 
 
 Semaphoreapp
@@ -174,6 +179,7 @@ Probleme:
     - im Settings Dialog sollte nun das Projekt stehen → »Ok«
   - zeigt auch eine geschätzte Restzeit an
   - wg. des fehlerhaften cc.xml von travis-ci wird hier ständig ein false negative »Recent checkins have broken the build« angezeigt
+    - hab ich als Bug reported: https://github.com/travis-ci/travis-ci/issues/3177 und http://www.cruisecontrolnet.org/issues/352
 
 
 ### Android Cruise Control Mobile
