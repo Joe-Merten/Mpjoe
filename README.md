@@ -42,8 +42,7 @@ Linux
         sudo apt-get install git openjdk-7-jdk maven vlc
         [ "$(uname -m)" == "x86_64" ] && sudo apt-get install lib32stdc++6 lib32z1
         git clone https://github.com/Joe-Merten/Mpjoe.git
-        cd Mpjoe
-        ./InstallAndroidSdk.sh
+        Mpjoe/Tools/InstallAndroidSdk.sh
 
 - vlc must be at least 2.1.5
   - it's because of GnuTls issues in vlc 2.1.4
@@ -64,8 +63,7 @@ OS X
     - export JAVA_HOME=$(/usr/libexec/java_home) within your .bash_profile et cetera
 - install android sdk, e.g.:
   - git clone https://github.com/Joe-Merten/Mpjoe.git
-  - cd Mpjoe
-  - ./InstallAndroidSdk.sh
+  - Mpjoe/Tools/InstallAndroidSdk.sh
 - download & install vlc from https://www.videolan.org
 - download & install java from https://www.java.com (e.g. jdk 8 from [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
 - tested using Yosemite 10.10 (64 Bit), Sun Jdk 1.8.0_31
