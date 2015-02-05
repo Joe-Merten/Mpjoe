@@ -25,6 +25,7 @@ import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
 import uk.co.caprica.vlcj.player.AudioDevice;
+import uk.co.caprica.vlcj.player.AudioOutput;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -146,7 +147,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
         mediaPlayerFactory = new MediaPlayerFactory();
 
-        /*{
+        {
             logger.debug("Detected audio outputs:");
             final List<AudioOutput> audioOutputs = mediaPlayerFactory.getAudioOutputs();
             for (AudioOutput audioOutput : audioOutputs) {
@@ -156,7 +157,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
                     logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
                 }
             }
-        }*/
+        }
 
 
         if (directPlayer) {
@@ -186,8 +187,12 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             // getAudioOutputDevices() gibt's hier zwar ab vlcj 3.2, ist aber in vlc 2.2.0-rc1 noch buggee (siehe https://trac.videolan.org/vlc/ticket/13655 und https://github.com/caprica/vlcj/issues/303)
             logger.debug("Available audio devices for this player:");
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
-            for (AudioDevice device : devices)
-                logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
+            if (devices != null) {
+                for (AudioDevice device : devices)
+                    logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
+            } else {
+                logger.debug("    <null>");
+            }
             final String audioOutputDevice = mediaPlayer.getAudioOutputDevice();
             logger.debug("    current = \"" + audioOutputDevice + "\"");
 
@@ -218,7 +223,8 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     public int getAudioOutputCount() {
         if (SystemInfo.isOsx()) { // Erst mal nur für OSX wg. buggee VLC 2.2 Prerelease
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
-            return devices.size();
+            if (devices != null) return devices.size();
+            else return 1;
         } else {
             return 1;
         }
@@ -227,9 +233,11 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     public void setAudioOutputIndex(int num) {
         if (SystemInfo.isOsx()) { // Erst mal nur für OSX wg. buggee VLC 2.2 Prerelease
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
-            if (num >= 0 && num < devices.size()) {
+            if (devices != null && num >= 0 && num < devices.size()) {
                 // TODO: Ist vorerst nur experimentell, muss vermutlich noch Threadsafe gemacht werden, also evtl. auch durch die Commandqueue schleusen
-                mediaPlayer.setAudioOutputDevice(null, devices.get(num).getLongName());
+                final String audioOutputName = devices.get(num).getLongName();
+                logger.debug("setAudioOutputIndex(" + num + ") = \"" + audioOutputName + "\"");
+                mediaPlayer.setAudioOutputDevice(null, audioOutputName);
                 audioOutputIndex = num;
             }
         }
