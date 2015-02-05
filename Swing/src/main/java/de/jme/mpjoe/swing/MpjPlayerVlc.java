@@ -171,14 +171,20 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             panel.add(canvas, BorderLayout.CENTER);
 
             embeddedMediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
+            // Wegen der VLC Ausgaben ala "This object event manager doesn't know about 'Unknown Event' events" hier ein Linefeed
+            System.out.println("");
             mediaPlayer = embeddedMediaPlayer;
             videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
             embeddedMediaPlayer.setVideoSurface(videoSurface);
         }
 
+
         /*{
             logger.debug("Available audio devices for this player:");
-            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices(); // gibt's erst ab vlcj 3.2.0
+            final String audioOutputDevice = mediaPlayer.getAudioOutputDevice();
+            logger.debug("    current = \"" + audioOutputDevice + "\"");
+            // getAudioOutputDevices() gibt's hier zwar ab vlcj 3.2, ist aber in vlc 2.2.0-rc1 noch buggee (siehe https://trac.videolan.org/vlc/ticket/13655 und https://github.com/caprica/vlcj/issues/303 )
+            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
             for (AudioDevice device : devices)
                 logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
         }*/
