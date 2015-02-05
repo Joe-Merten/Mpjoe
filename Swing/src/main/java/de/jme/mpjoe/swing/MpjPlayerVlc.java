@@ -168,6 +168,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             panel.add(imagePane, BorderLayout.CENTER);
 
             directMediaPlayer = mediaPlayerFactory.newDirectMediaPlayer(new DirectBufferFormatCallback(), new DirectRenderCallback());
+            System.out.println(""); // Wegen der VLC Ausgaben ala "This object event manager doesn't know about 'Unknown Event' events" hier ein Linefeed
             mediaPlayer = directMediaPlayer;
         } else {
             canvas = new Canvas();
@@ -175,8 +176,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             panel.add(canvas, BorderLayout.CENTER);
 
             embeddedMediaPlayer  = mediaPlayerFactory.newEmbeddedMediaPlayer();
-            // Wegen der VLC Ausgaben ala "This object event manager doesn't know about 'Unknown Event' events" hier ein Linefeed
-            System.out.println("");
+            System.out.println(""); // Wegen der VLC Ausgaben ala "This object event manager doesn't know about 'Unknown Event' events" hier ein Linefeed
             mediaPlayer = embeddedMediaPlayer;
             videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
             embeddedMediaPlayer.setVideoSurface(videoSurface);
