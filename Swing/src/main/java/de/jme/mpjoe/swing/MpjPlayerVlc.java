@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -24,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
-import uk.co.caprica.vlcj.player.AudioDevice;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -181,7 +179,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }
 
 
-        {
+        /*{
             logger.debug("Available audio devices for this player:");
             final String audioOutputDevice = mediaPlayer.getAudioOutputDevice();
             logger.debug("    current = \"" + audioOutputDevice + "\"");
@@ -189,7 +187,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
             for (AudioDevice device : devices)
                 logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
-        }
+        }*/
 
 
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
