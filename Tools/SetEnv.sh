@@ -53,7 +53,7 @@ function setEnv() {
     [[ ":$PATH:" == *":$ANDROID_TOOLS:"*         ]] || export PATH=$ANDROID_TOOLS:$PATH
 
     # Für Maven unter OSX ggf. JAVA_HOME setzen, siehe http://blog.tompawlak.org/maven-default-java-version-mac-osx oder http://www.jayway.com/2013/03/08/configuring-maven-to-use-java-7-on-mac-os-x
-    [ "$OS" == "Osx" ] && [ "$JAVA_HOME" == "" ] && [ -x "/usr/libexec/javahome" ] && export JAVA_HOME="$("/usr/libexec/javahome")"
+    [ "$OS" == "Osx" ] && [ "$JAVA_HOME" == "" ] && [ -x "/usr/libexec/java_home" ] && export JAVA_HOME="$("/usr/libexec/java_home")"
 
     return 0
 }
