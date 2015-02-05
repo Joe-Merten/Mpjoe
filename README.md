@@ -87,3 +87,40 @@ Android app:
 
     cd Mpjoe/Android
     mvn clean install android:deploy android:run
+
+
+Troubleshooting
+===============
+
+Linux 32 Bit & VLC crashes
+--------------------------
+On my Kubuntu 14.04 32 Bit, I'm able to playback mp3 using vlcj. But I earn crashes when trying to play flac, ogg or video.
+Unfortunately, there is no solution until now. See also → https://github.com/caprica/vlcj/issues/300
+
+
+OSX & VLC - No plugins found
+----------------------------
+When trying to start the Mpjoe swing application, I' sometimes got an error like »core libvlc error: No plugins found! Check your VLC installation«
+
+Testet e.g. with vlc 2.2.0-rc2 Weatherwax.
+
+Assuming the vlc installation location is `/Applications/VLC.app`, I see files & directories like:
+
+* Contents/MacOS
+* Contents/MacOS/lib/libvlc.dylib
+* Contents/MacOS/plugins
+* Contrnts/vlc -> MacOS
+
+When looking to the whole error output, we see something like `Make sure the plugins are installed in the "<libvlc-path>/vlc/plugins" directory ...`.
+Assuming, that `<libvlc-path>` in our case equals to `/Applications/VLC.appContents/MacOS/lib`, then there is of course no `vlc/plugins` below there.
+
+Two workaroundssolutions for that issue:
+
+* Set the VLC_PLUGIN_PATH environment variable like:
+
+        VLC_PLUGIN_PATH=/Applications/VLC.app/Contents/MacOS/plugins java -jar target/Mpjoe-Swing-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+
+* or creating a symlink into the vlc installation:
+
+        mkdir /Applications/VLC.app/Contents/MacOS/lib/vlc
+        ln -s ../../plugins /Applications/VLC.app/Contents/MacOS/lib/vlc/plugins
