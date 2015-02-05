@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -23,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
+import uk.co.caprica.vlcj.player.AudioDevice;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -102,6 +104,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     MediaPlayerFactory  mediaPlayerFactory;
     MediaPlayer         mediaPlayer;
     boolean             directPlayer = true;
+    int                 audioOutputIndex;
 
     // für EmbeddedMediaPlayer
     Canvas              canvas;
@@ -179,15 +182,23 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }
 
 
-        /*{
+        if (SystemInfo.isOsx()) {
+            // getAudioOutputDevices() gibt's hier zwar ab vlcj 3.2, ist aber in vlc 2.2.0-rc1 noch buggee (siehe https://trac.videolan.org/vlc/ticket/13655 und https://github.com/caprica/vlcj/issues/303)
             logger.debug("Available audio devices for this player:");
-            final String audioOutputDevice = mediaPlayer.getAudioOutputDevice();
-            logger.debug("    current = \"" + audioOutputDevice + "\"");
-            // getAudioOutputDevices() gibt's hier zwar ab vlcj 3.2, ist aber in vlc 2.2.0-rc1 noch buggee (siehe https://trac.videolan.org/vlc/ticket/13655 und https://github.com/caprica/vlcj/issues/303 )
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
             for (AudioDevice device : devices)
                 logger.debug("    id = \"" + device.getDeviceId() + "\", longName = \"" + device.getLongName() + "\"");
-        }*/
+            final String audioOutputDevice = mediaPlayer.getAudioOutputDevice();
+            logger.debug("    current = \"" + audioOutputDevice + "\"");
+
+            // Auf dem Mac sehe ich damit immerhin:
+            //   id    longName
+            //    0    "System Sound Output Device"
+            //   38    "Built-in Output"
+            //   72    "BM-8810 Red"
+            //   81    "BM-8810 White"
+            //   90    "BM-8810 Black"
+        }
 
 
         // Notwendig zur Wiedergabe von Youtube Videos, siehe auch: http://stackoverflow.com/questions/15829583/playing-youtube-videos-with-vlcj-not-working-anymore
@@ -203,6 +214,31 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         addVlcListeners();
         thread.start();
     }
+
+    public int getAudioOutputCount() {
+        if (SystemInfo.isOsx()) { // Erst mal nur für OSX wg. buggee VLC 2.2 Prerelease
+            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
+            return devices.size();
+        } else {
+            return 1;
+        }
+    }
+
+    public void setAudioOutputIndex(int num) {
+        if (SystemInfo.isOsx()) { // Erst mal nur für OSX wg. buggee VLC 2.2 Prerelease
+            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
+            if (num >= 0 && num < devices.size()) {
+                // TODO: Ist vorerst nur experimentell, muss vermutlich noch Threadsafe gemacht werden, also evtl. auch durch die Commandqueue schleusen
+                mediaPlayer.setAudioOutputDevice(null, devices.get(num).getLongName());
+                audioOutputIndex = num;
+            }
+        }
+    }
+
+    public int getAudioOutputIndex() {
+        return audioOutputIndex;
+    }
+
 
     private void addVlcListeners() {
 

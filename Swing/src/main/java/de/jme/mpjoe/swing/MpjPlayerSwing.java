@@ -270,6 +270,36 @@ public class MpjPlayerSwing extends JPanel {
     private NextTrackAction nextTrackAction = new NextTrackAction();
     public MpjAction getNextTrackAction() { return nextTrackAction; }
 
+    private class SetAudioOutputAction extends MpjAction {
+        private static final long serialVersionUID = 1L;
+        private int audioOutputIndex;
+        public SetAudioOutputAction(int audioOutputIndex) {
+            super("Audio " + audioOutputIndex);
+            this.audioOutputIndex = audioOutputIndex;
+            // TODO: Diese Icons sind erst mal übergangsweise
+            setIconFromResource(buttonPath + "Mute.png");
+            setSelectedIconFromResource(buttonPath + "Nomute.png");
+        }
+        public void actionPerformed(ActionEvent ae) {
+            if (mpjPlayer instanceof MpjPlayerVlc) {
+                // TODO: Ist vorerst nur experimentell
+                MpjPlayerVlc mpjPlayerVlc = (MpjPlayerVlc)mpjPlayer;
+                mpjPlayerVlc.setAudioOutputIndex(audioOutputIndex);
+            }
+        }
+    }
+    private SetAudioOutputAction setAudioOutputAction0 = new SetAudioOutputAction(0);
+    public MpjAction getSetAudioOutputAction0() { return setAudioOutputAction0; }
+    private SetAudioOutputAction setAudioOutputAction1 = new SetAudioOutputAction(1);
+    public MpjAction getSetAudioOutputAction1() { return setAudioOutputAction1; }
+    private SetAudioOutputAction setAudioOutputAction2 = new SetAudioOutputAction(2);
+    public MpjAction getSetAudioOutputAction2() { return setAudioOutputAction2; }
+    private SetAudioOutputAction setAudioOutputAction3 = new SetAudioOutputAction(3);
+    public MpjAction getSetAudioOutputAction3() { return setAudioOutputAction3; }
+    private SetAudioOutputAction setAudioOutputAction4 = new SetAudioOutputAction(4);
+    public MpjAction getSetAudioOutputAction4() { return setAudioOutputAction4; }
+    private SetAudioOutputAction setAudioOutputAction5 = new SetAudioOutputAction(5);
+    public MpjAction getSetAudioOutputAction5() { return setAudioOutputAction5; }
 
     public MpjPlayerSwing(String name, MpjPlayer mpjPlayer) throws IOException {
         this.mpjPlayer = mpjPlayer;
@@ -349,6 +379,27 @@ public class MpjPlayerSwing extends JPanel {
         muteAction.setSelected(false);
         fadeAction.setSelected(trackLoaded && (state == PlayerState.FADING_IN || state == PlayerState.FADING_OUT));
         headphoneAction.setSelected(false);
+
+        int audioOutputCount = 0;
+        int audioOutputIndex = 0;
+        if (mpjPlayer instanceof MpjPlayerVlc) {
+            // TODO: Ist vorerst nur experimentell
+            MpjPlayerVlc mpjPlayerVlc = (MpjPlayerVlc)mpjPlayer;
+            audioOutputCount = mpjPlayerVlc.getAudioOutputCount();
+            audioOutputIndex = mpjPlayerVlc.getAudioOutputIndex();
+        }
+        setAudioOutputAction0.setEnabled(audioOutputCount > 0);
+        setAudioOutputAction0.setSelected(audioOutputIndex == 0);
+        setAudioOutputAction1.setEnabled(audioOutputCount > 1);
+        setAudioOutputAction1.setSelected(audioOutputIndex == 1);
+        setAudioOutputAction2.setEnabled(audioOutputCount > 2);
+        setAudioOutputAction2.setSelected(audioOutputIndex == 2);
+        setAudioOutputAction3.setEnabled(audioOutputCount > 3);
+        setAudioOutputAction3.setSelected(audioOutputIndex == 3);
+        setAudioOutputAction4.setEnabled(audioOutputCount > 4);
+        setAudioOutputAction4.setSelected(audioOutputIndex == 4);
+        setAudioOutputAction5.setEnabled(audioOutputCount > 5);
+        setAudioOutputAction5.setSelected(audioOutputIndex == 5);
     }
 
     MpjPlayer getCorePlayer() {

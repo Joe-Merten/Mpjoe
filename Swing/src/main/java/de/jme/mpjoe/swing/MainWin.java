@@ -447,7 +447,13 @@ public class MainWin {
         leftPanel.add(mpjPlayerSwing, BorderLayout.CENTER);
         mpjPlayer = mpjPlayerSwing.getCorePlayer();
         mnFile.add(new JMenuItem(mpjPlayerSwing.getPauseAction()));
-        toolbar.add(mpjPlayerSwing.getPauseAction());
+        toolbar.add(mpjPlayerSwing.getPauseAction());            toolbar.addSeparator();
+        toolbar.add(mpjPlayerSwing.getSetAudioOutputAction0());  toolbar.addSeparator();
+        toolbar.add(mpjPlayerSwing.getSetAudioOutputAction1());  toolbar.addSeparator();
+        toolbar.add(mpjPlayerSwing.getSetAudioOutputAction2());  toolbar.addSeparator();
+        toolbar.add(mpjPlayerSwing.getSetAudioOutputAction3());  toolbar.addSeparator();
+        toolbar.add(mpjPlayerSwing.getSetAudioOutputAction4());  toolbar.addSeparator();
+        toolbar.add(mpjPlayerSwing.getSetAudioOutputAction5());  toolbar.addSeparator();
 
         // Den jewels letzten State des MpjPlayerJmf auch in der Statusbar anzeigen
         mpjPlayer.addListener(new MpjPlayer.EventListner() {
