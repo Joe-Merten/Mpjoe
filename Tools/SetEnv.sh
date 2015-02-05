@@ -7,29 +7,34 @@
 #-----------------------------------------------------------------------------------------------------------------------
 # Bash include, also Verwendung:
 #     source Tools/SetEnv.sh
+# Durch vorheriges setzen von MPJOE_SETENV_NO_AUTOMATIC="true" werden nur die Funktionen bereit gestellt, aber nicht
+# automatisch aufgerufen - wird z.B. verwendet von InstallAndroidSdk.sh
 ########################################################################################################################
 
 
-function setEnv() {
+function setEnvAndroidSdkVersion() {
     export ANDROID_SDK_VERSION="24.0.2"
     export ANDROID_BUILDTOOLS_VERSION="21.1.2"
     export ANDROID_API_LEVEL="19"
     export ANDROID_HOME_DEFAULT="/opt/android/sdk"
     export ANDROID_HOME_BREW="/usr/local/Cellar/android-sdk"
+}
 
-    # echo "Interactive=$-" >&2
-    # [[ "$-" =~ "i" ]] || echo "Non Interactive" >&2
-    # [[ "$-" =~ "i" ]] && echo "Is Interactive"  >&2
-
-    local OS=""
+function setEnvOS() {
+    export OS=""
     if [ "$(uname)" == "Darwin" ]; then
-        OS="Osx"
+        export OS="Osx"
     elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-        OS="Linux"
+        export OS="Linux"
     else
         echo "Error: Unknown OS \"$(uname)\"" >&2
         return 1
     fi
+}
+
+function setEnv() {
+    setEnvAndroidSdkVersion
+    setEnvOS || return 1
 
     # ggf. ANDROID_HOME suchen & setzen
     [ "$ANDROID_HOME" == "" ] && [ -d "$ANDROID_HOME_DEFAULT" ] && export ANDROID_HOME="$ANDROID_HOME_DEFAULT"
@@ -49,10 +54,12 @@ function setEnv() {
 
     # Für Maven unter OSX ggf. JAVA_HOME setzen, siehe http://blog.tompawlak.org/maven-default-java-version-mac-osx oder http://www.jayway.com/2013/03/08/configuring-maven-to-use-java-7-on-mac-os-x
     [ "$OS" == "Osx" ] && [ "$JAVA_HOME" == "" ] && [ -x "/usr/libexec/javahome" ] && export JAVA_HOME="$("/usr/libexec/javahome")"
+
+    return 0
 }
 
 
-if [ "$MPJOE_ENVIRONMENT_SET" == "" ]; then
+if [ "$MPJOE_ENVIRONMENT_SET" == "" ] && [ "$MPJOE_SETENV_NO_AUTOMATIC" != "true" ] ; then
     if ! setEnv; then
         # Exit mit Fehler, sofern wir nicht direkt von Kommandozeile aufgerufen wurden (weil das würde sonst die Konsole schliessen)
         [[ "$-" =~ "i" ]] || exit 1

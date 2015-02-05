@@ -11,27 +11,18 @@
 # TODO: For Osx, there is a recommendation for using homebrew: "brew install android-sdk"; see also http://stackoverflow.com/a/7697173/2880699
 ########################################################################################################################
 
-declare ANDROID_SDK_VERSION="24.0.2"
-declare ANDROID_BUILDTOOLS_VERSION="21.1.2"
-declare ANDROID_API_LEVEL="19"
-declare ANDROID_HOME_DEFAULT="/opt/android/sdk"
 
+# Mein eigenes Skriptverzeichnis ermitteln, damit ich SetEnv.sh finde
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-declare OS=""
-if [ "$(uname)" == "Darwin" ]; then
-    OS="Osx"
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    OS="Linux"
-else
-    echo "Error: Unknown OS" >&2
-    exit 1
-fi
+MPJOE_SETENV_NO_AUTOMATIC="true"
+source $SCRIPT_DIR/SetEnv.sh
+MPJOE_SETENV_NO_AUTOMATIC=""
 
+setEnvAndroidSdkVersion
+setEnvOS
 
-if [ "$ANDROID_HOME" == "" ]; then
-    ANDROID_HOME="$ANDROID_HOME_DEFAULT"
-fi
-
+[ "$ANDROID_HOME" == "" ] && ANDROID_HOME="$ANDROID_HOME_DEFAULT"
 ANDROID_DIR="$(dirname "$ANDROID_HOME")"
 
 # Die Downloadlinks des reinen Sdk sehen in etwa so aus:
@@ -110,8 +101,15 @@ echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter andro
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL --all   >/dev/null
 
 
+# Hier nur noch etwas Komfort Output für den Aufrufer
+SETENV_CALL="$SCRIPT_DIR/SetEnv.sh"
+SETENV_CALL=$(python -c "import os.path; print os.path.relpath('$SETENV_CALL', '$(pwd)')")
+SETENV_CALL="source $SETENV_CALL"
+
 echo "Android Sdk installation complete."
+echo ""
 echo "You might also want to set ANDROID_HOME and PATH entvironment variables for your convinience, like:"
 echo "    export ANDROID_HOME=\"$ANDROID_HOME\""
 echo "    export PATH=\"\$PATH:\${ANDROID_HOME}/tools:\${ANDROID_HOME}/platform-tools\""
-echo "→ TODO: Doku wie man das global einstellt"
+echo "You could archive that for your current terminal session by calling the SetEnv.sh bash script:"
+echo "    $SETENV_CALL"
