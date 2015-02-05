@@ -277,8 +277,7 @@ public class MpjPlayerSwing extends JPanel {
             super("Audio " + audioOutputIndex);
             this.audioOutputIndex = audioOutputIndex;
             // TODO: Diese Icons sind erst mal übergangsweise
-            setIconFromResource(buttonPath + "Mute.png");
-            setSelectedIconFromResource(buttonPath + "Nomute.png");
+            setIconFromResource(buttonPath + "Nomute.png");
         }
         public void actionPerformed(ActionEvent ae) {
             if (mpjPlayer instanceof MpjPlayerVlc) {
