@@ -234,7 +234,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
             final String audioOutputName = devices.get(num).getLongName();
             logger.debug("setAudioOutputIndex(" + num + ") = \"" + audioOutputDeviceId + "\" = \"" + audioOutputName + "\"");
             // Als erten Parameter kann man lt. caprica auch null angeben (https://github.com/caprica/vlcj/issues/303)
-            mediaPlayer.setAudioOutputDevice(audioOutputName, audioOutputDeviceId);
+            mediaPlayer.setAudioOutputDevice(null, audioOutputDeviceId);
             audioOutputIndex = num;
         }
     }
