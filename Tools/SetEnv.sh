@@ -34,6 +34,10 @@ function setEnv() {
     # ggf. ANDROID_HOME suchen & setzen
     [ "$ANDROID_HOME" == "" ] && [ -d "$ANDROID_HOME_DEFAULT" ] && export ANDROID_HOME="$ANDROID_HOME_DEFAULT"
     [ "$ANDROID_HOME" == "" ] && [ -d "$ANDROID_HOME_BREW"    ] && export ANDROID_HOME="$ANDROID_HOME_BREW"
+    if [ "$ANDROID_HOME" == "" ]; then
+        echo "Error: No android sdk found" >&2
+        return 1
+    fi
 
     # Android tools und platform-tools im PATH aufnehmen, damit z.B. adb und emulator direkt aufrufbar sind
     local ANDROID_TOOLS="$ANDROID_HOME/tools"
