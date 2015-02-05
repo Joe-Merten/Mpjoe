@@ -183,7 +183,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         }
 
 
-        if (SystemInfo.isOsx()) {
+        {
             // getAudioOutputDevices() gibt's hier zwar ab vlcj 3.2, ist aber in vlc 2.2.0-rc1 noch buggee (siehe https://trac.videolan.org/vlc/ticket/13655 und https://github.com/caprica/vlcj/issues/303)
             logger.debug("Available audio devices for this player:");
             final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
@@ -221,27 +221,21 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
     }
 
     public int getAudioOutputCount() {
-        if (SystemInfo.isOsx()) { // Erst mal nur für OSX wg. buggee VLC 2.2 Prerelease
-            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
-            if (devices != null) return devices.size();
-            else return 1;
-        } else {
-            return 1;
-        }
+        final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
+        if (devices != null) return devices.size();
+        else return 1;
     }
 
     public void setAudioOutputIndex(int num) {
-        if (SystemInfo.isOsx()) { // Erst mal nur für OSX wg. buggee VLC 2.2 Prerelease
-            final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
-            if (devices != null && num >= 0 && num < devices.size()) {
-                // TODO: Ist vorerst nur experimentell, muss vermutlich noch Threadsafe gemacht werden, also evtl. auch durch die Commandqueue schleusen
-                final String audioOutputDeviceId = devices.get(num).getDeviceId();
-                final String audioOutputName = devices.get(num).getLongName();
-                logger.debug("setAudioOutputIndex(" + num + ") = \"" + audioOutputDeviceId + "\" = \"" + audioOutputName + "\"");
-                // Als erten Parameter kann man lt. caprica auch null angeben (https://github.com/caprica/vlcj/issues/303)
-                mediaPlayer.setAudioOutputDevice(audioOutputName, audioOutputDeviceId);
-                audioOutputIndex = num;
-            }
+        final List<AudioDevice> devices = mediaPlayer.getAudioOutputDevices();
+        if (devices != null && num >= 0 && num < devices.size()) {
+            // TODO: Ist vorerst nur experimentell, muss vermutlich noch Threadsafe gemacht werden, also evtl. auch durch die Commandqueue schleusen
+            final String audioOutputDeviceId = devices.get(num).getDeviceId();
+            final String audioOutputName = devices.get(num).getLongName();
+            logger.debug("setAudioOutputIndex(" + num + ") = \"" + audioOutputDeviceId + "\" = \"" + audioOutputName + "\"");
+            // Als erten Parameter kann man lt. caprica auch null angeben (https://github.com/caprica/vlcj/issues/303)
+            mediaPlayer.setAudioOutputDevice(audioOutputName, audioOutputDeviceId);
+            audioOutputIndex = num;
         }
     }
 
