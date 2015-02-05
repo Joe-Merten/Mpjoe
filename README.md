@@ -46,10 +46,10 @@ Linux
 
 - vlc must be at least 2.1.5
   - it's because of GnuTls issues in vlc 2.1.4
-  - I succeed by adding [this ppa](https://launchpad.net/~djcj/+archive/ubuntu/vlc-stable) which updates my vlc to 2.2.0-rc2
+  - for Kubuntu 14.04, I succeed by adding [this ppa](https://launchpad.net/~djcj/+archive/ubuntu/vlc-stable) which updates my vlc to 2.2.0-rc2
 - the 32 bit libs were needed for using the android sdk on 64 bit hosts
 - there might be some different ways how and where to install android sdk; I'd described one in the script mentioned above
-- tested using Kubuntu 14.04 (32 Bit and 64 Bit), OpenJdk 1.7.0_65
+- tested using Kubuntu 14.04 (32 Bit and 64 Bit), OpenJdk 1.7.0_65 and also Kubuntu 14.10 (64 Bit)
 
 
 OS X
