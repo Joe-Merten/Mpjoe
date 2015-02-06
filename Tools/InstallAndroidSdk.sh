@@ -94,11 +94,25 @@ rmdir "$TMP_DIR"
 mv "$ANDROID_DIR/$ARCHIVEDIR" "$ANDROID_HOME"
 
 # Benötigte Komponenten nachinstallieren
+# For a full list, run `android list sdk -a --extended`
 echo "Installing additional Sdk components, please stand by ..."
+echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter tools                                                  >/dev/null
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter platform-tools                                         >/dev/null
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter build-tools-$ANDROID_BUILDTOOLS_VERSION --all          >/dev/null
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter android-$ANDROID_API_LEVEL                             >/dev/null
+
+# Standard Arm Image für Emulator
 echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL --all   >/dev/null
+
+# Intel Atom Image Image für Emulator mit Hardwarebeschleunigung (gibt's auch als 64 Bit Version, aber erst ab Api Level 21)
+echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter sys-img-x86-android-$ANDROID_API_LEVEL --all           >/dev/null
+
+# Extra/Support wird häuffig mit installiert. TODO: Prüfen, ob wir das hier auch brauchen
+#echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter extra-android-support --all                            >/dev/null
+
+# Diese braucht man angeblich, wenn man mit Maven (oder Gradle) baut; aber vermutlich nur wenn man Extra/Support und/oder Extra/Google verwendet
+#echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter extra-android-m2repository --all                       >/dev/null
+#echo yes | $ANDROID_HOME/tools/android update sdk --no-ui --force --filter extra-google-m2repository --all                        >/dev/null
 
 
 # Hier nur noch etwas Komfort Output für den Aufrufer

@@ -125,3 +125,40 @@ Two workaroundssolutions for that issue:
 
         mkdir /Applications/VLC.app/Contents/MacOS/lib/vlc
         ln -s ../../plugins /Applications/VLC.app/Contents/MacOS/lib/vlc/plugins
+
+
+Tips & Tricks
+=============
+
+Using Android Virtual Device (Emulator) with HW Acceleration
+------------------------------------------------------------
+
+See also:
+
+* https://software.intel.com/de-de/android/articles/speeding-up-the-android-emulator-on-intel-architecture#_Toc358213273
+* http://stackoverflow.com/a/12941873
+* http://techtach.com/2014/05/boost-android-emulator-performanceon-linux-speeding-up-android-emulator-on-ubuntu/
+* http://developer.android.com/tools/devices/emulator.html
+
+### Tested on Kubuntu 14.04 & 14.10 (64 Bit)
+
+```bash
+   # check if HW acceleration is available, must return a value > 0
+   $ egrep -c '(vmx|svm)' /proc/cpuinfo
+   4
+   # install kvm
+   $ sudo apt-get install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils
+   # check if kvm is working properly
+   $ kvm-ok
+   INFO: /dev/kvm exists
+   KVM acceleration can be used
+   # add user to required groups
+   $ sudo adduser $USER kvm
+   $ sudo adduser $USER libvirtd
+   # now logout the user and login to make change the effect
+   # create an avd based on the intel atom image
+   $ echo no | android create avd --force -n "My Emu" -t android-19 --abi x86
+   # start the new created avd
+   $ emulator -avd "My Emu"
+   # TODO ...
+```
