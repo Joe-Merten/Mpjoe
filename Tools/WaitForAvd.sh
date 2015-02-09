@@ -4,7 +4,7 @@
 # Android virtual Device starten
 #-----------------------------------------------------------------------------------------------------------------------
 # \project    Mpjoe
-# \file       StartAvd.sh
+# \file       WaitForAvd.sh
 # \creation   2014-02-03, Joe Merten
 #-----------------------------------------------------------------------------------------------------------------------
 # Insperied from android-wait-for-emulator by Ralf Kistner <ralf@embarkmobile.com>
@@ -19,16 +19,7 @@ if [ "$ANDROID_HOME" == "" ]; then
     ANDROID_HOME="$ANDROID_HOME_DEFAULT"
 fi
 
-declare EMU=$ANDROID_HOME/tools/emulator
 declare ADB=$ANDROID_HOME/platform-tools/adb
-
-declare EMU_OPTIONS=""
-EMU_OPTIONS+=" -avd test"
-#EMU_OPTIONS+=" -no-skin -no-audio -no-window"
-
-# Starten des Emulators
-$EMU $EMU_OPTIONS &
-declare EMU_PID=$!
 
 # Nach dem Starten des Emulators liefert `adb -e shell getprop init.svc.bootanim`
 # - "error: device not found"  ca.  5s
@@ -53,6 +44,3 @@ done
 
 # Keyevent zum Entsperren des Device senden
 $ADB shell input keyevent 82
-
-# EMU Pid an den Aufrufer liefern, damit dieser den Emu später wieder beenden kann
-echo "$EMU_PID"
