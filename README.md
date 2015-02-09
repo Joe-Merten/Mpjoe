@@ -157,16 +157,21 @@ See also:
    $ sudo adduser $USER libvirtd
    # now logout the user and login to make change the effect
    # create an avd based on the intel atom image
-   $ echo no | android create avd --force -n -My-Emu -t android-19 --abi x86
+   $ echo no | android create avd --force -n My-Emu -t android-19 --abi x86
    $ echo 'hw.keyboard=yes' >>~/.android/avd/My-Emu.avd/config.ini
    # start the new created avd
-   $ emulator -avd My-Emu -qemu -m 512 -enable-kvm -gpu on
+   $ emulator -avd My-Emu -gpu on -qemu -m 512 -enable-kvm
    # TODO ...
 ```
 
 * the `android create avd ...` creates a new virtual device below `~/.android/avd`
 * the `echo 'hw.keyboard=yes'...` is because of [this issue](http://stackoverflow.com/a/11252510)
 * you can also use the avd gui `android avd` to create the virtual device, but be shure to select Cpu/Abi `Intel Atom (x86)`
+* note that VTX might not work if your host itself runs in a VM
+* Adv boot time for example:
+  * Arm V7A image without HW acceleration = 55s
+  * Intel Atom image with HW acceleration = 19s
+  * benchmarked on an old 4 core i5, 3,3GHz, 8GB Ram, running Kubuntu 14.10 (64 bit)
 
 
 Android debug over Tcp
