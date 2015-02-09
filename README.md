@@ -167,3 +167,17 @@ See also:
 * the `android create avd ...` creates a new virtual device below `~/.android/avd`
 * the `echo 'hw.keyboard=yes'...` is because of [this issue](http://stackoverflow.com/a/11252510)
 * you can also use the avd gui `android avd` to create the virtual device, but be shure to select Cpu/Abi `Intel Atom (x86)`
+
+
+Android debug over Tcp
+----------------------
+
+To debug an Android device wireless (including apk upload etc) we can establish a Tcp connection.
+
+* switch on & unlock the Android device
+* connect the device via Usb to the host and allow access
+* on the host machine enter `adb tcpip 5555`
+* now disconnect Usb
+* »connect« the debugger by entering `adb connect <ip-addr-of-your-android-device>:5555` on the host machine (it should respond like »connected to <ip-addr>«)
+* now you should be able to perform `mvn android:deploy` etc. and remote debugging without Usb connection
+* tested with linux (Kubuntu 14.04) but should also work with Mac
