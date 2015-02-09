@@ -1,5 +1,8 @@
 package de.jme.mpjoe.android;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 
 public class Mpjoe extends Activity {
+    static final Logger logger = LogManager.getLogger();
 
     TableLayout table;
     Button redButton;
@@ -37,11 +41,14 @@ public class Mpjoe extends Activity {
         blueButton.setOnClickListener (onClickChangeColor(Color.BLUE ));
         blackButton.setOnClickListener(onClickChangeColor(Color.BLACK));
         whiteButton.setOnClickListener(onClickChangeColor(Color.WHITE));
+
+        logger.info("=== Initialized ===");
     }
 
     View.OnClickListener onClickChangeColor(final int color) {
         return new View.OnClickListener() {
             public void onClick(View view) {
+                logger.info("=== onClick \n 2nd line===");
                 table.setBackgroundColor(color);
             }
         };
