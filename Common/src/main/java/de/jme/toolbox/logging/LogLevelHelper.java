@@ -13,6 +13,7 @@ public class LogLevelHelper {
     // Ändern des Loglevel eines spezifischen Loggers geht nur, wenn dieser Logger in der log4j2.xml einen eigenen Eintrag hat.
     // Falls nicht, dann wird das Loglevel des Root Logger geändert!
     // TODO: Mal mit "config.addLogger()" versuchen, siehe hier: https://issues.apache.org/jira/browse/LOG4J2-468
+    //       evtl. auch interessant: https://issues.apache.org/jira/browse/LOG4J2-544
     public static void setLoggerLevel(String loggerName, Level level) {
         LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();
