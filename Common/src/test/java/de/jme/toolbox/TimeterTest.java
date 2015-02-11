@@ -6,11 +6,10 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Test der Klasse Timeter.
+ * Testing the class Timeter
  *
  * @author Joe Merten
  */
-
 public class TimeterTest {
 
     /**
