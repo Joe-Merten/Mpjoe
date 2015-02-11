@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Ermittlung diverser Systeminformationen
+ * Determine some system information
  *
  * @author Joe Merten
  */
@@ -22,11 +22,25 @@ public class SystemInfo {
 
     // Hmm, ändern auf "System.getProperty("user.name")" und "InetAddress.getLocalHost().getHostName()"?
 
+    /**
+     * Determine the current »username«
+     * ... whatever this means for each different host system.
+     *
+     * @return current username
+     * <ul>
+     * <li> Linux  : USER environment variable
+     * <li> OSX    : USER environment variable
+     * <li> Windows: USERNAME environment variable
+     * <li> Android: currently not implemented
+     */
     static public String getUserName() {
         if (userName == null) {
             if (isAndroid()) {
                 // TODO: Für Android implementieren
                 userName = "";
+                // via Bluetooth bekämen wir den Bluetooth Gerätenamen (mit android.permission.BLUETOOTH), aber das ist nicht was wir wollen
+                //userName = BluetoothAdapter.getDefaultAdapter().getName();
+                // Via "android.os.Build.MODEL" bekomme ich den Gereätetyp, z.B. "SM-P605"
             } else {
                 // Unter Linux und Osx steht der Name des angemeldeten Benutzers in der Environmentvariablen "USER", unter Windows in "USERNAME"
                 String s = System.getenv("USER");
@@ -39,6 +53,17 @@ public class SystemInfo {
         return userName;
     }
 
+    /**
+     * Determine the »computer name« of the host system
+     * ... whatever this means for each different host system.
+     *
+     * @return computer name of the host system
+     * <ul>
+     * <li> Linux  : $(uname -n)
+     * <li> OSX    : $(uname -n) but shortened at the first dot
+     * <li> Windows: COMPUTERNAME environment variable
+     * <li> Android: currently not implemented
+     */
     static public String getComputerName() {
         if (computerName == null) {
             /*try {
@@ -87,6 +112,7 @@ public class SystemInfo {
         return computerName;
     }
 
+
     private static MachineType machineType = null;
 
     public enum MachineType {
@@ -102,6 +128,16 @@ public class SystemInfo {
         }
     };
 
+    /**
+     * Determine the the kind of the host system
+     *
+     * @return kind of the host system, @see MachineType
+     * <ul>
+     * <li> Linux  : $(uname -n)
+     * <li> OSX    : $(uname -n) but shortened at the first dot
+     * <li> Windows: COMPUTERNAME environment variable
+     * <li> Android: currently not implemented
+     */
     public static MachineType getMachineType() /*throws IOException*/ {
         if (machineType == null) {
             //listAllSystemProperties();
@@ -163,25 +199,41 @@ public class SystemInfo {
         return machineType;
     }
 
+    /**
+     * Determine, if the host system is Linux (but not Android)
+     * @return true if host system is Linux (but not Android) or false elsewere
+     */
     public static boolean isLinux() {
         return getMachineType() == MachineType.PcLinux;
     }
 
+    /**
+     * Determine, if the host system is Windows
+     * @return true if host system is Windows or false elsewere
+     */
     public static boolean isWindows() {
         return getMachineType() == MachineType.PcWindows;
     }
 
+    /**
+     * Determine, if the host system is Mac OS X
+     * @return true if host system is Mac OS X or false elsewere
+     */
     public static boolean isOsx() {
         return getMachineType() == MachineType.PcOsx;
     }
 
+    /**
+     * Determine, if the host system is Android
+     * @return true if host system is Android or false elsewere
+     */
     public static boolean isAndroid() {
         return getMachineType() == MachineType.Android;
     }
 
 
     /**
-     * Just debugoutput for testing purpose
+     * List all java system properties - just debugoutput for testing purpose
      */
     public static void listAllSystemProperties() {
         System.out.println("===== System Properties =====");
@@ -196,7 +248,7 @@ public class SystemInfo {
     }
 
     /**
-     * Just debugoutput for testing purpose
+     * List all environment variables - just debugoutput for testing purpose
      */
     public static void listAllEnvironmentVariables() {
         System.out.println("===== Environment Variables =====");
