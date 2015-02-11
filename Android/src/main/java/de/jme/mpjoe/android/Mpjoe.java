@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 
 public class Mpjoe extends Activity {
+    static org.apache.logging.log4j.core.LoggerContext loggerContext = de.jme.toolbox.logging.Log4jConfigure.configureSimpleConsole();
     static final Logger logger = LogManager.getLogger();
 
     TableLayout table;
@@ -22,6 +23,7 @@ public class Mpjoe extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        logger.fatal("=== Initialing ===");
         setContentView(R.layout.main);
 
         // get all the view components
@@ -42,13 +44,18 @@ public class Mpjoe extends Activity {
         blackButton.setOnClickListener(onClickChangeColor(Color.BLACK));
         whiteButton.setOnClickListener(onClickChangeColor(Color.WHITE));
 
-        logger.info("=== Initialized ===");
+        logger.fatal("=== Initialized ===");
     }
 
     View.OnClickListener onClickChangeColor(final int color) {
         return new View.OnClickListener() {
             public void onClick(View view) {
-                logger.info("=== onClick \n 2nd line===");
+                logger.fatal("=== onClick ===");
+                logger.error("=== onClick ===");
+                logger.warn ("=== onClick ===");
+                logger.info ("=== onClick ===");
+                logger.debug("=== onClick ===");
+                logger.trace("=== onClick ===");
                 table.setBackgroundColor(color);
             }
         };
