@@ -4,7 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Ausgabe von Binärdaten als Hex-Dump (zu Debugzwecken)
+ * Helper class to produce hex dump from binary data
+ *
+ * @author Joe Merten
  */
 public class HexDump {
 

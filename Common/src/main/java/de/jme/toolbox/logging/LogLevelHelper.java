@@ -7,6 +7,11 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+/**
+ * Helper class for switching the log4j loglevel
+ *
+ * @author Joe Merten
+ */
 public class LogLevelHelper {
     static final Logger logger = LogManager.getLogger(LogLevelHelper.class);
 

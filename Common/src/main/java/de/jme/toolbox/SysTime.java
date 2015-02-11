@@ -9,6 +9,11 @@ import java.util.TimeZone;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Helper class for handling the system time
+ *
+ * @author Joe Merten
+ */
 public class SysTime {
 
     static Logger logger = LogManager.getLogger(SysTime.class);

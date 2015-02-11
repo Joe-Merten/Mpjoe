@@ -1,7 +1,7 @@
 package de.jme.toolbox;
 
 /**
- * Uptime des Systems und der Applikation
+ * Determine uptime of the system and the application
  *
  * @author Joe Merten
  */
