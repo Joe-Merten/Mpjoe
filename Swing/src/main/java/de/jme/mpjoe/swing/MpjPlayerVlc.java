@@ -18,8 +18,8 @@ import java.util.Properties;
 
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
@@ -93,7 +93,7 @@ import de.jme.toolbox.SystemInfo.MachineType;
 
 public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
 
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LoggerFactory.getLogger(MpjPlayerVlc.class);
 
     static boolean initialized = false;
 
@@ -250,7 +250,7 @@ public class MpjPlayerVlc implements MpjPlayer, AutoCloseable {
         // Wäre zu überlegen, ob ich die auch noch über meinen Thread kanalisiere...
         // Naja, erst mal nicht, ich schicke die Events vorerst mal direkt in diesem Threadkontext Richtung Applikation (bzw. zur Player Gui Komponente)
         final class MyMediaPlayerEventListener implements MediaPlayerEventListener {
-            final Logger logger = LogManager.getLogger();
+            final Logger logger = LoggerFactory.getLogger(MyMediaPlayerEventListener.class);
 
             public MyMediaPlayerEventListener() {
                 // // Loglevel für Vlcj Events ggf. von Trace auf Debug reduzieren

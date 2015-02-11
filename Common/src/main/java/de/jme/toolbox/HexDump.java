@@ -1,7 +1,7 @@
 package de.jme.toolbox;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to produce hex dump from binary data
@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class HexDump {
 
-    static final Logger logger = LogManager.getLogger(HexDump.class);
+    static final Logger logger = LoggerFactory.getLogger(HexDump.class);
 
     // Wird momentan nicht verwendet, deshalb keine neue Implementation
     // Idee für ein Interface:

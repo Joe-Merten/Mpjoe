@@ -2,8 +2,8 @@ package de.jme.jsi;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jme.jsi.Jsi.JsiAction;
 
@@ -12,7 +12,7 @@ import de.jme.jsi.Jsi.JsiAction;
  */
 public class Sample {
 
-    static final Logger logger = LogManager.getLogger(Sample.class);
+    static final Logger logger = LoggerFactory.getLogger(Sample.class);
 
     public Sample() {
         // TODO Auto-generated constructor stub

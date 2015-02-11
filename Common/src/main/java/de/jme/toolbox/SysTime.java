@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for handling the system time
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class SysTime {
 
-    static Logger logger = LogManager.getLogger(SysTime.class);
+    static Logger logger = LoggerFactory.getLogger(SysTime.class);
 
     /**
      * Setzen der Systemzeit.

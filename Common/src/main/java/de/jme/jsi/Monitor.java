@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Debugmonitor
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Monitor implements Runnable {
 
-    static final Logger logger = LogManager.getLogger(Monitor.class);
+    static final Logger logger = LoggerFactory.getLogger(Monitor.class);
 
     private Jsi         jsi;
     private InputStream is;

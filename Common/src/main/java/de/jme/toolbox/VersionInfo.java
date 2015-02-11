@@ -7,8 +7,8 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Versionsinformationen der Applikation.
@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class VersionInfo {
 
-    static final Logger logger = LogManager.getLogger(VersionInfo.class);
+    static final Logger logger = LoggerFactory.getLogger(VersionInfo.class);
 
     static private String vInfo;
 

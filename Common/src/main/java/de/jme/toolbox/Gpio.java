@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Klasse zum Zugriff auf die GPIOs über das Kernel-Interface /sys/class/gpio,
@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Gpio implements Closeable {
 
-    static Logger logger = LogManager.getLogger(Gpio.class);
+    static Logger logger = LoggerFactory.getLogger(Gpio.class);
 
     private static Map<Integer, Gpio> allExportedInstances = new LinkedHashMap<Integer,Gpio>();
 
