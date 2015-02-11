@@ -191,7 +191,7 @@ public class SystemInfo {
 
                 if (machineType == null)
                     throw new IOException("Can not determine Machine Type (os.name = " + osName + ")");
-                System.out.println("MachineType = " + machineType);
+                //System.out.println("MachineType = " + machineType);
             } catch (IOException e) {
                 e.printStackTrace();
             }
