@@ -14,16 +14,15 @@ import org.slf4j.LoggerFactory;
  * Versionsinformationen der Applikation.
  *
  * Die Versionsinformationen werden biem Kompilieren vom Shellskript »InvokeVersion.sh« generiert
- * und über das Maven Buildskript im Propertyfile »<MainClassName>.buildinfo.properties« abgelegt.
+ * und über das Maven Buildskript im Propertyfile »de.jme.application.buildinfo.properties« abgelegt.
  * Hier lesen wir das mittels getResourceAsStream() aus.
  *
- * Die Verwendung unterschiedlicher Namen für die Property-Files ist wichtig, weil durch die
- * Jar-Abhängigkeiten (z.B. Dpc verwendet Tts) Uneindeutigkeiten entstehen.
- *
- * Achtung: Wenn irgendwann mal per Maven kompiliert wurde, und anschliessend wieder mit dem
- * Eclipse-internen Java Compiler, dann sind die angezeigten Versionsinformationen (mitunter ziemlich
- * stark) veraltet, da dass File »...buildinfo.properties« in diesem Fall auf einem alten Stand stehen bleibt.
- * Hmm, da jetzt auch in Eclipse mit Maven übersetzt wird, sollte das Problem nicht länger bestehen - hab's aber nicht getestet.
+ * TODO: Abgleich / Synchronisation zwischen den verschiedenen Versionsnummern:
+ * - Meine Versionsnummer aus InvokeVersion.sh -> "1", aber zzgl. git rev, Timestamp et cetera
+ * - pom.xml (0.0.1-SNAPSHOT)
+ * - evtl. bei .jar im MANIFEST.MF
+ * - bei Android im AndroidManifest.xml -> android:versionCode="1" und android:versionName="0.0.1"
+ * - bei Distribution als Debian Package via InvokeVersion.sh
  *
  * @author Joe Merten
  */
@@ -60,13 +59,16 @@ public class VersionInfo {
      * @return  Versionsstring. null = nicht gefunden
      */
     static private String getFromProperties() throws IOException {
-        String mainClassName = getMainClassName();
+        //String mainClassName = getMainClassName();
         //System.out.println("MainClass = " + mainClassName);
-
-        if (mainClassName == null || mainClassName.isEmpty()) return null;
-        Properties buildProps  = new Properties();
-        InputStream stream = new VersionInfo().getClass().getResourceAsStream("/" + mainClassName + ".buildinfo.properties");
+        //logger.trace("getFromManifest = \"" + getFromManifest() + "\"");
+        //logger.trace("mainClassName = \"" + mainClassName + "\"");
+        //if (mainClassName == null || mainClassName.isEmpty()) return null;
+        // String propertiesPath = "/" + mainClassName + ".buildinfo.properties"
+        String propertiesPath = "/de.jme.application.buildinfo.properties";
+        InputStream stream = new VersionInfo().getClass().getResourceAsStream(propertiesPath);
         if (stream == null) return null;
+        Properties buildProps  = new Properties();
         buildProps.load(stream);
         return buildProps.getProperty("build.version");
     }
@@ -115,18 +117,47 @@ public class VersionInfo {
      * Funktioniert nur, wenn der Mainthread »main« heisst.
      * Der Name der Main-Class steht zwar auch im Manifest, aber es hat sich aus recht schwierig erwiesen, das richtige Manifest zu lesen.
      * Siehe auch: http://stackoverflow.com/questions/84486/how-do-you-create-a-manifest-mf-thats-available-when-youre-testing-and-running
+     *
+     * Auf 'nem PC sieht der Stacktrace in etwa so aus:
+     *     java.lang.Thread.dumpThreads(Native Method)
+     *     java.lang.Thread.getAllStackTraces(Thread.java:1640)
+     *     de.jme.toolbox.VersionInfo.printAllStackTraces(VersionInfo.java:152)
+     *     de.jme.toolbox.VersionInfo.getMainClassName(VersionInfo.java:119)
+     *     de.jme.toolbox.VersionInfo.getFromProperties(VersionInfo.java:58)
+     *     de.jme.toolbox.VersionInfo.getVersionInfo(VersionInfo.java:41)
+     *     de.jme.mpjoe.swing.MainWin.main(MainWin.java:187)
+     *     de.jme.mpjoe.swing.Mpjoe.main(Mpjoe.java:27)
+     *
+     * Auf Android hingegen aber eher so:
+     *     dalvik.system.VMStack.getThreadStackTrace(Native Method)
+     *     java.lang.Thread.getStackTrace(Thread.java:579)
+     *     java.lang.Thread.getAllStackTraces(Thread.java:521)
+     *     de.jme.toolbox.VersionInfo.printAllStackTraces(VersionInfo.java:152)
+     *     de.jme.toolbox.VersionInfo.getMainClassName(VersionInfo.java:119)
+     *     de.jme.toolbox.VersionInfo.getFromProperties(VersionInfo.java:58)
+     *     de.jme.toolbox.VersionInfo.getVersionInfo(VersionInfo.java:41)
+     *     de.jme.mpjoe.android.Mpjoe.onCreate(Mpjoe.java:33)                         <<<<<<<<<<<<<<<<<< hier ein Treffer, aber unsicher
+     *     android.app.Activity.performCreate(Activity.java:5473)
+     *     android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1093)
+     *     android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2292)
+     *     android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2386)
+     *     android.app.ActivityThread.access$900(ActivityThread.java:169)
+     *     android.app.ActivityThread$H.handleMessage(ActivityThread.java:1277)
+     *     android.os.Handler.dispatchMessage(Handler.java:102)
+     *     android.os.Looper.loop(Looper.java:136)
+     *     android.app.ActivityThread.main(ActivityThread.java:5476)
+     *     java.lang.reflect.Method.invokeNative(Native Method)
+     *     java.lang.reflect.Method.invoke(Method.java:515)
+     *     com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:1268)
+     *     com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1084)
+     *     dalvik.system.NativeStart.main(Native Method)
+     * Auch Android: System.property java.io.tmpdir = "/data/data/de.jme.mpjoe.android/cache", aber das schein mir zu unsicher
      */
     static public String getMainClassName() {
         Map<Thread,StackTraceElement[]> stackTraceMap = Thread.getAllStackTraces();
         for (Thread t : stackTraceMap.keySet()) { // TODO: Statt Schleife eher ein get("main")?
             if (t.getName().equals("main")) {
                 StackTraceElement[] st = stackTraceMap.get(t);
-                // Was hier ankommt, sieht ungefähr so aus:
-                //   java.lang.Thread.dumpThreads(Native Method)
-                //   java.lang.Thread.getMainClassName(Thread.java:1619)
-                //   jme.toolbox.VersionInfo.printAllStackTraces(VersionInfo.java:129)
-                //   jme.toolbox.VersionInfo.getVersionInfo(VersionInfo.java:49)
-                //   jme.ews.tts.Tts.main(Tts.java:306)
                 int idx = st.length - 1;
                 if (idx < 0)
                     throw new IllegalStateException("Cannot determine main class (Main-Thread has no StackTrace-Elements).");

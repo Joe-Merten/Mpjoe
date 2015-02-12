@@ -206,6 +206,28 @@
                 </executions>
             </plugin>
 
+            <!-- Ant-Skript zum Generieren unseres eigenen Versionsstrings, siehe auch VersionInfo.java -->
+            <!-- Hmm, alternativ konnte man z.B. auch exec-maven-plugin oder bash-maven-plugin verwenden -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Invoke Version</id>
+                        <phase>generate-sources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <target>
+                                <!-- Wir tun unser Properties-File nach target/classes, dann wird es automatisch mit in's jar getan -->
+                                <mkdir dir="${project.build.directory}/classes" />
+                                <exec executable="bash" dir="." outputproperty="myversion" failonerror="true"> <arg line="-C InvokeVersion.sh --make-version-string"/> </exec>
+                                <propertyfile file="${project.build.directory}/classes/de.jme.application.buildinfo.properties"> <entry key="build.version" value="${myversion}"/> </propertyfile>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
     </build>

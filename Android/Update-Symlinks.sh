@@ -13,7 +13,7 @@
 declare MPJOE_COMMON_DIR="../Common"
 declare FILES=()
 
-#FILES+=("src/main/java/de/jme/toolbox")
+FILES+=("src/main/java/de/jme/toolbox")
 #FILES+=("src/test/java/de/jme/toolbox")
 #FILES+=("src/main/java/de/jme/jsi")
 #FILES+=("src/main/java/de/jme/thrift")
@@ -111,13 +111,13 @@ function ShowHelp() {
 # Main
 ########################################################################################################################
 
-# declare ACTION="update"
-# [ "$#" != "0" ] && ACTION="$1"
-#
-# case "$ACTION" in
-#     "-h"|"--help"|"help") ShowHelp;;
-#     "list"  ) ListAllExistingLinks;;
-#     "clean" ) RemoveAllLinks;;
-#     "update") UpdateAllLinks;;
-#     *) echo "Invalid action, try --help" >&2; exit 1;;
-# esac
+declare ACTION="update"
+[ "$#" != "0" ] && ACTION="$1"
+
+case "$ACTION" in
+    "-h"|"--help"|"help") ShowHelp;;
+    "list"  ) ListAllExistingLinks;;
+    "clean" ) RemoveAllLinks;;
+    "update") UpdateAllLinks;;
+    *) echo "Invalid action, try --help" >&2; exit 1;;
+esac

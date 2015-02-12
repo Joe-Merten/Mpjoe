@@ -3,6 +3,7 @@ package de.jme.mpjoe.android;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jme.toolbox.VersionInfo;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class Mpjoe extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        logger.info(VersionInfo.getVersionInfo());
         logger.info("=== Initialing ===");
         setContentView(R.layout.main);
 
