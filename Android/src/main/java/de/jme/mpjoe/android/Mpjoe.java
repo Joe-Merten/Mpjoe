@@ -1,7 +1,7 @@
 package de.jme.mpjoe.android;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -11,8 +11,14 @@ import android.widget.Button;
 import android.widget.TableLayout;
 
 public class Mpjoe extends Activity {
-    static org.apache.logging.log4j.core.LoggerContext loggerContext = de.jme.toolbox.logging.Log4jConfigure.configureSimpleConsole();
-    static final Logger logger = LogManager.getLogger();
+    static {
+        ch.qos.logback.classic.android.BasicLogcatConfigurator.configureDefaultContext();
+        // Logback Loglevel auf TRACE, weil ist per Default auf DEBUG
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(ch.qos.logback.classic.Level.TRACE);
+    }
+
+    static final Logger logger = LoggerFactory.getLogger(Mpjoe.class);
 
     TableLayout table;
     Button redButton;
@@ -23,7 +29,7 @@ public class Mpjoe extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logger.fatal("=== Initialing ===");
+        logger.info("=== Initialing ===");
         setContentView(R.layout.main);
 
         // get all the view components
@@ -44,18 +50,18 @@ public class Mpjoe extends Activity {
         blackButton.setOnClickListener(onClickChangeColor(Color.BLACK));
         whiteButton.setOnClickListener(onClickChangeColor(Color.WHITE));
 
-        logger.fatal("=== Initialized ===");
+        logger.info("=== Initialized ===");
     }
 
     View.OnClickListener onClickChangeColor(final int color) {
         return new View.OnClickListener() {
             public void onClick(View view) {
-                logger.fatal("=== onClick ===");
-                logger.error("=== onClick ===");
-                logger.warn ("=== onClick ===");
-                logger.info ("=== onClick ===");
-                logger.debug("=== onClick ===");
-                logger.trace("=== onClick ===");
+                logger.error("slf4j === onClick error ===");
+                logger.warn ("slf4j === onClick warn ===");
+                logger.info ("slf4j === onClick info ===");
+                logger.debug("slf4j === onClick debug ===");
+                logger.trace("slf4j === onClick trace ===");
+
                 table.setBackgroundColor(color);
             }
         };
