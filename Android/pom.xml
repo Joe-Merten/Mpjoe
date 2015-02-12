@@ -12,6 +12,14 @@
     <artifactId>Mpjoe-Android</artifactId>
     <name>Mpjoe Android</name>
 
+    <properties>
+        <!-- app.version.code und name werden via »filtered-manifest« in's apk geschleust -->
+        <!-- siehe auch http://blog.synyx.de/2013/09/building-android-projects-with-maven-part-2-releases-with-maven -->
+        <!-- und        http://stackoverflow.com/a/10808077/2880699 -->
+        <app.version.code>1</app.version.code>
+        <app.version.name>0.0.1-SNAPSHOT</app.version.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>
@@ -39,13 +47,38 @@
                 <groupId>com.simpligility.maven.plugins</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <configuration>
-                    <sdk>
-                        <platform>19</platform>
-                    </sdk>
+                    <sdk><platform>19</platform></sdk>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml</androidManifestFile>
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main</directory>
+                <targetPath>${project.build.directory}/filtered-manifest</targetPath>
+                <filtering>true</filtering>
+                <includes>
+                    <include>AndroidManifest.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
     </build>
 
 </project>
