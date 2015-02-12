@@ -12,14 +12,17 @@ Joe’s Media Player & DJ’ing App
 | semaphoreapp | [![Build Status](https://semaphoreapp.com/api/v1/projects/ed34e48b-8b31-4d78-a3cd-0730d586feaa/341075/shields_badge.svg)](https://semaphoreapp.com/joe-merten/mpjoe)
 
 
-Allgemeines zur Entwicklung
-===========================
-- zum bauen verwende ich Maven (für alle Unterprojekte)
-- bevorzugte IDE ist Eclipse, es kann aber auch jeder andere Editor (vim et cetera) verwendet werden
-- durch Verwendung von Maven können alle Projekte auch von Kommandozeile kompiliert werden
-- Java 1.7
-- Android Api Level 19 (wg. Java 1.7, also mind. Android 4.4 erforderlich)
-- CI Anbindung siehe [Ci/README.md](Ci/README.md)
+About the development
+=====================
+- main programming language is Java SE (1.7)
+- I'm using Maven for build (for each sub project)
+- prefered IDE is Eclispe, but it's shure possible to use the editor of your choice (vim et cetera)
+- because of using Maven, all projects can build from command line
+- Android api level 19 (because of Java 1.7, so at least Android 4.4 required)
+- for logging / debug output I decide to [slf4j](http://www.slf4j.org/) as api
+  and currently [log4j2](http://logging.apache.org/log4j/2.x) as backend for the Swing application
+  and [logback](http://tony19.github.io/logback-android) for Android
+- for CI see [Ci/README.md](Ci/README.md)
 
 
 Prerequisites
