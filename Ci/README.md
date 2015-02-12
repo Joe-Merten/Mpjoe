@@ -113,6 +113,7 @@ Semaphoreapp
   - baut die Swing App aber noch nicht für Android
 - Notification
   - liefert im Status Badge auch »Pending«
+  - beim Start eines neuen Build wird leider via cc.xml der letzte Buildstatus nicht mehr geliefert (und lastBuildLabel steht schon auf »Not built yet« etc)
 
 
 Notification Clients
