@@ -1,4 +1,4 @@
-package de.jme.toolbox.logging;
+package de.jme.util.log;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -23,7 +23,7 @@ package de.jme.mpjoe.swing;
 public class Mpjoe {
 
     public static void main(final String[] args) {
-        de.jme.toolbox.logging.Log4jConfigure.configureRollingFile();
+        de.jme.util.log.Log4jConfigure.configureRollingFile();
         MainWin.main(args);
     }
 }

@@ -1,4 +1,4 @@
-package de.jme.toolbox.swing;
+package de.jme.util.swing;
 
 import java.awt.Point;
 import java.awt.Rectangle;

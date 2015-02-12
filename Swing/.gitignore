@@ -7,6 +7,8 @@ Log
 # Symlinks aus Mpjoe Common
 src/main/java/de/jme/toolbox
 src/test/java/de/jme/toolbox
+src/main/java/de/jme/util
+src/test/java/de/jme/util
 src/main/java/de/jme/jsi
 src/test/java/de/jme/jsi
 src/main/java/de/jme/thrift

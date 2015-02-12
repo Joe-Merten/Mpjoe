@@ -1,4 +1,4 @@
-package de.jme.toolbox.logging;
+package de.jme.util.log;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
