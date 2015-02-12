@@ -101,8 +101,6 @@ Circleci
 --------
 - Status:
   - baut die Swing und auch die Android App
-- Notification
-  - liefert via cc.xml keine `lastBuildTime`
 - Sonstige Anmerkungen:
   - kann optional auch via `circle.yml` konfiguriert werden, [siehe hier](https://circleci.com/docs/configuration)
   - Zeigt via `gitversion` den Commit Count nicht korrekt an, somit ist im Kompilat der Versionsstring falsch (ähnlich wie bei travis-ci)
