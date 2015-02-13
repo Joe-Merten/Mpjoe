@@ -37,7 +37,7 @@ function pollServer() {
     echo "========== $url ==========$CLEAR_CURRENT_LINE_RIGHT"
 
     # Datei zeilenweise ausgeben, damit ich jeweils am Zeilenende ggf. Reste alter Ausgaben löschen kann
-    cat "$output" | xmllint --format - | while IFS= read -r line; do
+    cat "$output" | xmllint --c14n --format - | while IFS= read -r line || [[ -n "$line" ]]; do
         echo "$line$CLEAR_CURRENT_LINE_RIGHT"
     done
 
