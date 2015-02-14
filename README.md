@@ -189,3 +189,6 @@ To debug an Android device wireless (including apk upload etc) we can establish 
 * »connect« the debugger by entering `adb connect <ip-addr-of-your-android-device>:5555` on the host machine (it should respond like »connected to <ip-addr>«)
 * now you should be able to perform `mvn android:deploy` etc. and remote debugging without Usb connection
 * tested with linux (Kubuntu 14.04) but should also work with Mac
+
+
+ 😎
