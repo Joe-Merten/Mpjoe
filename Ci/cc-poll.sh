@@ -23,6 +23,10 @@ declare CURSOR_XY_HOME="${ESC}[H"
 declare CURSOR_ON="${ESC}[?25h"
 declare CURSOR_OFF="${ESC}[?25l"
 
+# Display Modes:
+#   1 = Vewendung von CURSOR_XY_HOME und Trennzeilen etc
+#   2 = Platzsparende Ausgabe und ohne CURSOR_XY_HOME
+declare DISPLAY_MODE="2"
 
 ########################################################################################################################
 # Abfrage eines Buildservers
@@ -34,25 +38,25 @@ function pollServer() {
     local status="$(mktemp -t --suffix .txt  Mpjoe-ccpoll-XXXX)"
     local output="$(mktemp -t --suffix .xml  Mpjoe-ccpoll-XXXX)"
     wget -o "$status" -O "$output" "$url"
-    echo "========== $url ==========$CLEAR_CURRENT_LINE_RIGHT"
+    [ "$DISPLAY_MODE" == "1" ] && echo "========== $url ==========$CLEAR_CURRENT_LINE_RIGHT"
 
     # Datei zeilenweise ausgeben, damit ich jeweils am Zeilenende ggf. Reste alter Ausgaben löschen kann
     cat "$output" | xmllint --c14n --format - | while IFS= read -r line || [[ -n "$line" ]]; do
         echo "$line$CLEAR_CURRENT_LINE_RIGHT"
     done
 
-    echo "==========================$CLEAR_CURRENT_LINE_RIGHT"
-    echo "$CLEAR_CURRENT_LINE_RIGHT"
+    [ "$DISPLAY_MODE" == "1" ] && echo "==========================$CLEAR_CURRENT_LINE_RIGHT"
+    [ "$DISPLAY_MODE" == "1" ] && echo "$CLEAR_CURRENT_LINE_RIGHT"
 
     rm "$status" "$output"
 }
 
 function pollServers() {
-    printf "$CURSOR_XY_HOME"
-    echo "================================================================================"
-    echo "================================================================================"
-    echo "================================================================================"
-    echo ""
+    [ "$DISPLAY_MODE" == "1" ] && printf "$CURSOR_XY_HOME"
+    [ "$DISPLAY_MODE" == "1" ] && echo "================================================================================$CLEAR_CURRENT_LINE_RIGHT"
+    [ "$DISPLAY_MODE" == "1" ] && echo "================================================================================$CLEAR_CURRENT_LINE_RIGHT"
+    [ "$DISPLAY_MODE" == "1" ] && echo "================================================================================$CLEAR_CURRENT_LINE_RIGHT"
+    echo "$CLEAR_CURRENT_LINE_RIGHT"
     pollServer "https://snap-ci.com/Joe-Merten/Mpjoe/branch/master/cctray.xml"
     pollServer "https://api.travis-ci.org/repos/Joe-Merten/Mpjoe/cc.xml"
     pollServer "https://circleci.com/gh/Joe-Merten/Mpjoe.cc.xml"
@@ -60,7 +64,12 @@ function pollServers() {
 }
 
 
-printf "$RESET_TERMINAL"
+if [ "$#" == "1" ]; then
+    [ "$1" == "1" ] && DISPLAY_MODE="$1"
+    [ "$1" == "2" ] && DISPLAY_MODE="$1"
+fi
+
+[ "$DISPLAY_MODE" == "1" ] && printf "$RESET_TERMINAL"
 while true; do
     pollServers
     sleep 1
