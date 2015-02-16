@@ -38,11 +38,13 @@ function pollServer() {
     local status="$(mktemp -t --suffix .txt  Mpjoe-ccpoll-XXXX)"
     local output="$(mktemp -t --suffix .xml  Mpjoe-ccpoll-XXXX)"
     wget -o "$status" -O "$output" "$url"
+    local timestamp=""
+    [ "$DISPLAY_MODE" == "2" ] && timestamp="$(date +"%T")  "
     [ "$DISPLAY_MODE" == "1" ] && echo "========== $url ==========$CLEAR_CURRENT_LINE_RIGHT"
 
     # Datei zeilenweise ausgeben, damit ich jeweils am Zeilenende ggf. Reste alter Ausgaben löschen kann
     cat "$output" | xmllint --c14n --format - | while IFS= read -r line || [[ -n "$line" ]]; do
-        echo "$line$CLEAR_CURRENT_LINE_RIGHT"
+        echo "$timestamp$line$CLEAR_CURRENT_LINE_RIGHT"
     done
 
     [ "$DISPLAY_MODE" == "1" ] && echo "==========================$CLEAR_CURRENT_LINE_RIGHT"
