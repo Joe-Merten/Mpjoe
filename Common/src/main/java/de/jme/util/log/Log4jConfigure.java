@@ -12,8 +12,8 @@ import org.apache.logging.log4j.status.StatusLogger;
 
 /**
  * Configure log4j2 without a configuration file
- *
  * @author Joe Merten
+ * Based on the idea of Alvaro de Lucas found at stackoverflow.com/questions/28235021/log4j2-on-android/28453604
  */
 public class Log4jConfigure {
 
