@@ -50,22 +50,25 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 
 ########################################################################################################################
-# Anlegen eines Symlink, sofern dieser noch nicht besteht
+# Creates a symlink if not exist
 #-----------------------------------------------------------------------------------------------------------------------
-# \in  $1  Dateiname, ggf. mit relativem Verzeichnis
-#          Der relative Path muss gleichermassen für Stm Common und auch für Nrf Common passen
+# \in  $1  Sourcepath of real file or directory
+# \in  $2  Destination directory (will be created if not exist)
 ########################################################################################################################
 function UpdateLink() {
-    local file="$1"
-    if ! test -L "${file}"; then
-        # Verzeichnis für den Link ggf. anlegen
-        mkdir -pv "$(dirname ${file})"
+    local srcDirWithFilename="$1"
+    local dstDir="$2"
+    local filename=$(basename "$srcDirWithFilename")
+    local dstDirWithFilename="${dstDir}/${filename}"
+    if ! test -f "${dstDirWithFilename}"; then
+        mkdir -p "${dstDir}"
         # Das Linkziel muss relativ zu unserem Linknamen angegeben werden, dazu bedienen wir uns eines kleinen Pyton Skripts
         # siehe auch: http://stackoverflow.com/a/7305217/2880699
-        local dots=$(python -c "import os.path; print os.path.relpath('.', '$(dirname ${file})')")
-        ln -sv "${dots}/${MPJOE_COMMON_DIR}/${file}" "${file}" >&2
+        local dots=$(python -c "import os.path; print os.path.relpath('.', '$dstDir')")
+        ln -sv "${dots}/${srcDirWithFilename}" "${dstDirWithFilename}" >&2
     fi
 }
+
 
 ########################################################################################################################
 # Aktualisierung
@@ -73,7 +76,7 @@ function UpdateLink() {
 function UpdateAllLinks() {
     local file
     for file in "${FILES[@]}"; do
-        UpdateLink "$file"
+        UpdateLink "$MPJOE_COMMON_DIR/$file" "$(dirname $file)"
     done
 }
 
