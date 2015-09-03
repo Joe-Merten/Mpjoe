@@ -93,7 +93,10 @@ function RemoveAllLinks() {
 # Anzeigen aller derzeit existierenden Symlinks
 ########################################################################################################################
 function ListAllExistingLinks() {
-    ls -lR --color=always . | grep ^l --color=never
+    local lsColorOption="--color=always"
+    # OSX have no "--color=always", but even -G won't work because of piping over grep
+    [ "$(uname -s)" == "Darwin" ] && lsColorOption="-G"
+    ls -lR $lsColorOption . | grep ^l --color=never
 }
 
 ########################################################################################################################
