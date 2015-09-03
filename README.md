@@ -47,7 +47,10 @@ Linux
 - vlc must be at least 2.1.5
   - it's because of GnuTls issues in vlc 2.1.4
   - for Kubuntu 14.04, I succeed by adding [this ppa](https://launchpad.net/~videolan/+archive/ubuntu/master-daily) which updates my vlc to the most recent 3.0.0
-    (yep, it's next to bleeding edge `sudo add-apt-repository ppa:videolan/master-daily`)
+    (yep, it's next to bleeding edge `sudo add-apt-repository ppa:videolan/master-daily`) ... but it seems that this not longer works with ubuntu 14.04 because of some unavailable package dependencies
+  - but it could also be used e.g. 2.2.1 from [this ppa](https://launchpad.net/~mc3man/+archive/ubuntu/trusty-media)
+    `sudo add-apt-repository ppa:mc3man/trusty-media && sudo apt-get update && sudo apt-get install vlc`
+  - Note: Should removing that ppa before performing distribution upgrade `sudo apt-get purge vlc-data && sudo sudo ppa-purge ppa:videolan/master-daily`
 - the 32 bit libs were needed for using the android sdk on 64 bit hosts
 - there might be some different ways how and where to install android sdk; I'd described one in the script mentioned above
 - tested using Kubuntu 14.04 (32 Bit and 64 Bit), OpenJdk 1.7.0_65 and also Kubuntu 14.10 (64 Bit)
