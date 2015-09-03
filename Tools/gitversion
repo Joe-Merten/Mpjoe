@@ -128,6 +128,12 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 function MakeGitRevString {
+    # Vorab prüfen, ob das Verzeichnis unter Git Control steht
+    if ! git rev-parse >/dev/null 2>&1; then
+        [ "$#" == "1" ] && echo "$1"
+        return
+    fi
+
     local gitRevHash="$(LANG= git rev-list HEAD -n 1)"
     local gitRevCount="$(LANG= git rev-list HEAD --full-history --all --count)"
 
@@ -151,4 +157,5 @@ function MakeGitRevString {
     echo "${gitRevCount}${gitUncommited}${gitUnpushed}:${gitRevHash}"
 }
 
-MakeGitRevString
+argv=("${@}")
+MakeGitRevString "${argv[@]}"

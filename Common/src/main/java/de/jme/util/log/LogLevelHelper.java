@@ -1,4 +1,4 @@
-package de.jme.toolbox.logging;
+package de.jme.util.log;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -7,12 +7,18 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+/**
+ * Helper class for switching the log4j loglevel
+ *
+ * @author Joe Merten
+ */
 public class LogLevelHelper {
     static final Logger logger = LogManager.getLogger(LogLevelHelper.class);
 
     // Ändern des Loglevel eines spezifischen Loggers geht nur, wenn dieser Logger in der log4j2.xml einen eigenen Eintrag hat.
     // Falls nicht, dann wird das Loglevel des Root Logger geändert!
-    // TODO: Mal mit "config.addLogger() versuchen
+    // TODO: Mal mit "config.addLogger()" versuchen, siehe hier: https://issues.apache.org/jira/browse/LOG4J2-468
+    //       evtl. auch interessant: https://issues.apache.org/jira/browse/LOG4J2-544
     public static void setLoggerLevel(String loggerName, Level level) {
         LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();

@@ -31,7 +31,7 @@ import de.jme.mpj.MpjPlaylist.PlaylistEvent;
 import de.jme.mpj.MpjPlaylistEntry;
 import de.jme.mpj.MpjTrack;
 import de.jme.toolbox.SystemInfo;
-import de.jme.toolbox.swing.JTableColumnFitAdapter;
+import de.jme.util.swing.JTableColumnFitAdapter;
 
 public class PlaylistPanel extends JPanel {
     private static final long serialVersionUID = 1L;

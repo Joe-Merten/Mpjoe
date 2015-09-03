@@ -15,6 +15,7 @@ declare FILES=()
 
 FILES+=("src/main/java/de/jme/toolbox")
 FILES+=("src/test/java/de/jme/toolbox")
+FILES+=("src/main/java/de/jme/util")
 FILES+=("src/main/java/de/jme/jsi")
 FILES+=("src/main/java/de/jme/thrift")
 FILES+=("src/main/java/de/jme/mpj")
@@ -57,6 +58,8 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 function UpdateLink() {
     local file="$1"
     if ! test -L "${file}"; then
+        # Verzeichnis für den Link ggf. anlegen
+        mkdir -pv "$(dirname ${file})"
         # Das Linkziel muss relativ zu unserem Linknamen angegeben werden, dazu bedienen wir uns eines kleinen Pyton Skripts
         # siehe auch: http://stackoverflow.com/a/7305217/2880699
         local dots=$(python -c "import os.path; print os.path.relpath('.', '$(dirname ${file})')")
@@ -94,8 +97,28 @@ function ListAllExistingLinks() {
 }
 
 ########################################################################################################################
+# Help
+########################################################################################################################
+function ShowHelp() {
+    echo "Usage: Update-Symlinks.sh [action]"
+    scho "were action is one of:"
+    echo "  help   - show this text"
+    echo "  list   - list existing symlinks"
+    echo "  clean  - remove symlinks"
+    echo "  update - create / update symlinks (default action)"
+}
+
+########################################################################################################################
 # Main
 ########################################################################################################################
-#RemoveAllLinks
-UpdateAllLinks
-#ListAllExistingLinks
+
+declare ACTION="update"
+[ "$#" != "0" ] && ACTION="$1"
+
+case "$ACTION" in
+    "-h"|"--help"|"help") ShowHelp;;
+    "list"  ) ListAllExistingLinks;;
+    "clean" ) RemoveAllLinks;;
+    "update") UpdateAllLinks;;
+    *) echo "Invalid action, try --help" >&2; exit 1;;
+esac

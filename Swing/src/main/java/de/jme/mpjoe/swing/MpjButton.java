@@ -18,8 +18,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // Hmm, offenbar soll man sich nicht von AbstractButton ableiten sondern von JButton
 //   http://stackoverflow.com/questions/5751311/creating-a-custom-button-in-java-with-jbutton
@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 public class MpjButton extends JComponent implements MouseListener {
     private static final long serialVersionUID = 1L;
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LoggerFactory.getLogger(MpjButton.class);
 
     private Dimension      size;
     private AbstractAction action;

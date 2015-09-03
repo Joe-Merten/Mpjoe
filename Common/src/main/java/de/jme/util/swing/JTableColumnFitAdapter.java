@@ -1,19 +1,4 @@
-/**
- * Um bei einem JTable mittels Doppelklick die Spaltenbreite automatisch zusetzen
- *
- * Author: Santhosh Kumar
- *
- * Verwendung: table.getTableHeader().addMouseListener(new ColumnFitAdapter());
- * Funktioniert auch mit umsortierten Spalten (header.setReorderingAllowed(true))
- *
- * Quelle: http://www.jroller.com/santhosh/entry/fit_tablecolumns_on_demand
- *
- * Siehe auch:
- * - https://lokeshshah.wordpress.com/2004/07/29/jtable-resize-column
- * - http://www.coderanch.com/t/343480/GUI/java/JTableHeader-column-selection
- */
-
-package de.jme.toolbox.swing;
+package de.jme.util.swing;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -24,6 +9,20 @@ import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
+/**
+ * Um bei einem JTable mittels Doppelklick die Spaltenbreite automatisch zusetzen
+ *
+ * @author: Santhosh Kumar
+ *
+ * Verwendung: table.getTableHeader().addMouseListener(new ColumnFitAdapter());
+ * Funktioniert auch mit umsortierten Spalten (header.setReorderingAllowed(true))
+ *
+ * Quelle: http://www.jroller.com/santhosh/entry/fit_tablecolumns_on_demand
+ *
+ * Siehe auch:
+ * - https://lokeshshah.wordpress.com/2004/07/29/jtable-resize-column
+ * - http://www.coderanch.com/t/343480/GUI/java/JTableHeader-column-selection
+ */
 public class JTableColumnFitAdapter extends MouseAdapter {
 
     public void mouseClicked(MouseEvent e) {

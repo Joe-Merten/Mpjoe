@@ -30,6 +30,9 @@ Status
   * [jayway](http://mvnrepository.com/artifact/com.simpligility.maven.plugins/android-maven-plugin) hingegen auf Version 4.0.0-rc2
   * simpligility scheint ein Fork von jayway zu sein?
 * TODO: [das hier](http://books.sonatype.com/mvnref-book/reference/android-dev.html) lesen
+* evenfalls interessant:
+  * http://blog.synyx.de/2013/09/building-android-projects-with-maven-part-1-setup
+  * http://blog.synyx.de/2013/09/building-android-projects-with-maven-part-2-releases-with-maven
 
 Eclipse Integration
 -------------------

@@ -12,14 +12,17 @@ Joe’s Media Player & DJ’ing App
 | semaphoreapp | [![Build Status](https://semaphoreapp.com/api/v1/projects/ed34e48b-8b31-4d78-a3cd-0730d586feaa/341075/shields_badge.svg)](https://semaphoreapp.com/joe-merten/mpjoe)
 
 
-Allgemeines zur Entwicklung
-===========================
-- zum bauen verwende ich Maven (für alle Unterprojekte)
-- bevorzugte IDE ist Eclipse, es kann aber auch jeder andere Editor (vim et cetera) verwendet werden
-- durch Verwendung von Maven können alle Projekte auch von Kommandozeile kompiliert werden
-- Java 1.7
-- Android Api Level 19 (wg. Java 1.7, also mind. Android 4.4 erforderlich)
-- CI Anbindung siehe [Ci/README.md](Ci/README.md)
+About the development
+=====================
+- main programming language is Java SE (1.7)
+- I'm using Maven for build (for each sub project)
+- prefered IDE is Eclispe, but it's shure possible to use the editor of your choice (vim et cetera)
+- because of using Maven, all projects can build from command line
+- Android api level 19 (because of Java 1.7, so at least Android 4.4 required)
+- for logging / debug output I decide to [slf4j](http://www.slf4j.org/) as api
+  and currently [log4j2](http://logging.apache.org/log4j/2.x) as backend for the Swing application
+  and [logback](http://tony19.github.io/logback-android) for Android
+- for CI see [Ci/README.md](Ci/README.md)
 
 
 Prerequisites
@@ -160,16 +163,21 @@ See also:
    $ sudo adduser $USER libvirtd
    # now logout the user and login to make change the effect
    # create an avd based on the intel atom image
-   $ echo no | android create avd --force -n -My-Emu -t android-19 --abi x86
+   $ echo no | android create avd --force -n My-Emu -t android-19 --abi x86
    $ echo 'hw.keyboard=yes' >>~/.android/avd/My-Emu.avd/config.ini
    # start the new created avd
-   $ emulator -avd My-Emu -qemu -m 512 -enable-kvm -gpu on
+   $ emulator -avd My-Emu -gpu on -qemu -m 512 -enable-kvm
    # TODO ...
 ```
 
 * the `android create avd ...` creates a new virtual device below `~/.android/avd`
 * the `echo 'hw.keyboard=yes'...` is because of [this issue](http://stackoverflow.com/a/11252510)
 * you can also use the avd gui `android avd` to create the virtual device, but be shure to select Cpu/Abi `Intel Atom (x86)`
+* note that VTX might not work if your host itself runs in a VM
+* Adv boot time for example:
+  * Arm V7A image without HW acceleration = 55s
+  * Intel Atom image with HW acceleration = 19s
+  * benchmarked on an old 4 core i5, 3,3GHz, 8GB Ram, running Kubuntu 14.10 (64 bit)
 
 
 Android debug over Tcp
@@ -184,3 +192,6 @@ To debug an Android device wireless (including apk upload etc) we can establish 
 * »connect« the debugger by entering `adb connect <ip-addr-of-your-android-device>:5555` on the host machine (it should respond like »connected to <ip-addr>«)
 * now you should be able to perform `mvn android:deploy` etc. and remote debugging without Usb connection
 * tested with linux (Kubuntu 14.04) but should also work with Mac
+
+
+ 😎

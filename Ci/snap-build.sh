@@ -42,10 +42,14 @@ ls -l $ANDROID_HOME/platform-tools
 echo "========================="
 
 
+echo "========== Build Mpjoe Swing =========="
 cd ../Swing
 mvn -q -DskipTests=true clean install
 cd ../Ci
+echo "========== Build Mpjoe Swing finished =========="
 
+echo "========== Build Mpjoe Android =========="
 cd ../Android
 mvn -q -DskipTests=true -Dandroid.sdk.path=$ANDROID_HOME clean install
 cd ../Ci
+echo "========== Build Mpjoe Android finished =========="

@@ -1,5 +1,9 @@
 package de.jme.mpjoe.android;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jme.toolbox.VersionInfo;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +12,14 @@ import android.widget.Button;
 import android.widget.TableLayout;
 
 public class Mpjoe extends Activity {
+    static {
+        ch.qos.logback.classic.android.BasicLogcatConfigurator.configureDefaultContext();
+        // Logback Loglevel auf TRACE, weil ist per Default auf DEBUG
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(ch.qos.logback.classic.Level.TRACE);
+    }
+
+    static final Logger logger = LoggerFactory.getLogger(Mpjoe.class);
 
     TableLayout table;
     Button redButton;
@@ -18,6 +30,8 @@ public class Mpjoe extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        logger.info(VersionInfo.getVersionInfo());
+        logger.info("=== Initialing ===");
         setContentView(R.layout.main);
 
         // get all the view components
@@ -37,11 +51,19 @@ public class Mpjoe extends Activity {
         blueButton.setOnClickListener (onClickChangeColor(Color.BLUE ));
         blackButton.setOnClickListener(onClickChangeColor(Color.BLACK));
         whiteButton.setOnClickListener(onClickChangeColor(Color.WHITE));
+
+        logger.info("=== Initialized ===");
     }
 
     View.OnClickListener onClickChangeColor(final int color) {
         return new View.OnClickListener() {
             public void onClick(View view) {
+                logger.error("slf4j === onClick error ===");
+                logger.warn ("slf4j === onClick warn ===");
+                logger.info ("slf4j === onClick info ===");
+                logger.debug("slf4j === onClick debug ===");
+                logger.trace("slf4j === onClick trace ===");
+
                 table.setBackgroundColor(color);
             }
         };

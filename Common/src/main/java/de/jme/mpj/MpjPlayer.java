@@ -6,8 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /***********************************************************************************************************************
   Empfehlung für Status und Funktionen für Buttons von Player Gui's
@@ -123,7 +123,7 @@ import org.apache.logging.log4j.Logger;
  */
 public interface MpjPlayer {
 
-    static final Logger logger = LogManager.getLogger(MpjPlayer.class);
+    static final Logger logger = LoggerFactory.getLogger(MpjPlayer.class);
 
     @SuppressWarnings("serial")
     class MpjPlayerException extends Exception {
