@@ -18,7 +18,9 @@ FILES+=("src/test/java/de/jme/toolbox")
 FILES+=("src/main/java/de/jme/util")
 FILES+=("src/main/java/de/jme/jsi")
 FILES+=("src/main/java/de/jme/thrift")
+FILES+=("src/test/java/de/jme/thrift")
 FILES+=("src/main/java/de/jme/mpj")
+FILES+=("src/test/java/de/jme/mpj")
 FILES+=("src/main/resources/de/jme/mpj")
 
 
@@ -99,7 +101,7 @@ function ListAllExistingLinks() {
     local lsColorOption="--color=always"
     # OSX have no "--color=always", but even -G won't work because of piping over grep
     [ "$(uname -s)" == "Darwin" ] && lsColorOption="-G"
-    ls -lR $lsColorOption . | grep ^l --color=never
+    ls -lR $lsColorOption . | grep ^l --color=never || echo "no symlinks at all"
 }
 
 ########################################################################################################################
